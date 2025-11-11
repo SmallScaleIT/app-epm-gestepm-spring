@@ -2741,9 +2741,11 @@ paths:
           name: activityCenterIds
           description: Filter by user activity center id.
         - schema:
-            type: integer
+            type: array
+            items:
+              type: integer
           in: query
-          name: state
+          name: states
           description: Filter by user state.
         - schema:
             type: array

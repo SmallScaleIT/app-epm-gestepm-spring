@@ -25,7 +25,7 @@ public class UserListRestRequest extends RestRequest {
 
     private List<Integer> activityCenterIds;
 
-    private Integer state;
+    private List<Integer> states;
 
     private List<Integer> signingIds;
 

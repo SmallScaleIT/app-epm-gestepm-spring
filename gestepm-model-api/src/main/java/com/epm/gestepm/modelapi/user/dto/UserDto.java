@@ -35,7 +35,6 @@ public class UserDto implements Serializable {
     @NotNull
     private Integer state;
 
-    @NotNull
     private Integer signingId;
 
     private String forumUsername;

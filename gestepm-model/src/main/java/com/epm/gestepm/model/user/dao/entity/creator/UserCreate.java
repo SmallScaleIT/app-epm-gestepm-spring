@@ -32,7 +32,6 @@ public class UserCreate implements CollectableAttributes {
     @NotNull
     private Integer state;
 
-    @NotNull
     private Integer signingId;
 
     @NotNull
