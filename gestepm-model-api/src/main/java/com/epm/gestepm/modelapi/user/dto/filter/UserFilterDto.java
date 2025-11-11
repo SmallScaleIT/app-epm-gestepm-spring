@@ -22,7 +22,7 @@ public class UserFilterDto extends OrderableDto implements UsableAsCacheKey {
 
   private List<Integer> activityCenterIds;
 
-  private Integer state;
+  private List<Integer> states;
 
   private List<Integer> signingIds;
 
@@ -43,7 +43,7 @@ public class UserFilterDto extends OrderableDto implements UsableAsCacheKey {
     cacheKeyBuilder.addElement("email", this.email);
     cacheKeyBuilder.addElement("password", this.password);
     cacheKeyBuilder.addElement("activityCenterIds", this.activityCenterIds);
-    cacheKeyBuilder.addElement("state", this.state);
+    cacheKeyBuilder.addElement("states", this.states);
     cacheKeyBuilder.addElement("signingIds", this.signingIds);
     cacheKeyBuilder.addElement("roleIds", this.roleIds);
     cacheKeyBuilder.addElement("levelIds", this.levelIds);

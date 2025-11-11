@@ -48,7 +48,7 @@ public class User {
 	@Column(name = "state", nullable = false, length = 1)
 	private Integer state;
 
-	@Column(name = "signing_id", nullable = false, length = 11)
+	@Column(name = "signing_id", length = 11)
 	private Long signingId;
 
 	@Column(name = "forum_username", unique = true, length = 32)

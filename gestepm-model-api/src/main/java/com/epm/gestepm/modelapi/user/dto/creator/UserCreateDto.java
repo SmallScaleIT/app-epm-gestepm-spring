@@ -22,7 +22,6 @@ public class UserCreateDto {
     @NotNull
     private Integer activityCenterId;
 
-    @NotNull
     private Integer signingId;
 
     @NotNull

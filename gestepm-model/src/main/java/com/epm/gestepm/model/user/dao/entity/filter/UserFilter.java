@@ -27,7 +27,7 @@ public class UserFilter extends Orderable implements CollectableAttributes {
 
     private List<Integer> activityCenterIds;
 
-    private Integer state;
+    private List<Integer> states;
 
     private List<Integer> signingIds;
 
@@ -49,7 +49,7 @@ public class UserFilter extends Orderable implements CollectableAttributes {
         map.put(ATTR_U_EMAIL, this.email);
         map.put(ATTR_U_PASSWORD, this.password);
         map.putList(ATTR_U_ACTIVITY_CENTER_IDS, this.activityCenterIds);
-        map.put(ATTR_U_STATE, this.getState());
+        map.putList(ATTR_U_STATE, this.getStates());
         map.putList(ATTR_U_SIGNING_ID, this.signingIds);
         map.putList(ATTR_U_ROLE_IDS, this.roleIds);
         map.putList(ATTR_U_LEVEL_IDS, this.levelIds);
@@ -59,7 +59,7 @@ public class UserFilter extends Orderable implements CollectableAttributes {
         return map;
     }
 
-    public Integer getState() {
-        return state != null ? state : 1;
+    public List<Integer> getStates() {
+        return states != null ? states : List.of(1);
     }
 }
