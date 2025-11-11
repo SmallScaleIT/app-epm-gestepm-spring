@@ -29,6 +29,12 @@ gestepm:
       password: ENC(Z3mcTbnwemui5IchrCL8+j8L1K234WNL)
   virtual-project-ids: 251, 344
 
+logging:
+  level:
+    root: ERROR
+    com.epm.gestepm: DEBUG
+    org.hibernate.SQL: DEBUG
+
 scheduler:
   personal-signings:
     cron: '0 30 21 * * *'

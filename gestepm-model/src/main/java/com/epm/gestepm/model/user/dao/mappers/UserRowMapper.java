@@ -61,7 +61,7 @@ public class UserRowMapper extends CommonRowMapper implements RowMapper<User> {
         user.setCountryId(rs.getInt(COL_U_CO_ID));
         user.setActivityCenterId(rs.getInt(COL_U_ACTIVITY_CENTER_ID));
         user.setState(rs.getInt(COL_U_STATE));
-        user.setSigningId(rs.getInt(COL_U_SIGNING_ID));
+        user.setSigningId(nullableInt(rs, COL_U_SIGNING_ID));
         user.setForumUsername(nullableString(rs, COL_U_FORUM_USERNAME));
         user.setForumPassword(nullableString(rs, COL_U_FORUM_PASSWORD));
         user.setRoleId(rs.getInt(COL_U_ROLE_ID));

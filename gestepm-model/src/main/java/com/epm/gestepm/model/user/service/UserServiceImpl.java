@@ -29,6 +29,7 @@ import com.epm.gestepm.modelapi.user.dto.finder.UserByIdFinderDto;
 import com.epm.gestepm.modelapi.user.dto.updater.UserUpdateDto;
 import com.epm.gestepm.modelapi.user.exception.UserForumAlreadyException;
 import com.epm.gestepm.modelapi.user.exception.UserNotFoundException;
+import com.epm.gestepm.modelapi.user.exception.UserSigningIdExistException;
 import com.epm.gestepm.modelapi.user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -158,6 +159,8 @@ public class UserServiceImpl implements UserService {
             msgOut = "New user created OK",
             errorMsg = "Failed to create new user")
     public UserDto create(UserCreateDto createDto) {
+        this.checkSigningId(createDto.getSigningId());
+
         final ActivityCenterDto activityCenter = this.activityCenterService.findOrNotFound(
                 new ActivityCenterByIdFinderDto(createDto.getActivityCenterId())
         );
@@ -186,6 +189,10 @@ public class UserServiceImpl implements UserService {
         final UserByIdFinderDto finderDto = new UserByIdFinderDto(updateDto.getId());
 
         final UserDto userDto = findOrNotFound(finderDto);
+
+        if (updateDto.getSigningId() != null && !updateDto.getSigningId().equals(userDto.getSigningId())) {
+            this.checkSigningId(updateDto.getSigningId());
+        }
 
         if (StringUtils.isNoneEmpty(updateDto.getForumUsername())) {
             checkAndCreateForumUser(updateDto.getForumUsername(), userDto);
@@ -241,5 +248,21 @@ public class UserServiceImpl implements UserService {
 
         // TODO: In future, check if username exists in forum db
         this.userForumService.createUser(forumUsername, userDto.getEmail(), plainPassword);
+    }
+
+    private void checkSigningId(final Integer signingId) {
+        if (signingId == null) {
+            return;
+        }
+
+        final UserFilterDto filterDto = new UserFilterDto();
+        filterDto.setStates(List.of(0, 1));
+        filterDto.setSigningIds(List.of(signingId));
+
+        final List<UserDto> users = this.list(filterDto);
+
+        if (!users.isEmpty()) {
+            throw new UserSigningIdExistException(signingId);
+        }
     }
 }

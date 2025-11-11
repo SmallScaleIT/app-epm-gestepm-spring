@@ -166,7 +166,7 @@ sql:
 
   predicate-for-u-state: |
 
-    u.state = :attr_u_state
+    u.state IN (:attr_u_state)
 
   predicate-for-u-signing-id: |
 

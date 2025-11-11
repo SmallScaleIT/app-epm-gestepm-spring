@@ -6,6 +6,7 @@ import com.epm.gestepm.lib.controller.exception.BaseRestExceptionHandler;
 import com.epm.gestepm.lib.executiontrace.ExecutionRequestProvider;
 import com.epm.gestepm.modelapi.user.exception.UserForumAlreadyException;
 import com.epm.gestepm.modelapi.user.exception.UserNotFoundException;
+import com.epm.gestepm.modelapi.user.exception.UserSigningIdExistException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,6 +22,8 @@ public class UserExceptionHandler extends BaseRestExceptionHandler {
     public static final String U_NOT_FOUND = "user-not-found";
 
     public static final String U_FORUM_ALREADY = "user-forum-already";
+
+    public static final String U_SINGING_ID_ALREADY = "user-signing-id-already";
 
     public UserExceptionHandler(ExecutionRequestProvider executionRequestProvider, I18nErrorMessageSource i18nErrorMessageSource) {
         super(executionRequestProvider, i18nErrorMessageSource);
@@ -44,4 +47,12 @@ public class UserExceptionHandler extends BaseRestExceptionHandler {
         return toAPIError(U_ERROR_CODE, U_FORUM_ALREADY, U_FORUM_ALREADY, username);
     }
 
+    @ExceptionHandler(UserSigningIdExistException.class)
+    @ResponseStatus(value = FORBIDDEN)
+    public APIError handle(UserSigningIdExistException ex) {
+
+        final Integer signingId = ex.getSigningId();
+
+        return toAPIError(U_ERROR_CODE, U_SINGING_ID_ALREADY, U_SINGING_ID_ALREADY, signingId);
+    }
 }
