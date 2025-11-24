@@ -31,6 +31,7 @@ gestepm:
       user: # by environment
       password: # by environment
     url: # by environment
+  front-error-logs: frontend-errors.txt
   mails:
     admin: # by environment
     rrhh: # by environment

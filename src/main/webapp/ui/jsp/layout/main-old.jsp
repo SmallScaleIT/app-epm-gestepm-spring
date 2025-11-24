@@ -144,6 +144,8 @@
 		<tiles:insertAttribute name="header" />
 		<tiles:insertAttribute name="body" />
 	</div>
+
+	<script type="text/javascript" src="/ui/static/js/front-errors.js?v=<%= System.currentTimeMillis() %>"></script>
 </body>
 
 <tiles:insertAttribute name="footer" />

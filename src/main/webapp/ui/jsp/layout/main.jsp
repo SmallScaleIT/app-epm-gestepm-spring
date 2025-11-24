@@ -44,6 +44,7 @@
         <script type="text/javascript" src="/webjars/bootstrap-notify/3.1.3/bootstrap-notify.min.js"></script>
         <script type="text/javascript" src="/webjars/momentjs/2.24.0/min/moment.min.js"></script>
         <script type="text/javascript" src="/webjars/momentjs/2.24.0/min/moment-with-locales.min.js"></script>
+        <script type="text/javascript" src="/ui/static/js/front-errors.js?v=<%= System.currentTimeMillis() %>"></script>
 
         <jsp:include page="../loading/footer/${importPath}.jsp" />
 
