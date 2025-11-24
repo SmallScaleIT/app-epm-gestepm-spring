@@ -32,6 +32,7 @@ $(function() {
 		$this.css({
 			paddingRight: 60
 		});
+
 		$this.after($("<div/>", {
 			html: $('#lang') === 'fr' ? 'Afficher' : 'Mostrar',
 			class: 'btn btn-primary btn-sm',
@@ -59,6 +60,7 @@ $(function() {
 		$this.on("keyup paste", function() {
 			$("#passeye-"+i).val($(this).val());
 		});
+
 		$("#passeye-toggle-"+i).on("click", function() {
 			if($this.hasClass("show")) {
 				$this.attr('type', 'password');
@@ -66,7 +68,11 @@ $(function() {
 				$(this).removeClass("btn-outline-primary");
 			}else{
 				$this.attr('type', 'text');
-				$this.val($("#passeye-"+i).val());				
+
+				let v = $this.val();
+				$this.val('');
+				$this.val(v);
+
 				$this.addClass("show");
 				$(this).addClass("btn-outline-primary");
 			}
