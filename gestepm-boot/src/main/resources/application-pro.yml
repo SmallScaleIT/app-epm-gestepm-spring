@@ -17,6 +17,7 @@ gestepm:
       user: forum
       password: ENC(Nu6ZHsfSqsI2jroCXMcK+JSto2xQ22lq)
     url: http://forum.gestepm.com
+  front-error-logs: /var/www/gestepm.com/logs/front/frontend-errors.txt
   mails:
     admin: jrodriguez@epmgastech.com
     rrhh: jsanchez@epmgastech.com
