@@ -1,102 +1,190 @@
 (function () {
-    const ENDPOINT = '/frontend-error-log'; // tu endpoint que ya escribe en disco
-    // opcional: inyecta session/user desde JSP: window.__APP_SESSION_ID__ = "${session.id}";
-    const SESSION_ID = window.__APP_SESSION_ID__ || null;
+    const ENDPOINT = '/frontend-error-log';
+
+    function safeJson(v) {
+        try {
+            return JSON.stringify(v);
+        } catch (e) {
+            return String(v);
+        }
+    }
 
     function sendLog(payload) {
         try {
-            payload.time = new Date().toISOString();
+            payload.ts = new Date().toISOString();
             payload.url = location.href;
             payload.userAgent = navigator.userAgent;
-            if (SESSION_ID) payload.sessionId = SESSION_ID;
+            payload.online = navigator.onLine;
+            payload.connection = navigator.connection ? {
+                effectiveType: navigator.connection.effectiveType,
+                downlink: navigator.connection.downlink
+            } : null;
 
             const json = JSON.stringify(payload);
-
-            // prefer sendBeacon para que funcione en unload; fallback a fetch
             if (navigator.sendBeacon) {
                 try {
-                    const blob = new Blob([json], {type: 'application/json'});
-                    if (navigator.sendBeacon(ENDPOINT, blob)) return;
-                } catch (e) { /* fallthrough a fetch */
+                    navigator.sendBeacon(ENDPOINT, new Blob([json], {type: 'application/json'}));
+                    return;
+                } catch (e) {
                 }
             }
-
-            // fallback
             fetch(ENDPOINT, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: json,
                 keepalive: true
-            }).catch(() => { /* swallow */
+            }).catch(() => {
             });
-
         } catch (e) {
-            // no hacer nada si fallamos al logear el log
         }
     }
 
-    // 1) Interceptar console.error
+    // Helper para extraer info de ProgressEvent (XHR)
+    function extractFromProgressEvent(pe) {
+        try {
+            const t = pe && (pe.target || pe.srcElement);
+            if (!t) return {kind: String(pe)};
+
+            // intenta obtener campos seguros y truncados
+            const info = {
+                eventType: pe.type || null,
+                readyState: t.readyState,
+                status: t.status,
+                statusText: t.statusText,
+                responseURL: t.responseURL || t._responseURL || null,
+                // response puede ser blob/arraybuffer; leer solo si es string
+                responseSnippet: (typeof t.response === 'string') ? t.response.slice(0, 1000) : null,
+                responseTextSnippet: (typeof t.responseText === 'string') ? t.responseText.slice(0, 1000) : null,
+                // si añadimos nuestra marca _url/_method en wrapper XHR
+                loggedUrl: t._loggedUrl || null,
+                loggedMethod: t._loggedMethod || null
+            };
+            return info;
+        } catch (e) {
+            return {errorWhileExtracting: String(e)};
+        }
+    }
+
+    // unhandledrejection mejorado
+    window.addEventListener('unhandledrejection', function (ev) {
+        try {
+            const reason = ev.reason;
+            if (reason && (reason instanceof ProgressEvent || reason.type === 'error' || reason.target)) {
+                const peInfo = extractFromProgressEvent(reason);
+                sendLog({type: 'unhandledrejection-progress-event', raw: String(reason), progressInfo: peInfo});
+                return;
+            }
+
+            // otros tipos (Error, TypeError, DOMException...)
+            let message = (reason && reason.message) ? reason.message : String(reason);
+            let stack = reason && reason.stack ? reason.stack : null;
+            sendLog({type: 'unhandledrejection', message, stack});
+        } catch (e) {
+            // swallow
+        }
+    });
+
+    // Intercept XHR para enriquecer ProgressEvent con URL y method
     (function () {
-        const origConsoleError = console.error;
-        console.error = function () {
-            try {
-                // construir mensaje representativo
-                const args = Array.prototype.slice.call(arguments);
-                const message = args.map(a => {
-                    try {
-                        return typeof a === 'object' ? JSON.stringify(a) : String(a);
-                    } catch (ex) {
-                        return String(a);
-                    }
-                }).join(' ');
+        const _open = XMLHttpRequest.prototype.open;
+        const _send = XMLHttpRequest.prototype.send;
 
-                // si hay un Error object en args, intentar sacar stack
-                let stack = null;
-                for (const a of args) {
-                    if (a && a.stack) {
-                        stack = a.stack;
-                        break;
+        XMLHttpRequest.prototype.open = function (method, url) {
+            this._loggedMethod = method;
+            this._loggedUrl = url;
+            return _open.apply(this, arguments);
+        };
+
+        XMLHttpRequest.prototype.send = function (body) {
+            // listeners para error/timeout/abort que suelen generar ProgressEvent
+            this.addEventListener('error', (ev) => {
+                const info = extractFromProgressEvent(ev);
+                sendLog({type: 'xhr-error', loggedMethod: this._loggedMethod, loggedUrl: this._loggedUrl, info});
+            });
+            this.addEventListener('timeout', (ev) => {
+                const info = extractFromProgressEvent(ev);
+                sendLog({type: 'xhr-timeout', loggedMethod: this._loggedMethod, loggedUrl: this._loggedUrl, info});
+            });
+            this.addEventListener('abort', (ev) => {
+                const info = extractFromProgressEvent(ev);
+                sendLog({type: 'xhr-abort', loggedMethod: this._loggedMethod, loggedUrl: this._loggedUrl, info});
+            });
+            this.addEventListener('load', (ev) => {
+                // si status no OK, loguea para inspección
+                try {
+                    const status = this.status;
+                    if (status >= 400) {
+                        const info = extractFromProgressEvent(ev);
+                        sendLog({
+                            type: 'xhr-load-nok',
+                            loggedMethod: this._loggedMethod,
+                            loggedUrl: this._loggedUrl,
+                            status,
+                            statusText: this.statusText,
+                            info
+                        });
                     }
+                } catch (e) {
                 }
+            });
 
-                sendLog({
-                    type: 'console-error',
-                    message: message,
-                    stack: stack,
-                    rawArgs: args.slice(0, 5) // evitar payloads enormes
-                });
-            } catch (e) {
-            }
-            // llamar al console.error original para mantener behavior
-            try {
-                origConsoleError.apply(console, arguments);
-            } catch (e) {
-            }
+            return _send.apply(this, arguments);
         };
     })();
 
-    // 2) window.onerror (errores clásicos)
-    window.onerror = function (message, source, lineno, colno, error) {
-        sendLog({
-            type: 'window-error',
-            message: String(message),
-            source: source,
-            lineno: lineno,
-            colno: colno,
-            stack: error && error.stack
-        });
-        // return false to let browser handle default
-        return false;
-    };
-
-    // 3) Unhandled promise rejections
-    window.addEventListener('unhandledrejection', function (e) {
-        const reason = e.reason;
-        sendLog({
-            type: 'unhandledrejection',
-            message: reason && reason.message ? reason.message : String(reason),
-            stack: reason && reason.stack
-        });
-    });
-
+    // Intercept fetch para logear errores/respuestas no-ok
+    if (window.fetch) {
+        const _fetch = window.fetch;
+        window.fetch = function (input, init) {
+            const start = Date.now();
+            const method = (init && init.method) || 'GET';
+            const url = (typeof input === 'string') ? input : (input && input.url) || null;
+            return _fetch.apply(this, arguments)
+                .then(res => {
+                    const duration = Date.now() - start;
+                    if (!res.ok) {
+                        // clonar y extraer texto limitado
+                        try {
+                            res.clone().text().then(text => {
+                                sendLog({
+                                    type: 'fetch-nok',
+                                    method,
+                                    url,
+                                    status: res.status,
+                                    statusText: res.statusText,
+                                    durationMs: duration,
+                                    responseSnippet: text.slice(0, 1000)
+                                });
+                            }).catch(() => {
+                                sendLog({
+                                    type: 'fetch-nok-no-body',
+                                    method,
+                                    url,
+                                    status: res.status,
+                                    statusText: res.statusText
+                                });
+                            });
+                        } catch (e) {
+                            sendLog({
+                                type: 'fetch-nok-ex',
+                                method,
+                                url,
+                                status: res.status,
+                                statusText: res.statusText
+                            });
+                        }
+                    }
+                    return res;
+                }).catch(err => {
+                    // fetch falló (p. ej. red, CORS, DNS)
+                    sendLog({
+                        type: 'fetch-error',
+                        method,
+                        url,
+                        message: err && err.message ? err.message : String(err)
+                    });
+                    throw err;
+                });
+        };
+    }
 })();
