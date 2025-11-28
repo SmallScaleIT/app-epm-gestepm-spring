@@ -71,7 +71,7 @@
             const reason = ev.reason;
             if (reason && (reason instanceof ProgressEvent || reason.type === 'error' || reason.target)) {
                 const peInfo = extractFromProgressEvent(reason);
-                sendLog({type: 'unhandledrejection-progress-event', raw: String(reason), progressInfo: peInfo});
+                sendLog({type: 'unhandledrejection-progress-event', raw: safeJson(reason), progressInfo: peInfo});
                 return;
             }
 
