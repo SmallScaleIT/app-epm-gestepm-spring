@@ -71,21 +71,11 @@ function create() {
         showLoading();
         createFromJQ.removeClass('was-validated');
 
-        const form = document.querySelector('#createForm');
-
-        /*
-        const familyId = form.querySelector('[name="familyId"]').value;
-        const nameES = form.querySelector('[name="nameES"]').value;
-        const nameFR = form.querySelector('[name="nameFR"]').value;
-        const brand = form.querySelector('[name="brand"]').value;
-        const model = form.querySelector('[name="model"]').value;
-        const enrollment = form.querySelector('[name="enrollment"]').value;
-        */
-
         axios.post(endpoint + '/families', createFromJQ.serialize()).then(() => {
             dTable.ajax.reload(function () {
                 dTable.page(dTable.page()).draw(false);
             }, false);
+            createFromJQ.trigger('reset');
         }).catch(error => showNotify(error.response.data.detail, 'danger'))
             .finally(() => { hideLoading(); createModal.modal('hide'); });
     }
@@ -114,24 +104,19 @@ function edit(id) {
         editModal.modal('show');
     });
 
-    saveBtn.click(function() {
+    saveBtn.off('click').on('click', function() {
 
         showLoading();
 
-        /*
-        const familyId = editForm.querySelector('[name="familyId"]').value;
-        const nameES = editForm.querySelector('[name="nameES"]').value;
-        const nameFR = editForm.querySelector('[name="nameFR"]').value;
-        const brand = editForm.querySelector('[name="brand"]').value;
-        const model = editForm.querySelector('[name="model"]').value;
-        const enrollment = editForm.querySelector('[name="enrollment"]').value;
-        */
+        const idToSave = editElement.getAttribute('data-id');
 
-        axios.put(endpoint + '/families/' + id, editFormJQ.serialize()).then(() => {
-            dTable.ajax.reload(function () {
-                dTable.page(dTable.page()).draw(false);
-            }, false);
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        axios.put(endpoint + '/families/' + idToSave, editFormJQ.serialize())
+            .then(() => {
+                dTable.ajax.reload(function () {
+                    dTable.page(dTable.page()).draw(false);
+                }, false);
+            })
+            .catch(error => showNotify(error.response.data.detail, 'danger'))
             .finally(() => {
                 hideLoading();
                 editModal.modal('hide');
