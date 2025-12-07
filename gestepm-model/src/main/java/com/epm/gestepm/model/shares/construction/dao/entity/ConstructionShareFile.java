@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @Data
 public class ConstructionShareFile {
@@ -18,6 +19,12 @@ public class ConstructionShareFile {
     private String name;
 
     @NotNull
-    private String content;
+    private UUID storageUUID;
+
+    @NotNull
+    private byte[] content;
+
+    // FIXME: @NotNull
+    private String url;
 
 }

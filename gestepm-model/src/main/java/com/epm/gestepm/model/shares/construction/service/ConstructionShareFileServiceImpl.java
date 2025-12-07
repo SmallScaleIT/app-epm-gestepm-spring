@@ -9,14 +9,21 @@ import com.epm.gestepm.model.shares.construction.dao.entity.creator.Construction
 import com.epm.gestepm.model.shares.construction.dao.entity.deleter.ConstructionShareFileDelete;
 import com.epm.gestepm.model.shares.construction.dao.entity.filter.ConstructionShareFileFilter;
 import com.epm.gestepm.model.shares.construction.dao.entity.finder.ConstructionShareFileByIdFinder;
+import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
 import com.epm.gestepm.model.shares.construction.service.mapper.*;
 import com.epm.gestepm.modelapi.shares.construction.dto.ConstructionShareFileDto;
 import com.epm.gestepm.modelapi.shares.construction.dto.creator.ConstructionShareFileCreateDto;
 import com.epm.gestepm.modelapi.shares.construction.dto.deleter.ConstructionShareFileDeleteDto;
 import com.epm.gestepm.modelapi.shares.construction.dto.filter.ConstructionShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.construction.dto.finder.ConstructionShareFileByIdFinderDto;
+import com.epm.gestepm.modelapi.shares.construction.dto.updater.ConstructionShareFileUpdateDto;
 import com.epm.gestepm.modelapi.shares.construction.exception.ConstructionShareFileNotFoundException;
 import com.epm.gestepm.modelapi.shares.construction.service.ConstructionShareFileService;
+import com.epm.gestepm.storageapi.dto.FileResponse;
+import com.epm.gestepm.storageapi.dto.deleter.FileDelete;
+import com.epm.gestepm.storageapi.dto.finder.FileByNameFinder;
+import com.epm.gestepm.storageapi.service.GoogleCloudStorageService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -33,14 +40,13 @@ import static org.mapstruct.factory.Mappers.getMapper;
 
 @Service
 @Validated
+@RequiredArgsConstructor
 @EnableExecutionLog(layerMarker = SERVICE)
 public class ConstructionShareFileServiceImpl implements ConstructionShareFileService {
     
     private final ConstructionShareFileDao constructionShareFileDao;
 
-    public ConstructionShareFileServiceImpl(ConstructionShareFileDao constructionShareFileDao) {
-        this.constructionShareFileDao = constructionShareFileDao;
-    }
+    private final GoogleCloudStorageService googleCloudStorageService;
 
     @Override
     @RequirePermits(value = PRMT_READ_CS, action = "List construction shares")
@@ -52,9 +58,10 @@ public class ConstructionShareFileServiceImpl implements ConstructionShareFileSe
     public List<ConstructionShareFileDto> list(ConstructionShareFileFilterDto filterDto) {
         final ConstructionShareFileFilter filter = getMapper(MapCSFToConstructionShareFileFilter.class).from(filterDto);
 
-        final List<ConstructionShareFile> page = this.constructionShareFileDao.list(filter);
+        final List<ConstructionShareFile> list = this.constructionShareFileDao.list(filter);
+        list.forEach(this::populateFileUrl);
 
-        return getMapper(MapCSFToConstructionShareFileDto.class).from(page);
+        return getMapper(MapCSFToConstructionShareFileDto.class).from(list);
     }
 
     @Override
@@ -68,6 +75,7 @@ public class ConstructionShareFileServiceImpl implements ConstructionShareFileSe
         final ConstructionShareFileByIdFinder finder = getMapper(MapCSFToConstructionShareFileByIdFinder.class).from(finderDto);
 
         final Optional<ConstructionShareFile> found = this.constructionShareFileDao.find(finder);
+        found.ifPresent(this::populateFileUrl);
 
         return found.map(getMapper(MapCSFToConstructionShareFileDto.class)::from);
     }
@@ -97,6 +105,17 @@ public class ConstructionShareFileServiceImpl implements ConstructionShareFileSe
         final ConstructionShareFileCreate create = getMapper(MapCSFToConstructionShareFileCreate.class).from(createDto);
 
         final ConstructionShareFile result = this.constructionShareFileDao.create(create);
+        this.populateFileUrl(result);
+
+        return getMapper(MapCSFToConstructionShareFileDto.class).from(result);
+    }
+
+    @Override
+    public ConstructionShareFileDto update(ConstructionShareFileUpdateDto updateDto) {
+        final ConstructionShareFileUpdate update = getMapper(MapCSFToConstructionShareFileUpdate.class).from(updateDto);
+
+        final ConstructionShareFile result = this.constructionShareFileDao.update(update);
+        this.populateFileUrl(result);
 
         return getMapper(MapCSFToConstructionShareFileDto.class).from(result);
     }
@@ -112,11 +131,23 @@ public class ConstructionShareFileServiceImpl implements ConstructionShareFileSe
 
         final ConstructionShareFileByIdFinderDto finderDto = new ConstructionShareFileByIdFinderDto(deleteDto.getId());
 
-        findOrNotFound(finderDto);
+        final ConstructionShareFileDto fileDto = this.findOrNotFound(finderDto);
+
+        this.googleCloudStorageService.deleteFile(new FileDelete(fileDto.getStorageUUID().toString()));
 
         final ConstructionShareFileDelete delete = getMapper(MapCSFToConstructionShareFileDelete.class).from(deleteDto);
 
         this.constructionShareFileDao.delete(delete);
     }
 
+    private void populateFileUrl(final ConstructionShareFile file) {
+        if (file.getStorageUUID() == null) { // FIXME: to remove
+            return;
+        }
+
+        final FileByNameFinder finder = new FileByNameFinder(file.getStorageUUID().toString());
+        final FileResponse fileResponse = this.googleCloudStorageService.getFile(finder);
+
+        file.setUrl(fileResponse.getUrl());
+    }
 }

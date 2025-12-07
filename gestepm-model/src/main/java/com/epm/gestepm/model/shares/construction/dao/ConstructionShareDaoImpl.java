@@ -12,20 +12,26 @@ import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.lib.logging.annotation.LogExecution;
 import com.epm.gestepm.lib.types.Page;
 import com.epm.gestepm.model.shares.construction.dao.entity.ConstructionShare;
+import com.epm.gestepm.model.shares.construction.dao.entity.creator.ConstructionShareFileCreate;
 import com.epm.gestepm.model.shares.construction.dao.entity.filter.ConstructionShareFilter;
 import com.epm.gestepm.model.shares.construction.dao.entity.creator.ConstructionShareCreate;
 import com.epm.gestepm.model.shares.construction.dao.entity.deleter.ConstructionShareDelete;
 import com.epm.gestepm.model.shares.construction.dao.entity.finder.ConstructionShareByIdFinder;
 import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareUpdate;
 import com.epm.gestepm.model.shares.construction.dao.mappers.ConstructionShareRowMapper;
+import com.epm.gestepm.storageapi.dto.FileResponse;
+import com.epm.gestepm.storageapi.dto.creator.FileCreate;
+import com.epm.gestepm.storageapi.service.GoogleCloudStorageService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.DAO;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.*;
@@ -40,6 +46,8 @@ import static com.epm.gestepm.model.shares.construction.dao.mappers.Construction
 public class ConstructionShareDaoImpl implements ConstructionShareDao {
 
     private final ConstructionShareFileDao constructionShareFileDao;
+
+    private final GoogleCloudStorageService googleCloudStorageService;
 
     private final SQLDatasource sqlDatasource;
 
@@ -144,9 +152,7 @@ public class ConstructionShareDaoImpl implements ConstructionShareDao {
         this.sqlDatasource.execute(sqlQuery);
 
         if (CollectionUtils.isNotEmpty(update.getFiles())) {
-            update.getFiles().stream()
-                    .peek(file -> file.setShareId(id))
-                    .forEach(constructionShareFileDao::create);
+            update.getFiles().forEach(file -> this.insertFiles(file, id));
         }
 
         return this.find(finder).orElse(null);
@@ -190,5 +196,22 @@ public class ConstructionShareDaoImpl implements ConstructionShareDao {
             return COL_CS_END_DATE;
         }
         return orderBy;
+    }
+
+    private void insertFiles(final MultipartFile file, final Integer id) {
+        final UUID storageUUID = UUID.randomUUID();
+
+        final FileCreate fileCreate = new FileCreate();
+        fileCreate.setId(storageUUID);
+        fileCreate.setFile(file);
+
+        this.googleCloudStorageService.uploadFile(fileCreate);
+
+        final ConstructionShareFileCreate csFileCreate = new ConstructionShareFileCreate();
+        csFileCreate.setShareId(id);
+        csFileCreate.setName(file.getOriginalFilename());
+        csFileCreate.setStorageUUID(storageUUID);
+
+        this.constructionShareFileDao.create(csFileCreate);
     }
 }

@@ -5094,47 +5094,46 @@ components:
               - projectId
     UpdateConstructionShare:
       content:
-        application/json:
+        multipart/form-data:
           schema:
             type: object
             properties:
-              projectId:
-                type: integer
+              data:
+                type: object
                 x-stoplight:
-                  id: pxse3yn75h7cw
-              startDate:
-                type: string
-                x-stoplight:
-                  id: o130b23mstyam
-                format: date-time
-              endDate:
-                type: string
-                x-stoplight:
-                  id: 9kif43i1jwn4s
-                format: date-time
-              observations:
-                type: string
-                x-stoplight:
-                  id: 6nihi8qpf5z2s
-              operatorSignature:
-                type: string
-                x-stoplight:
-                  id: 5xlprmjlumq02
+                  id: 8f3pj548srmb5
+                properties:
+                  projectId:
+                    type: integer
+                    x-stoplight:
+                      id: pxse3yn75h7cw
+                  startDate:
+                    type: string
+                    x-stoplight:
+                      id: o130b23mstyam
+                    format: date-time
+                  endDate:
+                    type: string
+                    x-stoplight:
+                      id: 9kif43i1jwn4s
+                    format: date-time
+                  observations:
+                    type: string
+                    x-stoplight:
+                      id: 6nihi8qpf5z2s
+                  operatorSignature:
+                    type: string
+                    x-stoplight:
+                      id: 5xlprmjlumq02
+                  notify:
+                    type: boolean
+                    x-stoplight:
+                      id: h6yu6hhf2dfi4
               files:
                 type: array
                 items:
-                  type: object
+                  type: string
                   format: binary
-                  properties:
-                    name:
-                      type: string
-                    content:
-                      type: string
-                      x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonIgnore'
-              notify:
-                type: boolean
-                x-stoplight:
-                  id: 056faw4s2fxpf
     UpdateWorkShare:
       content:
         application/json:

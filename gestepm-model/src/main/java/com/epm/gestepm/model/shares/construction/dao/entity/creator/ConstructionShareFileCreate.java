@@ -9,6 +9,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.util.Base64;
+import java.util.UUID;
 
 import static com.epm.gestepm.model.shares.construction.dao.constants.ConstructionShareFileAttributes.*;
 
@@ -22,8 +23,7 @@ public class ConstructionShareFileCreate implements CollectableAttributes {
     private String name;
 
     @NotNull
-    @JsonIgnore
-    private String content;
+    private UUID storageUUID;
 
     @Override
     public AttributeMap collectAttributes() {
@@ -32,7 +32,8 @@ public class ConstructionShareFileCreate implements CollectableAttributes {
 
         map.put(ATTR_CSF_SHARE_ID, this.shareId);
         map.put(ATTR_CSF_NAME, this.name);
-        map.put(ATTR_CSF_CONTENT, FileUtils.compressBytes(Base64.getDecoder().decode(this.content)));
+        map.putUUID(ATTR_CSF_STORAGE_UUID, this.storageUUID);
+        map.put(ATTR_CSF_CONTENT, FileUtils.compressBytes("to-remove".getBytes())); // FIXME: remove
 
         return map;
     }

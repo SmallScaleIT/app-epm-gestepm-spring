@@ -10,6 +10,8 @@ public abstract class ConstructionShareFileAttributes {
 
   public static final String ATTR_CSF_NAME = "attr_csf_name";
 
+  public static final String ATTR_CSF_STORAGE_UUID = "attr_csf_storage_uuid";
+
   public static final String ATTR_CSF_CONTENT = "attr_csf_content";
 
 }

@@ -7,6 +7,10 @@ data:
         password: ENC(WHrJ8zMpkOHli4iLFTu5SGRSRa6QaBdc)
         jdbcUrl: jdbc:mysql://92.54.16.198:3306
 
+gcp:
+  storage:
+    bucket: gestepm_bucket_local
+
 gestepm:
   base:
     url: https://gestepm.com

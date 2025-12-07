@@ -28,6 +28,8 @@
 		<module>gestepm-master-data</module>
 		<module>gestepm-email-api</module>
 		<module>gestepm-email</module>
+		<module>gestepm-storage</module>
+		<module>gestepm-storage-api</module>
 	</modules>
 
 	<properties>
@@ -107,6 +109,18 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>gestepm-email</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>gestepm-storage-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>gestepm-storage</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -392,11 +406,11 @@
 		    <artifactId>jna</artifactId>
 		    <version>5.6.0</version>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>com.google.http-client</groupId>
-		    <artifactId>google-http-client</artifactId>
-		    <version>1.36.0</version>
+			<groupId>com.google.http-client</groupId>
+			<artifactId>google-http-client</artifactId>
+			<version>2.0.2</version>
 		</dependency>
 		
 		<dependency>
