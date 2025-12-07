@@ -12,6 +12,10 @@ import com.epm.gestepm.modelapi.shares.programmed.dto.ProgrammedShareFileDto;
 import com.epm.gestepm.modelapi.shares.programmed.dto.filter.ProgrammedShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.programmed.dto.updater.ProgrammedShareFileUpdateDto;
 import com.epm.gestepm.modelapi.shares.programmed.service.ProgrammedShareFileService;
+import com.epm.gestepm.modelapi.shares.work.dto.WorkShareFileDto;
+import com.epm.gestepm.modelapi.shares.work.dto.filter.WorkShareFileFilterDto;
+import com.epm.gestepm.modelapi.shares.work.dto.updater.WorkShareFileUpdateDto;
+import com.epm.gestepm.modelapi.shares.work.service.WorkShareFileService;
 import com.epm.gestepm.storageapi.dto.FileResponse;
 import com.epm.gestepm.storageapi.dto.creator.FileCreate;
 import com.epm.gestepm.storageapi.service.GoogleCloudStorageService;
@@ -51,11 +55,14 @@ public class MigrationStorageDelegator {
     private final InspectionFileService inspectionFileService;
 
     private final ProgrammedShareFileService programmedShareFileService;
+    
+    private final WorkShareFileService workShareFileService;
 
     public void runMigration() {
         // this.migrateConstructionShareFiles();
-        this.migrateProgrammedShareFiles();
+        // this.migrateProgrammedShareFiles();
         // this.migrateInspectionFiles();
+        this.migrateWorkShareFiles();
     }
 
     @SneakyThrows
@@ -132,6 +139,35 @@ public class MigrationStorageDelegator {
             final FileResponse fileResponse = this.uploadFile(multipartCustomFile, "inspections");
 
             int i = 0;
+        }
+    }
+
+    @SneakyThrows
+    private void migrateWorkShareFiles() {
+        final WorkShareFileFilterDto filterDto = new WorkShareFileFilterDto();
+        filterDto.setIds(List.of(2));
+
+        final List<WorkShareFileDto> files = this.workShareFileService.list(filterDto);
+
+        for (final WorkShareFileDto file : files) {
+            final Path path = Paths.get(file.getName());
+            final String contentType = Files.probeContentType(path);
+            final byte[] content = this.compressImageToJpegBytes(file.getContent(), 1600, 0.8f);
+
+            final MultipartCustomFile multipartCustomFile = new MultipartCustomFile(file.getName(), contentType, content);
+
+            final FileResponse fileResponse = this.uploadFile(multipartCustomFile, "work-shares");
+
+            final WorkShareFileUpdateDto updateDto = new WorkShareFileUpdateDto();
+            updateDto.setId(file.getId());
+            updateDto.setName(file.getName());
+            updateDto.setStoragePath(fileResponse.getFileName());
+
+            this.workShareFileService.update(updateDto);
+
+            log.info(String.format("Work share file [%s] has been migrated successfully.", file.getId()));
+
+            break;
         }
     }
 

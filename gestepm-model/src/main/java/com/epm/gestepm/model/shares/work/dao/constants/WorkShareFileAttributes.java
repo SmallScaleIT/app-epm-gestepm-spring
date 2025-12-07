@@ -10,6 +10,8 @@ public abstract class WorkShareFileAttributes {
 
   public static final String ATTR_WSF_NAME = "attr_wsf_name";
 
+  public static final String ATTR_WSF_STORAGE_PATH = "attr_wsf_storage_path";
+
   public static final String ATTR_WSF_CONTENT = "attr_wsf_content";
 
 }

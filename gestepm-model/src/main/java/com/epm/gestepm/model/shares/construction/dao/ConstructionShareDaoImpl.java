@@ -23,6 +23,7 @@ import com.epm.gestepm.storageapi.dto.FileResponse;
 import com.epm.gestepm.storageapi.dto.creator.FileCreate;
 import com.epm.gestepm.storageapi.service.GoogleCloudStorageService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -40,7 +41,7 @@ import static com.epm.gestepm.model.shares.construction.dao.constants.Constructi
 import static com.epm.gestepm.model.shares.construction.dao.constants.ConstructionShareQueries.QRY_DELETE_CS;
 import static com.epm.gestepm.model.shares.construction.dao.mappers.ConstructionShareRowMapper.*;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Component("constructionShareDao")
 @EnableExecutionLog(layerMarker = DAO)
 public class ConstructionShareDaoImpl implements ConstructionShareDao {

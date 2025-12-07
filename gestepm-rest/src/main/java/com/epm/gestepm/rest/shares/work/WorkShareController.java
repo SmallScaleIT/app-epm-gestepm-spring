@@ -31,6 +31,7 @@ import com.epm.gestepm.rest.shares.work.response.ResponsesForWorkShare;
 import com.epm.gestepm.rest.shares.work.response.ResponsesForWorkShareList;
 import com.epm.gestepm.restapi.openapi.api.WorkShareV1Api;
 import com.epm.gestepm.restapi.openapi.model.*;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
@@ -39,7 +40,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -147,19 +150,20 @@ public class WorkShareController extends BaseController implements WorkShareV1Ap
     @Override
     @RequirePermits(value = PRMT_EDIT_WS, action = "Update work share")
     @LogExecution(operation = OP_UPDATE)
-    public ResponseEntity<CreateWorkShareV1200Response> updateWorkShareV1(final Integer id, final UpdateWorkShareV1Request reqUpdateWorkShare) {
+    public ResponseEntity<CreateWorkShareV1200Response> updateWorkShareV1(final Integer id, final UpdateWorkShareV1RequestData data, final List<MultipartFile> files) {
 
-        final WorkShareUpdateDto updateDto = getMapper(MapWSToWorkShareUpdateDto.class).from(reqUpdateWorkShare);
+        final WorkShareUpdateDto updateDto = getMapper(MapWSToWorkShareUpdateDto.class).from(data);
         updateDto.setId(id);
+        updateDto.setFiles(files);
 
         final WorkShareDto countryDto = this.workShareService.update(updateDto);
 
         final APIMetadata metadata = this.getDefaultMetadata();
-        final WorkShare data = getMapper(MapWSToWorkShareResponse.class).from(countryDto);
+        final WorkShare workShare = getMapper(MapWSToWorkShareResponse.class).from(countryDto);
 
         final CreateWorkShareV1200Response response = new CreateWorkShareV1200Response();
         response.setMetadata(getMapper(MetadataMapper.class).from(metadata));
-        response.setData(data);
+        response.setData(workShare);
 
         return ResponseEntity.ok(response);
     }

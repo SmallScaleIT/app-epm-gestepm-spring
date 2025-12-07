@@ -7,9 +7,11 @@ import com.epm.gestepm.lib.entity.CollectableAttributes;
 import com.epm.gestepm.model.shares.work.dao.entity.creator.WorkShareFileCreate;
 import lombok.Data;
 import lombok.Singular;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import static com.epm.gestepm.model.shares.work.dao.constants.WorkShareAttributes.*;
@@ -39,7 +41,7 @@ public class WorkShareUpdate implements AuditClose, AuditUpdate, CollectableAttr
     private Integer updatedBy;
     
     @Singular
-    private Set<WorkShareFileCreate> files;
+    private List<MultipartFile> files;
 
     @Override
     public AttributeMap collectAttributes() {

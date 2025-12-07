@@ -8,11 +8,15 @@ import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchMany;
 import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchOne;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.lib.logging.annotation.LogExecution;
+import com.epm.gestepm.model.shares.construction.dao.entity.ConstructionShareFile;
+import com.epm.gestepm.model.shares.construction.dao.entity.finder.ConstructionShareFileByIdFinder;
+import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
 import com.epm.gestepm.model.shares.work.dao.entity.WorkShareFile;
 import com.epm.gestepm.model.shares.work.dao.entity.creator.WorkShareFileCreate;
 import com.epm.gestepm.model.shares.work.dao.entity.deleter.WorkShareFileDelete;
 import com.epm.gestepm.model.shares.work.dao.entity.filter.WorkShareFileFilter;
 import com.epm.gestepm.model.shares.work.dao.entity.finder.WorkShareFileByIdFinder;
+import com.epm.gestepm.model.shares.work.dao.entity.updater.WorkShareFileUpdate;
 import com.epm.gestepm.model.shares.work.dao.mappers.WorkShareFileRowMapper;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +26,7 @@ import java.util.Optional;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.DAO;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.*;
+import static com.epm.gestepm.model.shares.construction.dao.constants.ConstructionShareFileQueries.QRY_UPDATE_CSF;
 import static com.epm.gestepm.model.shares.work.dao.constants.WorkShareFileQueries.*;
 
 @Component("workShareFileDao")
@@ -86,6 +91,29 @@ public class WorkShareFileDaoImpl implements WorkShareFileDao {
                 .onGeneratedKey(f -> finder.setId(f.intValue()));
 
         this.sqlDatasource.insert(sqlInsert);
+
+        return this.find(finder).orElse(null);
+    }
+
+    @Override
+    @LogExecution(operation = OP_UPDATE,
+            debugOut = true,
+            msgIn = "Persisting work share file",
+            msgOut = "Work share file persisted OK",
+            errorMsg = "Failed to persist work share file")
+    public WorkShareFile update(WorkShareFileUpdate update) {
+
+        final Integer id = update.getId();
+        final AttributeMap params = update.collectAttributes();
+
+        final WorkShareFileByIdFinder finder = new WorkShareFileByIdFinder();
+        finder.setId(id);
+
+        final SQLQuery sqlQuery = new SQLQuery()
+                .useQuery(QRY_UPDATE_WSF)
+                .withParams(params);
+
+        this.sqlDatasource.execute(sqlQuery);
 
         return this.find(finder).orElse(null);
     }
