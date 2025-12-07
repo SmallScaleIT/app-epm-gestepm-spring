@@ -13,7 +13,13 @@ public class ProgrammedShareFileDto implements Serializable {
     @NotNull
     private String name;
 
+    // FIXME: @NotNull
+    private String storagePath;
+
     @NotNull
-    private String content;
+    private byte[] content;
+
+    // FIXME: @NotNull
+    private String url;
 
 }

@@ -133,7 +133,7 @@ public class ConstructionShareFileServiceImpl implements ConstructionShareFileSe
 
         final ConstructionShareFileDto fileDto = this.findOrNotFound(finderDto);
 
-        this.googleCloudStorageService.deleteFile(new FileDelete(fileDto.getStorageUUID().toString()));
+        this.googleCloudStorageService.deleteFile(new FileDelete(fileDto.getStoragePath()));
 
         final ConstructionShareFileDelete delete = getMapper(MapCSFToConstructionShareFileDelete.class).from(deleteDto);
 
@@ -141,11 +141,11 @@ public class ConstructionShareFileServiceImpl implements ConstructionShareFileSe
     }
 
     private void populateFileUrl(final ConstructionShareFile file) {
-        if (file.getStorageUUID() == null) { // FIXME: to remove
+        if (file.getStoragePath() == null) { // FIXME: to remove
             return;
         }
 
-        final FileByNameFinder finder = new FileByNameFinder(file.getStorageUUID().toString());
+        final FileByNameFinder finder = new FileByNameFinder(file.getStoragePath());
         final FileResponse fileResponse = this.googleCloudStorageService.getFile(finder);
 
         file.setUrl(fileResponse.getUrl());

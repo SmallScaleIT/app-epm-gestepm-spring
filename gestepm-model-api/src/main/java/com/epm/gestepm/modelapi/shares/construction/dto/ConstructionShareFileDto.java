@@ -4,7 +4,6 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.UUID;
 
 @Data
 public class ConstructionShareFileDto implements Serializable {
@@ -15,8 +14,8 @@ public class ConstructionShareFileDto implements Serializable {
     @NotNull
     private String name;
 
-    @NotNull
-    private UUID storageUUID;
+    // FIXME: @NotNull
+    private String storagePath;
 
     @NotNull
     private byte[] content;

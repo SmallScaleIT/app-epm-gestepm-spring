@@ -45,6 +45,8 @@ import static com.epm.gestepm.model.shares.construction.dao.mappers.Construction
 @EnableExecutionLog(layerMarker = DAO)
 public class ConstructionShareDaoImpl implements ConstructionShareDao {
 
+    private static final String PATH_FOLDER = "construction-shares";
+
     private final ConstructionShareFileDao constructionShareFileDao;
 
     private final GoogleCloudStorageService googleCloudStorageService;
@@ -202,15 +204,15 @@ public class ConstructionShareDaoImpl implements ConstructionShareDao {
         final UUID storageUUID = UUID.randomUUID();
 
         final FileCreate fileCreate = new FileCreate();
-        fileCreate.setId(storageUUID);
+        fileCreate.setName(PATH_FOLDER + "/" + storageUUID);
         fileCreate.setFile(file);
 
-        this.googleCloudStorageService.uploadFile(fileCreate);
+        final FileResponse fileResponse = this.googleCloudStorageService.uploadFile(fileCreate);
 
         final ConstructionShareFileCreate csFileCreate = new ConstructionShareFileCreate();
         csFileCreate.setShareId(id);
         csFileCreate.setName(file.getOriginalFilename());
-        csFileCreate.setStorageUUID(storageUUID);
+        csFileCreate.setStoragePath(fileResponse.getFileName());
 
         this.constructionShareFileDao.create(csFileCreate);
     }

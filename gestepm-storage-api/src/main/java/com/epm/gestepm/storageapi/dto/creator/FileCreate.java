@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -14,7 +13,7 @@ import java.util.UUID;
 public class FileCreate {
 
     @NotNull
-    private UUID id;
+    private String name;
 
     @NotNull
     private MultipartFile file;

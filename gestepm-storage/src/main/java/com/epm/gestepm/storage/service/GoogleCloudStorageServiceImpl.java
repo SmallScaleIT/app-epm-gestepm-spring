@@ -27,8 +27,6 @@ import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.SERVICE;
 @EnableExecutionLog(layerMarker = SERVICE)
 public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService {
 
-    private static final String PATH_FOLDER = "construction-shares";
-
     @Value("${gcp.storage.bucket}")
     private String bucketName;
 
@@ -37,7 +35,7 @@ public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService 
     @Override
     public FileResponse uploadFile(final FileCreate create) {
         try {
-            final BlobInfo blobInfo = BlobInfo.newBuilder(this.bucketName, PATH_FOLDER + "/" + create.getId().toString())
+            final BlobInfo blobInfo = BlobInfo.newBuilder(this.bucketName, create.getName())
                     .setContentType(create.getFile().getContentType())
                     .build();
 
@@ -51,10 +49,10 @@ public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService 
 
     @Override
     public FileResponse getFile(final FileByNameFinder finder) {
-        final Blob blob = storage.get(BlobId.of(bucketName, PATH_FOLDER + "/" + finder.getName()));
+        final Blob blob = storage.get(BlobId.of(bucketName, finder.getName()));
 
         if (blob == null) {
-            throw new GCSFileNotFoundException(bucketName, PATH_FOLDER + "/" + finder.getName());
+            throw new GCSFileNotFoundException(bucketName, finder.getName());
         }
 
         return this.buildFileResponse(blob, blob.getContent());
@@ -62,7 +60,7 @@ public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService 
 
     @Override
     public boolean deleteFile(final FileDelete delete) {
-        return storage.delete(BlobId.of(bucketName, PATH_FOLDER + "/" + delete.getName()));
+        return storage.delete(BlobId.of(bucketName, delete.getName()));
     }
 
     private FileResponse buildFileResponse(final Blob blob, final byte[] content) {

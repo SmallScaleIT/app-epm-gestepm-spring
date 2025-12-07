@@ -3462,10 +3462,15 @@ components:
           type: string
           x-stoplight:
             id: prsxmvb3f9spa
+        url:
+          type: string
+          x-stoplight:
+            id: 2mfhf4p1ebytp
       required:
         - id
         - name
         - content
+        - url
     SubFamily:
       title: SubFamily
       x-stoplight:
@@ -5179,55 +5184,54 @@ components:
                   id: eb0k05xm2xuf3
     UpdateProgrammedShare:
       content:
-        application/json:
+        multipart/form-data:
           schema:
             type: object
             properties:
-              projectId:
-                type: integer
+              data:
+                type: object
                 x-stoplight:
-                  id: b6hkrbe3fr5qd
-              secondTechnicalId:
-                type: integer
-                x-stoplight:
-                  id: 1r9527ena6bni
-              startDate:
-                type: string
-                x-stoplight:
-                  id: eawwjjrxioh3x
-                format: date-time
-              endDate:
-                type: string
-                x-stoplight:
-                  id: 52qbswhsljf4p
-                format: date-time
-              observations:
-                type: string
-                x-stoplight:
-                  id: a5ricn3p3wsar
-              customerSignature:
-                type: string
-                x-stoplight:
-                  id: ymudq1zb14mwg
-              operatorSignature:
-                type: string
-                x-stoplight:
-                  id: il4qgichpo4yz
+                  id: co5z3nvlus0nx
+                properties:
+                  projectId:
+                    type: integer
+                    x-stoplight:
+                      id: b6hkrbe3fr5qd
+                  secondTechnicalId:
+                    type: integer
+                    x-stoplight:
+                      id: 1r9527ena6bni
+                  startDate:
+                    type: string
+                    x-stoplight:
+                      id: eawwjjrxioh3x
+                    format: date-time
+                  endDate:
+                    type: string
+                    x-stoplight:
+                      id: 52qbswhsljf4p
+                    format: date-time
+                  observations:
+                    type: string
+                    x-stoplight:
+                      id: a5ricn3p3wsar
+                  customerSignature:
+                    type: string
+                    x-stoplight:
+                      id: ymudq1zb14mwg
+                  operatorSignature:
+                    type: string
+                    x-stoplight:
+                      id: il4qgichpo4yz
+                  notify:
+                    type: boolean
+                    x-stoplight:
+                      id: 3byt4qf86eswz
               files:
                 type: array
                 items:
-                  type: object
+                  type: string
                   format: binary
-                  properties:
-                    name:
-                      type: string
-                    content:
-                      type: string
-                      x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonIgnore'
-              notify:
-                type: boolean
-                x-stoplight:
-                  id: 3byt4qf86eswz
     UpdateDisplacementShare:
       content:
         application/json:

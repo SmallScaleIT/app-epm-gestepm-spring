@@ -8,6 +8,10 @@ import com.epm.gestepm.modelapi.shares.construction.dto.ConstructionShareFileDto
 import com.epm.gestepm.modelapi.shares.construction.dto.filter.ConstructionShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.construction.dto.updater.ConstructionShareFileUpdateDto;
 import com.epm.gestepm.modelapi.shares.construction.service.ConstructionShareFileService;
+import com.epm.gestepm.modelapi.shares.programmed.dto.ProgrammedShareFileDto;
+import com.epm.gestepm.modelapi.shares.programmed.dto.filter.ProgrammedShareFileFilterDto;
+import com.epm.gestepm.modelapi.shares.programmed.dto.updater.ProgrammedShareFileUpdateDto;
+import com.epm.gestepm.modelapi.shares.programmed.service.ProgrammedShareFileService;
 import com.epm.gestepm.storageapi.dto.FileResponse;
 import com.epm.gestepm.storageapi.dto.creator.FileCreate;
 import com.epm.gestepm.storageapi.service.GoogleCloudStorageService;
@@ -46,8 +50,11 @@ public class MigrationStorageDelegator {
 
     private final InspectionFileService inspectionFileService;
 
+    private final ProgrammedShareFileService programmedShareFileService;
+
     public void runMigration() {
-        this.migrateConstructionShareFiles();
+        // this.migrateConstructionShareFiles();
+        this.migrateProgrammedShareFiles();
         // this.migrateInspectionFiles();
     }
 
@@ -65,16 +72,45 @@ public class MigrationStorageDelegator {
 
             final MultipartCustomFile multipartCustomFile = new MultipartCustomFile(file.getName(), contentType, content);
 
-            final FileResponse fileResponse = this.uploadFile(multipartCustomFile);
+            final FileResponse fileResponse = this.uploadFile(multipartCustomFile, "construction-shares");
 
             final ConstructionShareFileUpdateDto updateDto = new ConstructionShareFileUpdateDto();
             updateDto.setId(file.getId());
             updateDto.setName(file.getName());
-            updateDto.setStorageUUID(UUID.fromString(fileResponse.getFileName()));
+            updateDto.setStoragePath(fileResponse.getFileName());
 
             this.constructionShareFileService.update(updateDto);
 
             log.info(String.format("Construction share file [%s] has been migrated successfully.", file.getId()));
+
+            break;
+        }
+    }
+
+    @SneakyThrows
+    private void migrateProgrammedShareFiles() {
+        final ProgrammedShareFileFilterDto filterDto = new ProgrammedShareFileFilterDto();
+        filterDto.setIds(List.of(6));
+
+        final List<ProgrammedShareFileDto> files = this.programmedShareFileService.list(filterDto);
+
+        for (final ProgrammedShareFileDto file : files) {
+            final Path path = Paths.get(file.getName());
+            final String contentType = Files.probeContentType(path);
+            final byte[] content = this.compressImageToJpegBytes(file.getContent(), 1600, 0.8f);
+
+            final MultipartCustomFile multipartCustomFile = new MultipartCustomFile(file.getName(), contentType, content);
+
+            final FileResponse fileResponse = this.uploadFile(multipartCustomFile,  "programmed-shares");
+
+            final ProgrammedShareFileUpdateDto updateDto = new ProgrammedShareFileUpdateDto();
+            updateDto.setId(file.getId());
+            updateDto.setName(file.getName());
+            updateDto.setStoragePath(fileResponse.getFileName());
+
+            this.programmedShareFileService.update(updateDto);
+
+            log.info(String.format("Programmed share file [%s] has been migrated successfully.", file.getId()));
 
             break;
         }
@@ -93,17 +129,17 @@ public class MigrationStorageDelegator {
 
             final MultipartCustomFile multipartCustomFile = new MultipartCustomFile(file.getName(), contentType, content);
 
-            final FileResponse fileResponse = this.uploadFile(multipartCustomFile);
+            final FileResponse fileResponse = this.uploadFile(multipartCustomFile, "inspections");
 
             int i = 0;
         }
     }
 
-    private FileResponse uploadFile(final MultipartCustomFile customFile) {
+    private FileResponse uploadFile(final MultipartCustomFile customFile, final String path) {
         final MockMultipartFile mockMultipartFile = new MockMultipartFile("file", customFile.name, customFile.contentType, customFile.content);
 
         final FileCreate fileCreate = new FileCreate();
-        fileCreate.setId(UUID.randomUUID());
+        fileCreate.setName(path + "/" + UUID.randomUUID());
         fileCreate.setFile(mockMultipartFile);
 
         return this.googleCloudStorageService.uploadFile(fileCreate);

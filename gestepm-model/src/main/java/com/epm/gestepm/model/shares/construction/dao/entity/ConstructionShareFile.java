@@ -1,10 +1,8 @@
 package com.epm.gestepm.model.shares.construction.dao.entity;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
 @Data
 public class ConstructionShareFile {
@@ -18,8 +16,8 @@ public class ConstructionShareFile {
     @NotNull
     private String name;
 
-    @NotNull
-    private UUID storageUUID;
+    // FIXME: @NotNull
+    private String storagePath;
 
     @NotNull
     private byte[] content;

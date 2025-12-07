@@ -1,11 +1,11 @@
-package com.epm.gestepm.modelapi.shares.construction.dto.updater;
+package com.epm.gestepm.modelapi.shares.programmed.dto.updater;
 
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
 @Data
-public class ConstructionShareFileUpdateDto {
+public class ProgrammedShareFileUpdateDto {
 
     @NotNull
     private Integer id;
