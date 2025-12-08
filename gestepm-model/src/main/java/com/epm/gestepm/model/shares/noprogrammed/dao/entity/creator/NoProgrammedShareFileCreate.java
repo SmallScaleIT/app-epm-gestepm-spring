@@ -10,6 +10,11 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 import java.util.Base64;
 
+import static com.epm.gestepm.model.shares.construction.dao.constants.ConstructionShareFileAttributes.ATTR_CSF_CONTENT;
+import static com.epm.gestepm.model.shares.construction.dao.constants.ConstructionShareFileAttributes.ATTR_CSF_STORAGE_PATH;
+import static com.epm.gestepm.model.shares.noprogrammed.dao.constants.NoProgrammedShareFileAttributes.ATTR_NPSF_CONTENT;
+import static com.epm.gestepm.model.shares.noprogrammed.dao.constants.NoProgrammedShareFileAttributes.ATTR_NPSF_STORAGE_PATH;
+
 @Data
 public class NoProgrammedShareFileCreate implements CollectableAttributes {
 
@@ -20,8 +25,7 @@ public class NoProgrammedShareFileCreate implements CollectableAttributes {
     private String name;
 
     @NotNull
-    @JsonIgnore
-    private String content;
+    private String storagePath;
 
     @Override
     public AttributeMap collectAttributes() {
@@ -30,7 +34,8 @@ public class NoProgrammedShareFileCreate implements CollectableAttributes {
 
         map.put(NoProgrammedShareFileAttributes.ATTR_NPSF_SHARE_ID, this.shareId);
         map.put(NoProgrammedShareFileAttributes.ATTR_NPSF_NAME, this.name);
-        map.put(NoProgrammedShareFileAttributes.ATTR_NPSF_CONTENT, FileUtils.compressBytes(Base64.getDecoder().decode(this.content)));
+        map.put(ATTR_NPSF_STORAGE_PATH, this.storagePath);
+        map.put(ATTR_NPSF_CONTENT, FileUtils.compressBytes("to-remove".getBytes())); // FIXME: remove
 
         return map;
     }

@@ -7,6 +7,7 @@ sql:
       wsf.work_share_file_id,
       wsf.work_share_id,
       wsf.name,
+      wsf.storage_path,
       wsf.content
     FROM ${sch-gestepm}.work_share_file wsf
     
@@ -17,13 +18,25 @@ sql:
     INSERT INTO ${sch-gestepm}.work_share_file (
       work_share_id,
       name,
+      storage_path,
       content
     )
     VALUES (
       :attr_wsf_share_id,
       :attr_wsf_name,
+      :attr_wsf_storage_path,
       :attr_wsf_content
     )
+
+  qry-update-wsf: |
+    
+    UPDATE
+      ${sch-gestepm}.work_share_file
+    SET
+      name = :attr_wsf_name,
+      storage_path = :attr_wsf_storage_path
+    WHERE
+      work_share_file_id = :attr_wsf_id
 
   qry-delete-wsf: |
     

@@ -28,9 +28,12 @@ import com.epm.gestepm.rest.shares.noprogrammed.response.ResponsesForNoProgramme
 import com.epm.gestepm.rest.shares.noprogrammed.response.ResponsesForNoProgrammedShareList;
 import com.epm.gestepm.restapi.openapi.api.NoProgrammedShareV1Api;
 import com.epm.gestepm.restapi.openapi.model.*;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -127,19 +130,20 @@ public class NoProgrammedShareController extends BaseController implements NoPro
     @Override
     @RequirePermits(value = PRMT_EDIT_NPS, action = "Update no programmed share")
     @LogExecution(operation = OP_UPDATE)
-    public ResponseEntity<CreateNoProgrammedShareV1200Response> updateNoProgrammedShareV1(final Integer id, final UpdateNoProgrammedShareV1Request reqUpdateNoProgrammedShare) {
+    public ResponseEntity<CreateNoProgrammedShareV1200Response> updateNoProgrammedShareV1(final Integer id, final UpdateNoProgrammedShareV1RequestData data, final List<MultipartFile> files) {
 
-        final NoProgrammedShareUpdateDto updateDto = getMapper(MapNPSToNoProgrammedShareUpdateDto.class).from(reqUpdateNoProgrammedShare);
+        final NoProgrammedShareUpdateDto updateDto = getMapper(MapNPSToNoProgrammedShareUpdateDto.class).from(data);
         updateDto.setId(id);
+        updateDto.setFiles(files);
 
         final NoProgrammedShareDto countryDto = this.noProgrammedShareService.update(updateDto);
 
         final APIMetadata metadata = this.getDefaultMetadata();
-        final NoProgrammedShare data = getMapper(MapNPSToNoProgrammedShareResponse.class).from(countryDto);
+        final NoProgrammedShare noProgrammedShare = getMapper(MapNPSToNoProgrammedShareResponse.class).from(countryDto);
 
         final CreateNoProgrammedShareV1200Response response = new CreateNoProgrammedShareV1200Response();
         response.setMetadata(getMapper(MetadataMapper.class).from(metadata));
-        response.setData(data);
+        response.setData(noProgrammedShare);
 
         return ResponseEntity.ok(response);
     }

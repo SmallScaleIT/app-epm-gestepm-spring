@@ -11,21 +11,28 @@ import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchPage;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.lib.logging.annotation.LogExecution;
 import com.epm.gestepm.lib.types.Page;
+import com.epm.gestepm.model.shares.construction.dao.entity.creator.ConstructionShareFileCreate;
 import com.epm.gestepm.model.shares.programmed.dao.entity.ProgrammedShare;
 import com.epm.gestepm.model.shares.programmed.dao.entity.creator.ProgrammedShareCreate;
+import com.epm.gestepm.model.shares.programmed.dao.entity.creator.ProgrammedShareFileCreate;
 import com.epm.gestepm.model.shares.programmed.dao.entity.deleter.ProgrammedShareDelete;
 import com.epm.gestepm.model.shares.programmed.dao.entity.filter.ProgrammedShareFilter;
 import com.epm.gestepm.model.shares.programmed.dao.entity.finder.ProgrammedShareByIdFinder;
 import com.epm.gestepm.model.shares.programmed.dao.entity.updater.ProgrammedShareUpdate;
 import com.epm.gestepm.model.shares.programmed.dao.mappers.ProgrammedShareRowMapper;
+import com.epm.gestepm.storageapi.dto.FileResponse;
+import com.epm.gestepm.storageapi.dto.creator.FileCreate;
+import com.epm.gestepm.storageapi.service.GoogleCloudStorageService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.DAO;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.*;
@@ -36,6 +43,10 @@ import static com.epm.gestepm.model.shares.programmed.dao.mappers.ProgrammedShar
 @Component("programmedShareDao")
 @EnableExecutionLog(layerMarker = DAO)
 public class ProgrammedShareDaoImpl implements ProgrammedShareDao {
+
+    private static final String PATH_FOLDER = "programmed-shares";
+
+    private final GoogleCloudStorageService googleCloudStorageService;
 
     private final ProgrammedShareFileDao programmedShareFileDao;
 
@@ -142,9 +153,7 @@ public class ProgrammedShareDaoImpl implements ProgrammedShareDao {
         this.sqlDatasource.execute(sqlQuery);
 
         if (CollectionUtils.isNotEmpty(update.getFiles())) {
-            update.getFiles().stream()
-                    .peek(file -> file.setShareId(id))
-                    .forEach(programmedShareFileDao::create);
+            update.getFiles().forEach(file -> this.insertFiles(file, id));
         }
 
         return this.find(finder).orElse(null);
@@ -188,5 +197,22 @@ public class ProgrammedShareDaoImpl implements ProgrammedShareDao {
             return COL_PS_END_DATE;
         }
         return orderBy;
+    }
+
+    private void insertFiles(final MultipartFile file, final Integer id) {
+        final UUID storageUUID = UUID.randomUUID();
+
+        final FileCreate fileCreate = new FileCreate();
+        fileCreate.setName(PATH_FOLDER + "/" + storageUUID);
+        fileCreate.setFile(file);
+
+        final FileResponse fileResponse = this.googleCloudStorageService.uploadFile(fileCreate);
+
+        final ProgrammedShareFileCreate psFileCreate = new ProgrammedShareFileCreate();
+        psFileCreate.setShareId(id);
+        psFileCreate.setName(file.getOriginalFilename());
+        psFileCreate.setStoragePath(fileResponse.getFileName());
+
+        this.programmedShareFileDao.create(psFileCreate);
     }
 }

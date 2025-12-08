@@ -5,6 +5,7 @@ import com.epm.gestepm.modelapi.shares.construction.dto.creator.ConstructionShar
 import com.epm.gestepm.modelapi.shares.construction.dto.deleter.ConstructionShareFileDeleteDto;
 import com.epm.gestepm.modelapi.shares.construction.dto.filter.ConstructionShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.construction.dto.finder.ConstructionShareFileByIdFinderDto;
+import com.epm.gestepm.modelapi.shares.construction.dto.updater.ConstructionShareFileUpdateDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -21,6 +22,9 @@ public interface ConstructionShareFileService {
 
     @Valid
     ConstructionShareFileDto create(@Valid ConstructionShareFileCreateDto createDto);
+
+    @Valid
+    ConstructionShareFileDto update(@Valid ConstructionShareFileUpdateDto updateDto);
 
     void delete(@Valid ConstructionShareFileDeleteDto deleteDto);
     

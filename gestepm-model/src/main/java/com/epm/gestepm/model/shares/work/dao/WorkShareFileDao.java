@@ -1,10 +1,13 @@
 package com.epm.gestepm.model.shares.work.dao;
 
+import com.epm.gestepm.model.shares.construction.dao.entity.ConstructionShareFile;
+import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
 import com.epm.gestepm.model.shares.work.dao.entity.WorkShareFile;
 import com.epm.gestepm.model.shares.work.dao.entity.creator.WorkShareFileCreate;
 import com.epm.gestepm.model.shares.work.dao.entity.deleter.WorkShareFileDelete;
 import com.epm.gestepm.model.shares.work.dao.entity.filter.WorkShareFileFilter;
 import com.epm.gestepm.model.shares.work.dao.entity.finder.WorkShareFileByIdFinder;
+import com.epm.gestepm.model.shares.work.dao.entity.updater.WorkShareFileUpdate;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -18,6 +21,9 @@ public interface WorkShareFileDao {
 
   @Valid
   WorkShareFile create(@Valid WorkShareFileCreate create);
+
+  @Valid
+  WorkShareFile update(@Valid WorkShareFileUpdate update);
 
   void delete(@Valid WorkShareFileDelete delete);
 

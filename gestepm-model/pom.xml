@@ -40,6 +40,11 @@
             <artifactId>gestepm-email-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gestepm-storage-api</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

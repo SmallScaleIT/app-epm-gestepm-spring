@@ -1,10 +1,13 @@
 package com.epm.gestepm.modelapi.shares.programmed.service;
 
+import com.epm.gestepm.modelapi.shares.construction.dto.ConstructionShareFileDto;
+import com.epm.gestepm.modelapi.shares.construction.dto.updater.ConstructionShareFileUpdateDto;
 import com.epm.gestepm.modelapi.shares.programmed.dto.ProgrammedShareFileDto;
 import com.epm.gestepm.modelapi.shares.programmed.dto.creator.ProgrammedShareFileCreateDto;
 import com.epm.gestepm.modelapi.shares.programmed.dto.deleter.ProgrammedShareFileDeleteDto;
 import com.epm.gestepm.modelapi.shares.programmed.dto.filter.ProgrammedShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.programmed.dto.finder.ProgrammedShareFileByIdFinderDto;
+import com.epm.gestepm.modelapi.shares.programmed.dto.updater.ProgrammedShareFileUpdateDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -21,6 +24,9 @@ public interface ProgrammedShareFileService {
 
     @Valid
     ProgrammedShareFileDto create(@Valid ProgrammedShareFileCreateDto createDto);
+
+    @Valid
+    ProgrammedShareFileDto update(@Valid ProgrammedShareFileUpdateDto updateDto);
 
     void delete(@Valid ProgrammedShareFileDeleteDto deleteDto);
     

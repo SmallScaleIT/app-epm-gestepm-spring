@@ -8,6 +8,9 @@ import com.epm.gestepm.modelapi.project.service.ProjectService;
 import com.epm.gestepm.modelapi.deprecated.user.service.UserServiceOld;
 import com.epm.gestepm.modelapi.project.dto.ProjectDto;
 import com.epm.gestepm.modelapi.project.dto.finder.ProjectByIdFinderDto;
+import com.epm.gestepm.modelapi.user.dto.UserDto;
+import com.epm.gestepm.modelapi.user.dto.finder.UserByIdFinderDto;
+import com.epm.gestepm.modelapi.user.service.UserService;
 import com.epm.gestepm.rest.project.mappers.MapPRToProjectResponse;
 import com.epm.gestepm.rest.shares.construction.request.ConstructionShareFindRestRequest;
 import com.epm.gestepm.restapi.openapi.model.ConstructionShare;
@@ -30,12 +33,12 @@ public class ConstructionShareResponseDecorator extends BaseResponseDataDecorato
 
     private final ProjectService projectService;
 
-    private final UserServiceOld userServiceOld;
+    private final UserService userService;
 
-    public ConstructionShareResponseDecorator(ApplicationContext applicationContext, ProjectService projectService, UserServiceOld userServiceOld) {
+    public ConstructionShareResponseDecorator(ApplicationContext applicationContext, ProjectService projectService, UserService userService) {
         super(applicationContext);
         this.projectService = projectService;
-        this.userServiceOld = userServiceOld;
+        this.userService = userService;
     }
 
     @Override
@@ -56,7 +59,7 @@ public class ConstructionShareResponseDecorator extends BaseResponseDataDecorato
             final User user = data.getUser();
             final Integer id = user.getId();
 
-            final com.epm.gestepm.modelapi.deprecated.user.dto.User userDto = this.userServiceOld.getUserById(Long.valueOf(id));
+            final UserDto userDto = this.userService.findOrNotFound(new UserByIdFinderDto(id));
             final User response = new User().id(id).name(userDto.getFullName());
 
             data.setUser(response);

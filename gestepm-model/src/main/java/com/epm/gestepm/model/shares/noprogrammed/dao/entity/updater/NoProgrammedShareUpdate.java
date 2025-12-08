@@ -8,9 +8,11 @@ import com.epm.gestepm.model.shares.noprogrammed.dao.entity.NoProgrammedShareSta
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.creator.NoProgrammedShareFileCreate;
 import lombok.Data;
 import lombok.Singular;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -40,7 +42,7 @@ public class NoProgrammedShareUpdate implements AuditUpdate, CollectableAttribut
     private Integer updatedBy;
 
     @Singular
-    private Set<NoProgrammedShareFileCreate> files;
+    private List<MultipartFile> files;
 
     @Override
     public AttributeMap collectAttributes() {

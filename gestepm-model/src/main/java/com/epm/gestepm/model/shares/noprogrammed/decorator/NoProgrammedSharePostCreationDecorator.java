@@ -71,31 +71,22 @@ public class NoProgrammedSharePostCreationDecorator {
 
     private final LocaleProvider localeProvider;
 
-    public void createForumEntryAndUpdate(final NoProgrammedShareDto noProgrammedShare, final Set<NoProgrammedShareFileCreate> files) {
+    public void createForumEntryAndUpdate(final NoProgrammedShareDto noProgrammedShare, final List<MultipartFile> files) {
         final ProjectDto project = this.projectService.findOrNotFound(new ProjectByIdFinderDto(noProgrammedShare.getProjectId()));
         final Integer forumId = project.getForumId();
         final String forumTitle = this.getForumTitle(noProgrammedShare);
         final String ip = request.getLocalAddr();
-        final List<MultipartFile> multipartFiles = CollectionUtils.isNotEmpty(files)
-                ? files.stream()
-                .map(file -> convertToMultipartFile(file.getName(), Base64.decode(file.getContent()).getBytes()))
-                .collect(Collectors.toList())
-                : new ArrayList<>();
 
         final Locale locale = new Locale(this.localeProvider.getLocale().orElse("es"));
         final UserDto user = this.userService.findOrNotFound(new UserByIdFinderDto(noProgrammedShare.getUserId()));
 
-        topicService.create(forumTitle, noProgrammedShare.getDescription(), forumId, ip, user.getForumUsername(), multipartFiles)
+        topicService.create(forumTitle, noProgrammedShare.getDescription(), forumId, ip, user.getForumUsername(), files)
                 .whenComplete((topic, throwable) -> {
                     final NoProgrammedShareDto dto = throwable == null
                             ? this.updateWithForumInfo(noProgrammedShare, topic.getId().intValue(), forumTitle)
                             : noProgrammedShare;
                     this.sendOpenEmail(dto, user, project, locale);
                 });
-    }
-
-    private static MultipartFile convertToMultipartFile(String fileName, byte[] content) {
-        return new MockMultipartFile("file", fileName, "application/octet-stream", content);
     }
 
     private NoProgrammedShareDto updateWithForumInfo(final NoProgrammedShareDto noProgrammedShare, final Integer topicId, final String forumTitle) {

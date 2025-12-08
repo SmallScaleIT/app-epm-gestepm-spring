@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -90,4 +91,14 @@ public class AttributeMap extends HashMap<String, Object> {
         }
     }
 
+    public void putUUID(String attrKey, UUID uuid) {
+        final String valueToPut = uuid != null ? uuid.toString() : null;
+        put(attrKey, valueToPut);
+    }
+
+    public void putUUIDList(String attrKey, List<UUID> value) {
+
+        final List<String> valueToPut = value != null && !value.isEmpty() ? value.stream().map(UUID::toString).collect(Collectors.toList()) : null;
+        put(attrKey, valueToPut);
+    }
 }

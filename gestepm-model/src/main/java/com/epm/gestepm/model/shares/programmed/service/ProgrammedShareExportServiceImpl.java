@@ -37,13 +37,14 @@ import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.SERVICE;
 public class ProgrammedShareExportServiceImpl implements ProgrammedShareExportService {
 
     private static final String TEMPLATE_PATH = "/templates/pdf/programmed_share_%s.pdf";
+
     private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
+
     private static final String EMPTY_DATA_URI = "data:,";
-    private static final float IMAGE_COMPRESSION_QUALITY = 0.5f;
 
     private final ProgrammedShareFileService programmedShareFileService;
+
     private final LocaleProvider localeProvider;
-    private final UserServiceOld userServiceOld;
 
     @Override
     public byte[] generate(final ProgrammedShareDto programmedShare) {
@@ -54,9 +55,8 @@ public class ProgrammedShareExportServiceImpl implements ProgrammedShareExportSe
             pdfTemplate = loadPdfTemplate();
 
             final PdfStamper stamper = new PdfStamper(pdfTemplate, baos);
-            final User user = userServiceOld.getUserById(programmedShare.getUserId().longValue());
 
-            this.populateFields(stamper.getAcroFields(), programmedShare, user);
+            this.populateFields(stamper.getAcroFields(), programmedShare);
             this.addCustomerSignatureIfPresent(stamper, programmedShare);
             this.addOperatorSignatureIfPresent(stamper, programmedShare);
             this.addImagesIfPresent(stamper, pdfTemplate, programmedShare);
@@ -86,7 +86,7 @@ public class ProgrammedShareExportServiceImpl implements ProgrammedShareExportSe
         return new PdfReader(String.format(TEMPLATE_PATH, language));
     }
 
-    private void populateFields(AcroFields fields, ProgrammedShareDto dto, User user) throws IOException, DocumentException {
+    private void populateFields(AcroFields fields, ProgrammedShareDto dto) throws IOException, DocumentException {
         fields.setField("idShare", dto.getId().toString());
         fields.setField("station", dto.getProjectName());
         fields.setField("startDate", Utiles.transform(dto.getStartDate(), DATE_FORMAT));
@@ -134,16 +134,9 @@ public class ProgrammedShareExportServiceImpl implements ProgrammedShareExportSe
 
         for (Integer fileId : dto.getFileIds()) {
             final ProgrammedShareFileDto file = programmedShareFileService.findOrNotFound(new ProgrammedShareFileByIdFinderDto(fileId));
-            if (StringUtils.isNotBlank(file.getContent())) {
 
-                final byte[] imageBytes = Base64.getDecoder().decode(file.getContent());
-                final byte[] compressedBytes = ImageUtils.compressImage(imageBytes, IMAGE_COMPRESSION_QUALITY);
-
-                if (compressedBytes == null) {
-                    continue;
-                }
-
-                final Image image = Image.getInstance(compressedBytes);
+            if (StringUtils.isNotBlank(file.getUrl())) {
+                final Image image = Image.getInstance(file.getUrl());
 
                 float margin = 36f;
                 float availableWidth = pageWidth - 2 * margin;

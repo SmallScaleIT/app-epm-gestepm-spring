@@ -6,7 +6,8 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Base64;
+
+import static com.epm.gestepm.lib.jdbc.utils.ResultSetMappingUtils.nullableString;
 
 public class ProgrammedShareFileRowMapper implements RowMapper<ProgrammedShareFile> {
 
@@ -15,6 +16,8 @@ public class ProgrammedShareFileRowMapper implements RowMapper<ProgrammedShareFi
   public static final String COL_PSF_SHARE_ID = "programmed_share_id";
 
   public static final String COL_PSF_NAME = "name";
+
+  public static final String COL_PSF_STORAGE_PATH = "storage_path";
 
   public static final String COL_PSF_CONTENT = "content";
 
@@ -26,7 +29,8 @@ public class ProgrammedShareFileRowMapper implements RowMapper<ProgrammedShareFi
     programmedShareFile.setId(rs.getInt(COL_PSF_ID));
     programmedShareFile.setShareId(rs.getInt(COL_PSF_SHARE_ID));
     programmedShareFile.setName(rs.getString(COL_PSF_NAME));
-    programmedShareFile.setContent(Base64.getEncoder().encodeToString(FileUtils.decompressBytes(rs.getBytes(COL_PSF_CONTENT))));
+    programmedShareFile.setContent(FileUtils.decompressBytes(rs.getBytes(COL_PSF_CONTENT)));
+    programmedShareFile.setStoragePath(nullableString(rs, COL_PSF_STORAGE_PATH)); // FIXME: to remove
 
     return programmedShareFile;
   }

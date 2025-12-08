@@ -16,8 +16,13 @@ import com.epm.gestepm.modelapi.project.dto.ProjectDto;
 import com.epm.gestepm.modelapi.project.dto.filter.ProjectFilterDto;
 import com.epm.gestepm.modelapi.project.dto.finder.ProjectByIdFinderDto;
 import com.epm.gestepm.modelapi.project.service.ProjectService;
+import com.epm.gestepm.modelapi.shares.construction.dto.ConstructionShareFileDto;
+import com.epm.gestepm.modelapi.shares.construction.dto.filter.ConstructionShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.NoProgrammedShareDto;
+import com.epm.gestepm.modelapi.shares.noprogrammed.dto.NoProgrammedShareFileDto;
+import com.epm.gestepm.modelapi.shares.noprogrammed.dto.filter.NoProgrammedShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.finder.NoProgrammedShareByIdFinderDto;
+import com.epm.gestepm.modelapi.shares.noprogrammed.service.NoProgrammedShareFileService;
 import com.epm.gestepm.modelapi.shares.noprogrammed.service.NoProgrammedShareService;
 import com.epm.gestepm.modelapi.user.dto.UserDto;
 import com.epm.gestepm.modelapi.user.dto.filter.UserFilterDto;
@@ -36,6 +41,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -58,6 +64,8 @@ public class NoProgrammedShareViewController {
     private final InspectionService inspectionService;
 
     private final NoProgrammedShareService noProgrammedShareService;
+
+    private final NoProgrammedShareFileService noProgrammedShareFileService;
 
     private final ProjectService projectService;
 
@@ -110,6 +118,14 @@ public class NoProgrammedShareViewController {
         final ActionEnumDto lastAction = this.inspectionService.list(filterDto, 0L, 1L).get(0)
                 .map(InspectionDto::getAction)
                 .orElse(ActionEnumDto.FOLLOWING);
+
+        final NoProgrammedShareFileFilterDto filesFilterDto = new NoProgrammedShareFileFilterDto();
+        filterDto.setShareId(id);
+
+        final List<NoProgrammedShareFileDto> files = this.noProgrammedShareFileService.list(filesFilterDto).stream()
+                .sorted(Comparator.comparing(NoProgrammedShareFileDto::getName, String.CASE_INSENSITIVE_ORDER))
+                .collect(Collectors.toList());
+        model.addAttribute("files", files);
 
         final List<FamilyDTO> families = familyService.getCommonFamilyDTOsByProjectId(share.getProjectId().longValue(), locale);
         final List<UserDTO> usersTeam = userServiceOld.getUserDTOsByProjectId(share.getProjectId().longValue());

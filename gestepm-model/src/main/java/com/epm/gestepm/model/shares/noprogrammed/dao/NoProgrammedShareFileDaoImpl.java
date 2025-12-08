@@ -8,12 +8,16 @@ import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchMany;
 import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchOne;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.lib.logging.annotation.LogExecution;
+import com.epm.gestepm.model.shares.construction.dao.entity.ConstructionShareFile;
+import com.epm.gestepm.model.shares.construction.dao.entity.finder.ConstructionShareFileByIdFinder;
+import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.NoProgrammedShareFile;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.creator.NoProgrammedShareFileCreate;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.deleter.NoProgrammedShareDelete;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.deleter.NoProgrammedShareFileDelete;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.filter.NoProgrammedShareFileFilter;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.finder.NoProgrammedShareFileByIdFinder;
+import com.epm.gestepm.model.shares.noprogrammed.dao.entity.updater.NoProgrammedShareFileUpdate;
 import com.epm.gestepm.model.shares.noprogrammed.dao.mappers.NoProgrammedShareFileRowMapper;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +27,7 @@ import java.util.Optional;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.DAO;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.*;
+import static com.epm.gestepm.model.shares.construction.dao.constants.ConstructionShareFileQueries.QRY_UPDATE_CSF;
 import static com.epm.gestepm.model.shares.noprogrammed.dao.constants.NoProgrammedShareFileQueries.*;
 import static com.epm.gestepm.model.shares.noprogrammed.dao.constants.NoProgrammedShareQueries.QRY_DELETE_NPS;
 
@@ -92,6 +97,29 @@ public class NoProgrammedShareFileDaoImpl implements NoProgrammedShareFileDao {
         return this.find(finder).orElse(null);
     }
 
+    @Override
+    @LogExecution(operation = OP_UPDATE,
+            debugOut = true,
+            msgIn = "Persisting no programmed share file",
+            msgOut = "No programmed share file persisted OK",
+            errorMsg = "Failed to persist no programmed share file")
+    public NoProgrammedShareFile update(NoProgrammedShareFileUpdate update) {
+
+        final Integer id = update.getId();
+        final AttributeMap params = update.collectAttributes();
+
+        final NoProgrammedShareFileByIdFinder finder = new NoProgrammedShareFileByIdFinder();
+        finder.setId(id);
+
+        final SQLQuery sqlQuery = new SQLQuery()
+                .useQuery(QRY_UPDATE_NPSF)
+                .withParams(params);
+
+        this.sqlDatasource.execute(sqlQuery);
+
+        return this.find(finder).orElse(null);
+    }
+    
     @Override
     @LogExecution(operation = OP_DELETE,
             debugOut = true,

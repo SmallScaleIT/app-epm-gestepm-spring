@@ -4,9 +4,11 @@ import com.epm.gestepm.modelapi.shares.noprogrammed.dto.NoProgrammedShareStateEn
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.creator.NoProgrammedShareFileCreateDto;
 import lombok.Data;
 import lombok.Singular;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -34,7 +36,7 @@ public class NoProgrammedShareUpdateDto {
     private NoProgrammedShareStateEnumDto state;
 
     @Singular
-    private Set<NoProgrammedShareFileCreateDto> files;
+    private List<MultipartFile> files;
 
     private Boolean checkPermissions = true;
 

@@ -13,6 +13,9 @@ import com.epm.gestepm.modelapi.shares.construction.service.ConstructionShareExp
 import com.epm.gestepm.modelapi.shares.construction.service.ConstructionShareFileService;
 import com.epm.gestepm.modelapi.deprecated.user.dto.User;
 import com.epm.gestepm.modelapi.deprecated.user.service.UserServiceOld;
+import com.epm.gestepm.modelapi.user.dto.UserDto;
+import com.epm.gestepm.modelapi.user.dto.finder.UserByIdFinderDto;
+import com.epm.gestepm.modelapi.user.service.UserService;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
@@ -37,13 +40,16 @@ import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.SERVICE;
 public class ConstructionShareExportServiceImpl implements ConstructionShareExportService {
 
     private static final String TEMPLATE_PATH = "/templates/pdf/construction_share_%s.pdf";
+
     private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
+
     private static final String EMPTY_DATA_URI = "data:,";
-    private static final float IMAGE_COMPRESSION_QUALITY = 0.5f;
 
     private final ConstructionShareFileService constructionShareFileService;
+
     private final LocaleProvider localeProvider;
-    private final UserServiceOld userServiceOld;
+
+    private final UserService userService;
 
     @Override
     public byte[] generate(final ConstructionShareDto constructionShare) {
@@ -54,7 +60,7 @@ public class ConstructionShareExportServiceImpl implements ConstructionShareExpo
             pdfTemplate = loadPdfTemplate();
 
             final PdfStamper stamper = new PdfStamper(pdfTemplate, baos);
-            final User user = userServiceOld.getUserById(constructionShare.getUserId().longValue());
+            final UserDto user = this.userService.findOrNotFound(new UserByIdFinderDto(constructionShare.getUserId()));
 
             this.populateFields(stamper.getAcroFields(), constructionShare, user);
             this.addOperatorSignatureIfPresent(stamper, constructionShare);
@@ -85,7 +91,7 @@ public class ConstructionShareExportServiceImpl implements ConstructionShareExpo
         return new PdfReader(String.format(TEMPLATE_PATH, language));
     }
 
-    private void populateFields(AcroFields fields, ConstructionShareDto dto, User user) throws IOException, DocumentException {
+    private void populateFields(AcroFields fields, ConstructionShareDto dto, UserDto user) throws IOException, DocumentException {
         fields.setField("idShare", dto.getId().toString());
         fields.setField("startDate", Utiles.transform(dto.getStartDate(), DATE_FORMAT));
         fields.setField("endDate", Utiles.transform(dto.getEndDate(), DATE_FORMAT));
@@ -124,17 +130,10 @@ public class ConstructionShareExportServiceImpl implements ConstructionShareExpo
         final float pageHeight = pageSize.getHeight();
 
         for (Integer fileId : dto.getFileIds()) {
-            final ConstructionShareFileDto file = constructionShareFileService.findOrNotFound(new ConstructionShareFileByIdFinderDto(fileId));
-            if (StringUtils.isNotBlank(file.getContent())) {
+            final ConstructionShareFileDto file = this.constructionShareFileService.findOrNotFound(new ConstructionShareFileByIdFinderDto(fileId));
 
-                final byte[] imageBytes = Base64.getDecoder().decode(file.getContent());
-                final byte[] compressedBytes = ImageUtils.compressImage(imageBytes, IMAGE_COMPRESSION_QUALITY);
-
-                if (compressedBytes == null) {
-                    continue;
-                }
-
-                final Image image = Image.getInstance(compressedBytes);
+            if (StringUtils.isNoneBlank(file.getUrl())) {
+                final Image image = Image.getInstance(file.getUrl());
 
                 float margin = 36f;
                 float availableWidth = pageWidth - 2 * margin;

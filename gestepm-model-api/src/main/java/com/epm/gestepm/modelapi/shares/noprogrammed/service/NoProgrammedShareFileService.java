@@ -5,6 +5,7 @@ import com.epm.gestepm.modelapi.shares.noprogrammed.dto.creator.NoProgrammedShar
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.deleter.NoProgrammedShareFileDeleteDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.filter.NoProgrammedShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.finder.NoProgrammedShareFileByIdFinderDto;
+import com.epm.gestepm.modelapi.shares.noprogrammed.dto.updater.NoProgrammedShareFileUpdateDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -21,6 +22,9 @@ public interface NoProgrammedShareFileService {
 
     @Valid
     NoProgrammedShareFileDto create(@Valid NoProgrammedShareFileCreateDto createDto);
+
+    @Valid
+    NoProgrammedShareFileDto update(@Valid NoProgrammedShareFileUpdateDto updateDto);
 
     void delete(@Valid NoProgrammedShareFileDeleteDto deleteDto);
     

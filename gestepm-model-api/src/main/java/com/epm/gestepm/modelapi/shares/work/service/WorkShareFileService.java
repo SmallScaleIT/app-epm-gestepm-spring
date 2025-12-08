@@ -5,6 +5,7 @@ import com.epm.gestepm.modelapi.shares.work.dto.creator.WorkShareFileCreateDto;
 import com.epm.gestepm.modelapi.shares.work.dto.deleter.WorkShareFileDeleteDto;
 import com.epm.gestepm.modelapi.shares.work.dto.filter.WorkShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.work.dto.finder.WorkShareFileByIdFinderDto;
+import com.epm.gestepm.modelapi.shares.work.dto.updater.WorkShareFileUpdateDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -21,6 +22,9 @@ public interface WorkShareFileService {
 
     @Valid
     WorkShareFileDto create(@Valid WorkShareFileCreateDto createDto);
+
+    @Valid
+    WorkShareFileDto update(@Valid WorkShareFileUpdateDto updateDto);
 
     void delete(@Valid WorkShareFileDeleteDto deleteDto);
     

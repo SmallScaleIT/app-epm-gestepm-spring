@@ -1,7 +1,6 @@
 package com.epm.gestepm.model.shares.construction.dao.entity;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
@@ -17,7 +16,13 @@ public class ConstructionShareFile {
     @NotNull
     private String name;
 
+    // FIXME: @NotNull
+    private String storagePath;
+
     @NotNull
-    private String content;
+    private byte[] content;
+
+    // FIXME: @NotNull
+    private String url;
 
 }

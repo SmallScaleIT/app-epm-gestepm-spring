@@ -7,6 +7,10 @@ data:
         password: ENC(LswlxuerH82blnC6Euo9fgZTe2TYomFktesFMntrnbU=)
         jdbcUrl: jdbc:mysql://localhost:3306
 
+gcp:
+  storage:
+    bucket: gestepm_bucket_local
+
 gestepm:
   base:
     url: http://localhost:8888

@@ -1,12 +1,14 @@
 package com.epm.gestepm.rest.shares.noprogrammed.mappers;
 
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.updater.NoProgrammedShareUpdateDto;
-import com.epm.gestepm.restapi.openapi.model.UpdateNoProgrammedShareV1Request;
+import com.epm.gestepm.restapi.openapi.model.UpdateNoProgrammedShareV1RequestData;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Mapper(uses = MapNPSFToFileDto.class)
+@Mapper
 public interface MapNPSToNoProgrammedShareUpdateDto {
 
-  NoProgrammedShareUpdateDto from(UpdateNoProgrammedShareV1Request req);
+    @Mapping(target = "files", ignore = true)
+    NoProgrammedShareUpdateDto from(UpdateNoProgrammedShareV1RequestData req);
 
 }

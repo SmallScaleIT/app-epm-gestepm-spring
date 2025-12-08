@@ -7,9 +7,11 @@ import com.epm.gestepm.lib.entity.CollectableAttributes;
 import com.epm.gestepm.model.shares.construction.dao.entity.creator.ConstructionShareFileCreate;
 import lombok.Data;
 import lombok.Singular;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import static com.epm.gestepm.model.shares.construction.dao.constants.ConstructionShareAttributes.*;
@@ -39,7 +41,7 @@ public class ConstructionShareUpdate implements AuditClose, AuditUpdate, Collect
     private Integer updatedBy;
     
     @Singular
-    private Set<ConstructionShareFileCreate> files;
+    private List<MultipartFile> files;
 
     @Override
     public AttributeMap collectAttributes() {

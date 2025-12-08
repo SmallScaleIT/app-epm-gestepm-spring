@@ -3,9 +3,11 @@ package com.epm.gestepm.modelapi.shares.programmed.dto.updater;
 import com.epm.gestepm.modelapi.shares.programmed.dto.creator.ProgrammedShareFileCreateDto;
 import lombok.Data;
 import lombok.Singular;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -29,7 +31,7 @@ public class ProgrammedShareUpdateDto {
     private String operatorSignature;
 
     @Singular
-    private Set<ProgrammedShareFileCreateDto> files;
+    private List<MultipartFile> files;
 
     private Boolean notify;
 

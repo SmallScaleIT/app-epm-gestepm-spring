@@ -5,6 +5,7 @@ import com.epm.gestepm.model.shares.construction.dao.entity.creator.Construction
 import com.epm.gestepm.model.shares.construction.dao.entity.deleter.ConstructionShareFileDelete;
 import com.epm.gestepm.model.shares.construction.dao.entity.filter.ConstructionShareFileFilter;
 import com.epm.gestepm.model.shares.construction.dao.entity.finder.ConstructionShareFileByIdFinder;
+import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -18,6 +19,9 @@ public interface ConstructionShareFileDao {
 
   @Valid
   ConstructionShareFile create(@Valid ConstructionShareFileCreate create);
+
+  @Valid
+  ConstructionShareFile update(@Valid ConstructionShareFileUpdate update);
 
   void delete(@Valid ConstructionShareFileDelete delete);
 

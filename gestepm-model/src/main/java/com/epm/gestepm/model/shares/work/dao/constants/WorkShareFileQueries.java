@@ -8,6 +8,8 @@ public abstract class WorkShareFileQueries {
 
   public static final String QRY_CREATE_WSF = "qry-create-wsf";
 
+  public static final String QRY_UPDATE_WSF = "qry-update-wsf";
+
   public static final String FILTER_WSF_BY_ID = "filter-wsf-by-id";
 
   public static final String QRY_DELETE_WSF = "qry-delete-wsf";

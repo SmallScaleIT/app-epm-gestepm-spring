@@ -210,8 +210,9 @@ public class WorkShareServiceImpl implements WorkShareService {
 
         this.sendMail(result, updateDto.getNotify());
 
-        if (updateWork)
+        if (updateWork) {
             this.sendUpdateEmail(result);
+        }
 
         return result;
     }
