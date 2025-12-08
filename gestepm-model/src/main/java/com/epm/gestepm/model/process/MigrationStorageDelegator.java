@@ -8,6 +8,10 @@ import com.epm.gestepm.modelapi.shares.construction.dto.ConstructionShareFileDto
 import com.epm.gestepm.modelapi.shares.construction.dto.filter.ConstructionShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.construction.dto.updater.ConstructionShareFileUpdateDto;
 import com.epm.gestepm.modelapi.shares.construction.service.ConstructionShareFileService;
+import com.epm.gestepm.modelapi.shares.noprogrammed.dto.NoProgrammedShareFileDto;
+import com.epm.gestepm.modelapi.shares.noprogrammed.dto.filter.NoProgrammedShareFileFilterDto;
+import com.epm.gestepm.modelapi.shares.noprogrammed.dto.updater.NoProgrammedShareFileUpdateDto;
+import com.epm.gestepm.modelapi.shares.noprogrammed.service.NoProgrammedShareFileService;
 import com.epm.gestepm.modelapi.shares.programmed.dto.ProgrammedShareFileDto;
 import com.epm.gestepm.modelapi.shares.programmed.dto.filter.ProgrammedShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.programmed.dto.updater.ProgrammedShareFileUpdateDto;
@@ -54,15 +58,18 @@ public class MigrationStorageDelegator {
 
     private final InspectionFileService inspectionFileService;
 
+    private final NoProgrammedShareFileService noProgrammedShareFileService;
+
     private final ProgrammedShareFileService programmedShareFileService;
     
     private final WorkShareFileService workShareFileService;
 
     public void runMigration() {
         // this.migrateConstructionShareFiles();
+        this.migrateNoProgrammedShareFiles();
         // this.migrateProgrammedShareFiles();
         // this.migrateInspectionFiles();
-        this.migrateWorkShareFiles();
+        // this.migrateWorkShareFiles();
     }
 
     @SneakyThrows
@@ -94,6 +101,35 @@ public class MigrationStorageDelegator {
         }
     }
 
+    @SneakyThrows
+    private void migrateNoProgrammedShareFiles() {
+        final NoProgrammedShareFileFilterDto filterDto = new NoProgrammedShareFileFilterDto();
+        filterDto.setIds(List.of(55));
+
+        final List<NoProgrammedShareFileDto> files = this.noProgrammedShareFileService.list(filterDto);
+
+        for (final NoProgrammedShareFileDto file : files) {
+            final Path path = Paths.get(file.getName());
+            final String contentType = Files.probeContentType(path);
+            final byte[] content = this.compressImageToJpegBytes(file.getContent(), 1600, 0.8f);
+
+            final MultipartCustomFile multipartCustomFile = new MultipartCustomFile(file.getName(), contentType, content);
+
+            final FileResponse fileResponse = this.uploadFile(multipartCustomFile,  "no-programmed-shares");
+
+            final NoProgrammedShareFileUpdateDto updateDto = new NoProgrammedShareFileUpdateDto();
+            updateDto.setId(file.getId());
+            updateDto.setName(file.getName());
+            updateDto.setStoragePath(fileResponse.getFileName());
+
+            this.noProgrammedShareFileService.update(updateDto);
+
+            log.info(String.format("No programmed share file [%s] has been migrated successfully.", file.getId()));
+
+            break;
+        }
+    }
+    
     @SneakyThrows
     private void migrateProgrammedShareFiles() {
         final ProgrammedShareFileFilterDto filterDto = new ProgrammedShareFileFilterDto();

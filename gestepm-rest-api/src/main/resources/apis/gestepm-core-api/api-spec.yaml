@@ -4614,50 +4614,45 @@ components:
               - projectId
     UpdateNoProgrammedShare:
       content:
-        application/json:
+        multipart/form-data:
           schema:
             type: object
             properties:
-              userId:
-                type: integer
-              startDate:
-                type: string
-                format: date-time
-              endDate:
-                type: string
-                format: date-time
-              description:
-                type: string
-              familyId:
-                type: integer
-              subFamilyId:
-                type: integer
-              topicId:
-                type: integer
-              forumTitle:
-                type: string
-              state:
-                type: string
-                enum:
-                  - NEW
-                  - INITIALIZED
-                  - IN_PROGRESS
-                  - CLOSED
+              data:
+                type: object
+                x-stoplight:
+                  id: oxud49ln29kw4
+                properties:
+                  userId:
+                    type: integer
+                  startDate:
+                    type: string
+                    format: date-time
+                  endDate:
+                    type: string
+                    format: date-time
+                  description:
+                    type: string
+                  familyId:
+                    type: integer
+                  subFamilyId:
+                    type: integer
+                  topicId:
+                    type: integer
+                  forumTitle:
+                    type: string
+                  state:
+                    type: string
+                    enum:
+                      - NEW
+                      - INITIALIZED
+                      - IN_PROGRESS
+                      - CLOSED
               files:
                 type: array
                 items:
-                  type: object
+                  type: string
                   format: binary
-                  properties:
-                    name:
-                      type: string
-                      x-stoplight:
-                        id: y4v9ssqe7scoj
-                    content:
-                      type: string
-                      x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonIgnore'
-                      x-stoplight:
-                        id: 6ce64ca1txbth
             required:
               - userId
     CreateProgrammedShare:

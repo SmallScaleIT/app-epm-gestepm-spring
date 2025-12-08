@@ -1,10 +1,13 @@
 package com.epm.gestepm.model.shares.noprogrammed.dao;
 
+import com.epm.gestepm.model.shares.construction.dao.entity.ConstructionShareFile;
+import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.NoProgrammedShareFile;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.creator.NoProgrammedShareFileCreate;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.deleter.NoProgrammedShareFileDelete;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.filter.NoProgrammedShareFileFilter;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.finder.NoProgrammedShareFileByIdFinder;
+import com.epm.gestepm.model.shares.noprogrammed.dao.entity.updater.NoProgrammedShareFileUpdate;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -18,6 +21,9 @@ public interface NoProgrammedShareFileDao {
 
   @Valid
   NoProgrammedShareFile create(@Valid NoProgrammedShareFileCreate create);
+
+  @Valid
+  NoProgrammedShareFile update(@Valid NoProgrammedShareFileUpdate update);
 
   void delete(@Valid NoProgrammedShareFileDelete delete);
 
