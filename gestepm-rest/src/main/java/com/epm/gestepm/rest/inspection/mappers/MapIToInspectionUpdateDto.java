@@ -1,12 +1,15 @@
 package com.epm.gestepm.rest.inspection.mappers;
 
 import com.epm.gestepm.modelapi.inspection.dto.updater.InspectionUpdateDto;
-import com.epm.gestepm.restapi.openapi.model.UpdateInspectionV1Request;
+import com.epm.gestepm.restapi.openapi.model.UpdateInspectionV1RequestData;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Mapper(uses = MapIFToFileDto.class)
+@Mapper
 public interface MapIToInspectionUpdateDto {
 
-  InspectionUpdateDto from(UpdateInspectionV1Request req);
+    @Mapping(target = "files", ignore = true)
+    @Mapping(target = "materialsFile", ignore = true)
+    InspectionUpdateDto from(UpdateInspectionV1RequestData req);
 
 }

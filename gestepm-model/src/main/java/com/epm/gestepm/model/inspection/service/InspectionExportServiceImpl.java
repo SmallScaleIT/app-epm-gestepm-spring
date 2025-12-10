@@ -226,16 +226,8 @@ public class InspectionExportServiceImpl implements InspectionExportService {
 
             final InspectionFileDto file = this.inspectionFileService.findOrNotFound(new InspectionFileByIdFinderDto(id));
 
-            if (StringUtils.isNoneBlank(file.getContent())) {
-
-                final byte[] imageBytes = Base64.getDecoder().decode(file.getContent());
-                final byte[] compressedBytes = ImageUtils.compressImage(imageBytes, 0.5f);
-
-                if (compressedBytes == null) {
-                    continue;
-                }
-
-                final Image image = Image.getInstance(compressedBytes);
+            if (StringUtils.isNoneBlank(file.getUrl())) {
+                final Image image = Image.getInstance(file.getUrl());
 
                 if (image.getWidth() > pageWidth || image.getHeight() > pageHeight) {
                     image.scaleToFit(pageWidth, pageHeight);

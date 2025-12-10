@@ -9,7 +9,7 @@ data:
 
 gcp:
   storage:
-    bucket: gestepm_bucket_local
+    bucket: epm_gestepm_local
 
 gestepm:
   base:

@@ -207,11 +207,11 @@ public class ConstructionShareServiceImpl implements ConstructionShareService {
         final ConstructionShare updated = this.constructionShareDao.update(update);
         final ConstructionShareDto result = getMapper(MapCSToConstructionShareDto.class).from(updated);
 
+        this.sendMail(result, updateDto.getNotify());
+
         if (updateConstruction) {
             this.sendUpdateEmail(result);
         }
-
-        this.sendMail(result, updateDto.getNotify());
 
         return result;
     }

@@ -4,7 +4,7 @@ public abstract class InspectionAttributes {
 
   public static final String ATTR_I_ID = "attr_i_id";
 
-  public static final String ATTR_I_IDS = "p";
+  public static final String ATTR_I_IDS = "attr_i_ids";
 
   public static final String ATTR_I_SHARE_ID = "attr_i_share_id";
 
@@ -32,11 +32,15 @@ public abstract class InspectionAttributes {
 
   public static final String ATTR_I_MATERIALS_FILE_NAME = "attr_i_materials_file_name";
 
+  public static final String ATTR_I_MATERIALS_STORAGE_PATH = "attr_i_materials_storage_path";
+
   public static final String ATTR_I_TOPIC_ID = "attr_i_topic_id";
 
   public static final String ATTR_I_EQUIPMENT_HOURS = "attr_i_equipment_hours";
 
   public static final String ATTR_I_CURRENT = "attr_i_current";
+
+  public static final String ATTR_I_HAS_MATERIAL_FILE = "attr_i_has_material_file";
 
   public static final String ATTR_I_MODIFIED_AT = "attr_i_modified_at";
 

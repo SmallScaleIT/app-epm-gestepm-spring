@@ -13,7 +13,11 @@ import com.epm.gestepm.model.inspection.dao.entity.creator.InspectionFileCreate;
 import com.epm.gestepm.model.inspection.dao.entity.deleter.InspectionFileDelete;
 import com.epm.gestepm.model.inspection.dao.entity.filter.InspectionFileFilter;
 import com.epm.gestepm.model.inspection.dao.entity.finder.InspectionFileByIdFinder;
+import com.epm.gestepm.model.inspection.dao.entity.updater.InspectionFileUpdate;
 import com.epm.gestepm.model.inspection.dao.mappers.InspectionFileRowMapper;
+import com.epm.gestepm.model.shares.construction.dao.entity.ConstructionShareFile;
+import com.epm.gestepm.model.shares.construction.dao.entity.finder.ConstructionShareFileByIdFinder;
+import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.deleter.NoProgrammedShareFileDelete;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +28,7 @@ import java.util.Optional;
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.DAO;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.*;
 import static com.epm.gestepm.model.inspection.dao.constants.InspectionFileQueries.*;
+import static com.epm.gestepm.model.shares.construction.dao.constants.ConstructionShareFileQueries.QRY_UPDATE_CSF;
 import static com.epm.gestepm.model.shares.noprogrammed.dao.constants.NoProgrammedShareFileQueries.QRY_DELETE_NPSF;
 
 @Component("inspectionFileDao")
@@ -92,6 +97,29 @@ public class InspectionFileDaoImpl implements InspectionFileDao {
         return this.find(finder).orElse(null);
     }
 
+    @Override
+    @LogExecution(operation = OP_UPDATE,
+            debugOut = true,
+            msgIn = "Persisting inspection file",
+            msgOut = "Inspection file persisted OK",
+            errorMsg = "Failed to persist inspection file")
+    public InspectionFile update(InspectionFileUpdate update) {
+
+        final Integer id = update.getId();
+        final AttributeMap params = update.collectAttributes();
+
+        final InspectionFileByIdFinder finder = new InspectionFileByIdFinder();
+        finder.setId(id);
+
+        final SQLQuery sqlQuery = new SQLQuery()
+                .useQuery(QRY_UPDATE_IF)
+                .withParams(params);
+
+        this.sqlDatasource.execute(sqlQuery);
+
+        return this.find(finder).orElse(null);
+    }
+    
     @Override
     @LogExecution(operation = OP_DELETE,
             debugOut = true,

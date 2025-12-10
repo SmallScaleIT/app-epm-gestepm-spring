@@ -5,7 +5,7 @@ import com.epm.gestepm.model.inspection.dao.entity.creator.InspectionFileCreate;
 import com.epm.gestepm.model.inspection.dao.entity.deleter.InspectionFileDelete;
 import com.epm.gestepm.model.inspection.dao.entity.filter.InspectionFileFilter;
 import com.epm.gestepm.model.inspection.dao.entity.finder.InspectionFileByIdFinder;
-import com.epm.gestepm.model.shares.noprogrammed.dao.entity.deleter.NoProgrammedShareFileDelete;
+import com.epm.gestepm.model.inspection.dao.entity.updater.InspectionFileUpdate;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -13,13 +13,16 @@ import java.util.Optional;
 
 public interface InspectionFileDao {
 
-  List<InspectionFile> list(@Valid InspectionFileFilter filter);
+    List<InspectionFile> list(@Valid InspectionFileFilter filter);
 
-  Optional<@Valid InspectionFile> find(@Valid InspectionFileByIdFinder finder);
+    Optional<@Valid InspectionFile> find(@Valid InspectionFileByIdFinder finder);
 
-  @Valid
-  InspectionFile create(@Valid InspectionFileCreate create);
+    @Valid
+    InspectionFile create(@Valid InspectionFileCreate create);
 
-  void delete(@Valid InspectionFileDelete delete);
+    @Valid
+    InspectionFile update(@Valid InspectionFileUpdate update);
+
+    void delete(@Valid InspectionFileDelete delete);
 
 }

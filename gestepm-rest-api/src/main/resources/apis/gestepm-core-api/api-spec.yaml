@@ -3152,12 +3152,6 @@ components:
       x-stoplight:
         id: isocdt4oo7s7y
       type: object
-      required:
-        - id
-        - share
-        - action
-        - startDate
-        - firstTechnical
       properties:
         id:
           type: integer
@@ -3207,14 +3201,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Material'
-        materialsFile:
-          type: string
-          x-stoplight:
-            id: 8lfzk9pa7wyrg
         materialsFileName:
           type: string
           x-stoplight:
             id: 790fxpi66ikvh
+        materialsFileUrl:
+          type: string
+          x-stoplight:
+            id: 8lfzk9pa7wyrg
         equipmentHours:
           type: integer
           x-stoplight:
@@ -3236,6 +3230,12 @@ components:
           format: date-time
         updatedBy:
           $ref: '#/components/schemas/User'
+      required:
+        - id
+        - share
+        - action
+        - startDate
+        - firstTechnical
     NoProgrammedShare:
       title: NoProgrammedShare
       x-stoplight:
@@ -3458,10 +3458,6 @@ components:
           type: string
           x-stoplight:
             id: oe2w9nxlwwwkk
-        content:
-          type: string
-          x-stoplight:
-            id: prsxmvb3f9spa
         url:
           type: string
           x-stoplight:
@@ -3469,7 +3465,6 @@ components:
       required:
         - id
         - name
-        - content
         - url
     SubFamily:
       title: SubFamily
@@ -4699,69 +4694,73 @@ components:
               - action
     UpdateInspection:
       content:
-        application/json:
+        multipart/form-data:
           schema:
             type: object
-            required:
-              - userId
             properties:
-              userId:
-                type: integer
-              action:
-                type: string
-                x-stoplight:
-                  id: g7a5og6lprr3z
-                enum:
-                  - INTERVENTION
-                  - DIAGNOSIS
-                  - FOLLOWING
-              description:
-                type: string
-                x-stoplight:
-                  id: 51g2z0w667qn5
-              firstTechnicalId:
-                type: integer
-                x-stoplight:
-                  id: hlj8iv7ybklpt
-              secondTechnicalId:
-                type: string
-                x-stoplight:
-                  id: 74cdncarps5va
-              signature:
-                type: string
-                x-stoplight:
-                  id: tuy7ko9etwryl
-              operatorSignature:
-                type: string
-                x-stoplight:
-                  id: m1yshgsj7ekbo
-              clientName:
-                type: string
-                x-stoplight:
-                  id: 0c6m3cyog2nhk
-              materials:
-                type: array
-                x-stoplight:
-                  id: begtcvhk3jc1o
-                items:
-                  $ref: '#/components/schemas/Material'
-              materialsFile:
+              data:
                 type: object
                 x-stoplight:
-                  id: 52so0d165nfib
+                  id: jh8hsdf1trqe1
                 properties:
-                  name:
+                  userId:
+                    type: integer
+                  action:
                     type: string
                     x-stoplight:
-                      id: 34xgcj290t9pz
-                  content:
+                      id: g7a5og6lprr3z
+                    enum:
+                      - INTERVENTION
+                      - DIAGNOSIS
+                      - FOLLOWING
+                  description:
                     type: string
                     x-stoplight:
-                      id: 34eu2yg71stbp
-              equipmentHours:
-                type: integer
-                x-stoplight:
-                  id: f68utayhplewm
+                      id: 51g2z0w667qn5
+                  firstTechnicalId:
+                    type: integer
+                    x-stoplight:
+                      id: hlj8iv7ybklpt
+                  secondTechnicalId:
+                    type: string
+                    x-stoplight:
+                      id: 74cdncarps5va
+                  signature:
+                    type: string
+                    x-stoplight:
+                      id: tuy7ko9etwryl
+                  operatorSignature:
+                    type: string
+                    x-stoplight:
+                      id: m1yshgsj7ekbo
+                  clientName:
+                    type: string
+                    x-stoplight:
+                      id: 0c6m3cyog2nhk
+                  materials:
+                    type: array
+                    x-stoplight:
+                      id: begtcvhk3jc1o
+                    items:
+                      $ref: '#/components/schemas/Material'
+                  equipmentHours:
+                    type: integer
+                    x-stoplight:
+                      id: f68utayhplewm
+                  notify:
+                    type: boolean
+                    x-stoplight:
+                      id: c5vq4d1j24aah
+                  startDate:
+                    type: string
+                    x-stoplight:
+                      id: 8bx8m9m6sf8we
+                    format: date-time
+                  endDate:
+                    type: string
+                    x-stoplight:
+                      id: x8iadh3wymskh
+                    format: date-time
               files:
                 type: array
                 x-stoplight:
@@ -4769,30 +4768,13 @@ components:
                 items:
                   x-stoplight:
                     id: drjhxhl33x20c
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                      x-stoplight:
-                        id: vrhnxcl5lm6sy
-                    content:
-                      type: string
-                      x-stoplight:
-                        id: krfqwi7lui6wg
-              notify:
-                type: boolean
-                x-stoplight:
-                  id: c5vq4d1j24aah
-              startDate:
+                  type: string
+                  format: binary
+              materialsFile:
                 type: string
                 x-stoplight:
-                  id: 8bx8m9m6sf8we
-                format: date-time
-              endDate:
-                type: string
-                x-stoplight:
-                  id: x8iadh3wymskh
-                format: date-time
+                  id: bbru9oyz9br1p
+                format: binary
     CreatePersonalExpenseSheet:
       content:
         application/json:

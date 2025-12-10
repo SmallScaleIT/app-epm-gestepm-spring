@@ -26,11 +26,12 @@ public class NoProgrammedShareFileRowMapper implements RowMapper<NoProgrammedSha
   public NoProgrammedShareFile mapRow(ResultSet rs, int i) throws SQLException {
 
     final NoProgrammedShareFile noProgrammedShareFile = new NoProgrammedShareFile();
+    final byte[] bytes = FileUtils.decompressBytes(rs.getBytes(COL_NPSF_CONTENT));
 
     noProgrammedShareFile.setId(rs.getInt(COL_NPSF_ID));
     noProgrammedShareFile.setShareId(rs.getInt(COL_NPSF_SHARE_ID));
     noProgrammedShareFile.setName(rs.getString(COL_NPSF_NAME));
-    noProgrammedShareFile.setContent(FileUtils.decompressBytes(rs.getBytes(COL_NPSF_CONTENT))); // FIXME: to remove
+    noProgrammedShareFile.setContent(bytes != null ? bytes : rs.getBytes(COL_NPSF_CONTENT)); // FIXME: to remove
     noProgrammedShareFile.setStoragePath(nullableString(rs, COL_NPSF_STORAGE_PATH));
 
     return noProgrammedShareFile;

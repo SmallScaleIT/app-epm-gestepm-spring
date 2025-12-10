@@ -28,6 +28,8 @@ public class InspectionFilter extends Orderable implements CollectableAttributes
 
   private Boolean current;
 
+  private Boolean hasMaterialFile;
+
   @Override
   public AttributeMap collectAttributes() {
 
@@ -39,6 +41,7 @@ public class InspectionFilter extends Orderable implements CollectableAttributes
     map.putTimestamp(ATTR_I_START_DATE, this.startDate);
     map.putTimestamp(ATTR_I_END_DATE, this.endDate);
     map.put(ATTR_I_CURRENT, this.current);
+    map.putBooleanAsInt(ATTR_I_HAS_MATERIAL_FILE, this.hasMaterialFile);
 
     return map;
   }

@@ -54,9 +54,13 @@ public class Inspection implements AuditUpdate, Serializable {
 
   private Set<Material> materials = new HashSet<>();
 
-  private String materialsFile;
+  private byte[] materialsFile;
 
   private String materialsFileName;
+
+  private String materialsStoragePath;
+
+  private String materialsFileUrl;
 
   private Integer equipmentHours;
 

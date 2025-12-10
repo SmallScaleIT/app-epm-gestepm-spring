@@ -8,26 +8,32 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Base64;
 
+import static com.epm.gestepm.lib.jdbc.utils.ResultSetMappingUtils.nullableString;
+
 public class InspectionFileRowMapper implements RowMapper<InspectionFile> {
 
-  public static final String COL_IF_ID = "inspection_file_id";
+    public static final String COL_IF_ID = "inspection_file_id";
 
-  public static final String COL_IF_SHARE_ID = "inspection_id";
+    public static final String COL_IF_SHARE_ID = "inspection_id";
 
-  public static final String COL_IF_NAME = "name";
+    public static final String COL_IF_NAME = "name";
 
-  public static final String COL_IF_CONTENT = "content";
+    public static final String COL_IF_STORAGE_PATH = "storage_path";
 
-  @Override
-  public InspectionFile mapRow(ResultSet rs, int i) throws SQLException {
+    public static final String COL_IF_CONTENT = "content";
 
-    final InspectionFile inspectionFile = new InspectionFile();
+    @Override
+    public InspectionFile mapRow(ResultSet rs, int i) throws SQLException {
 
-    inspectionFile.setId(rs.getInt(COL_IF_ID));
-    inspectionFile.setInspectionId(rs.getInt(COL_IF_SHARE_ID));
-    inspectionFile.setName(rs.getString(COL_IF_NAME));
-    inspectionFile.setContent(Base64.getEncoder().encodeToString(FileUtils.decompressBytes(rs.getBytes(COL_IF_CONTENT))));
+        final InspectionFile inspectionFile = new InspectionFile();
+        final byte[] bytes = FileUtils.decompressBytes(rs.getBytes(COL_IF_CONTENT));
 
-    return inspectionFile;
-  }
+        inspectionFile.setId(rs.getInt(COL_IF_ID));
+        inspectionFile.setInspectionId(rs.getInt(COL_IF_SHARE_ID));
+        inspectionFile.setName(rs.getString(COL_IF_NAME));
+        inspectionFile.setContent(bytes != null ? bytes : rs.getBytes(COL_IF_CONTENT));
+        inspectionFile.setStoragePath(nullableString(rs, COL_IF_STORAGE_PATH)); // FIXME: to remove
+
+        return inspectionFile;
+    }
 }

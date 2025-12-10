@@ -197,22 +197,6 @@ function resizeCanvas(canvas) {
 	}
 }
 
-async function parseFiles(editForm) {
-	const selector = editForm.querySelector('[name="files"]');
-	let filesData = [];
-	if (selector && selector.files) {
-		for (let i = 0; i < selector.files.length; i++) {
-			const file = selector.files[i];
-
-			filesData.push({
-				name: file.name,
-				content: await toBase64(file)
-			});
-		}
-	}
-	return filesData ? filesData : null;
-}
-
 function resetForm(formSelector) {
 	const form = document.querySelector(formSelector);
 	if (!form) return;

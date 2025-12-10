@@ -115,7 +115,7 @@ public class ConstructionShareFileServiceImpl implements ConstructionShareFileSe
     @RequirePermits(value = PRMT_EDIT_CS, action = "Update construction share file")
     @LogExecution(operation = OP_CREATE,
             debugOut = true,
-            msgIn = "Updating new construction share file",
+            msgIn = "Updating construction share file",
             msgOut = "Construction share file OK",
             errorMsg = "Failed to update construction share file")
     public ConstructionShareFileDto update(ConstructionShareFileUpdateDto updateDto) {

@@ -505,7 +505,7 @@
             createInspectionBtn.classList.add('d-none');
         }
 
-        showFiles();
+        loadFiles(files);
     }
 
     function appendElementToList(element, list) {

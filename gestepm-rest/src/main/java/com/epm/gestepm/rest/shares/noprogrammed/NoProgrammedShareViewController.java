@@ -120,7 +120,7 @@ public class NoProgrammedShareViewController {
                 .orElse(ActionEnumDto.FOLLOWING);
 
         final NoProgrammedShareFileFilterDto filesFilterDto = new NoProgrammedShareFileFilterDto();
-        filterDto.setShareId(id);
+        filesFilterDto.setShareId(id);
 
         final List<NoProgrammedShareFileDto> files = this.noProgrammedShareFileService.list(filesFilterDto).stream()
                 .sorted(Comparator.comparing(NoProgrammedShareFileDto::getName, String.CASE_INSENSITIVE_ORDER))

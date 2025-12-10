@@ -25,6 +25,8 @@ public class InspectionFilterDto extends OrderableDto implements UsableAsCacheKe
 
   private Boolean current;
 
+  private Boolean hasMaterialFile;
+
   @Override
   public String asCacheKey() {
 
@@ -36,6 +38,7 @@ public class InspectionFilterDto extends OrderableDto implements UsableAsCacheKe
     cacheKeyBuilder.addElement("startDate", this.startDate);
     cacheKeyBuilder.addElement("endDate", this.endDate);
     cacheKeyBuilder.addElement("current", this.current);
+    cacheKeyBuilder.addElement("hasMaterialFile", this.hasMaterialFile);
 
     return cacheKeyBuilder.toString();
   }

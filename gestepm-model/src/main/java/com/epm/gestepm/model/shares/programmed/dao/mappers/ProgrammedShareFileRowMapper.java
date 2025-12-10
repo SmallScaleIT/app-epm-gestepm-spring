@@ -25,11 +25,12 @@ public class ProgrammedShareFileRowMapper implements RowMapper<ProgrammedShareFi
   public ProgrammedShareFile mapRow(ResultSet rs, int i) throws SQLException {
 
     final ProgrammedShareFile programmedShareFile = new ProgrammedShareFile();
+    final byte[] bytes = FileUtils.decompressBytes(rs.getBytes(COL_PSF_CONTENT));
 
     programmedShareFile.setId(rs.getInt(COL_PSF_ID));
     programmedShareFile.setShareId(rs.getInt(COL_PSF_SHARE_ID));
     programmedShareFile.setName(rs.getString(COL_PSF_NAME));
-    programmedShareFile.setContent(FileUtils.decompressBytes(rs.getBytes(COL_PSF_CONTENT)));
+    programmedShareFile.setContent(bytes != null ? bytes : rs.getBytes(COL_PSF_CONTENT));
     programmedShareFile.setStoragePath(nullableString(rs, COL_PSF_STORAGE_PATH)); // FIXME: to remove
 
     return programmedShareFile;

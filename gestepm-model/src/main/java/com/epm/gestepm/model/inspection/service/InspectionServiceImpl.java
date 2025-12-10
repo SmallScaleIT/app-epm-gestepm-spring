@@ -47,6 +47,10 @@ import com.epm.gestepm.modelapi.shares.noprogrammed.service.NoProgrammedShareSer
 import com.epm.gestepm.modelapi.user.dto.UserDto;
 import com.epm.gestepm.modelapi.user.dto.finder.UserByIdFinderDto;
 import com.epm.gestepm.modelapi.user.service.UserService;
+import com.epm.gestepm.storageapi.dto.FileResponse;
+import com.epm.gestepm.storageapi.dto.creator.FileCreate;
+import com.epm.gestepm.storageapi.dto.finder.FileByNameFinder;
+import com.epm.gestepm.storageapi.service.GoogleCloudStorageService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -56,6 +60,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -74,9 +79,13 @@ import static org.mapstruct.factory.Mappers.getMapper;
 @EnableExecutionLog(layerMarker = SERVICE)
 public class InspectionServiceImpl implements InspectionService {
 
+    private static final String PATH_FOLDER = "inspection-materials";
+
     private final CustomerService customerService;
 
     private final EmailService emailService;
+
+    private final GoogleCloudStorageService googleCloudStorageService;
 
     private final HttpServletRequest request;
 
@@ -112,9 +121,10 @@ public class InspectionServiceImpl implements InspectionService {
     public List<InspectionDto> list(InspectionFilterDto filterDto) {
         final InspectionFilter filter = getMapper(MapIToInspectionFilter.class).from(filterDto);
 
-        final List<Inspection> page = this.inspectionDao.list(filter);
+        final List<Inspection> list = this.inspectionDao.list(filter);
+        list.forEach(this::populateMaterialFileUrl);
 
-        return getMapper(MapIToInspectionDto.class).from(page);
+        return getMapper(MapIToInspectionDto.class).from(list);
     }
 
     @Override
@@ -128,6 +138,7 @@ public class InspectionServiceImpl implements InspectionService {
         final InspectionFilter filter = getMapper(MapIToInspectionFilter.class).from(filterDto);
 
         final Page<Inspection> page = this.inspectionDao.list(filter, offset, limit);
+        page.getContent().forEach(this::populateMaterialFileUrl);
 
         return getMapper(MapIToInspectionDto.class).from(page);
     }
@@ -143,6 +154,7 @@ public class InspectionServiceImpl implements InspectionService {
         final InspectionByIdFinder finder = getMapper(MapIToInspectionByIdFinder.class).from(finderDto);
 
         final Optional<Inspection> found = this.inspectionDao.find(finder);
+        found.ifPresent(this::populateMaterialFileUrl);
 
         return found.map(getMapper(MapIToInspectionDto.class)::from);
     }
@@ -180,6 +192,7 @@ public class InspectionServiceImpl implements InspectionService {
         create.setStartDate(LocalDateTime.now());
 
         final Inspection result = this.inspectionDao.create(create);
+        this.populateMaterialFileUrl(result);
 
         this.updateNoProgrammedShare(noProgrammedShare.getId(), createDto.getFirstTechnicalId(), NoProgrammedShareStateEnumDto.IN_PROGRESS);
 
@@ -199,26 +212,34 @@ public class InspectionServiceImpl implements InspectionService {
         final NoProgrammedShareDto noProgrammedShare = this.noProgrammedShareService.findOrNotFound(
                 new NoProgrammedShareByIdFinderDto(inspection.getShareId()));
 
-        this.inspectionChecker.checker(noProgrammedShare, inspection, updateDto);
+        /*this.inspectionChecker.checker(noProgrammedShare, inspection, updateDto);
 
         if (updateDto.getEndDate() == null) {
             updateDto.setEndDate(LocalDateTime.now());
-        }
+        }*/
 
         final InspectionUpdate update = getMapper(MapIToInspectionUpdate.class).from(updateDto,
                 getMapper(MapIToInspectionUpdate.class).from(inspection));
 
-        this.auditProvider.auditUpdate(update);
+        if (updateDto.getMaterialsFile() != null) {
+            final FileResponse fileResponse = this.uploadMaterialsFile(updateDto.getMaterialsFile());
+
+            update.setMaterialsFileName(updateDto.getMaterialsFile().getOriginalFilename());
+            update.setMaterialsStoragePath(fileResponse.getFileName());
+        }
+
+        // FIXME: TO REMOVE: this.auditProvider.auditUpdate(update);
 
         final Inspection updated = this.inspectionDao.update(update);
+        this.populateMaterialFileUrl(updated);
 
         final InspectionDto result = getMapper(MapIToInspectionDto.class).from(updated);
 
-        if (result.getTopicId() == null) {
+        /*if (result.getTopicId() == null) {
             this.createForumComment(result, noProgrammedShare);
-        }
+        }*/
 
-        this.sendMail(result, updateDto.getNotify());
+        // FIXME: this.sendMail(result, updateDto.getNotify());
 
         return result;
     }
@@ -384,5 +405,20 @@ public class InspectionServiceImpl implements InspectionService {
         emailGroup.setAttachments(List.of(attachment));
 
         this.emailService.sendEmail(emailGroup);
+    }
+
+    private FileResponse uploadMaterialsFile(final MultipartFile file) {
+        return this.googleCloudStorageService.uploadFile(new FileCreate(PATH_FOLDER + "/" + UUID.randomUUID(), file));
+    }
+
+    private void populateMaterialFileUrl(final Inspection inspection) {
+        if (inspection.getMaterialsStoragePath() == null) {
+            return;
+        }
+
+        final FileByNameFinder finder = new FileByNameFinder(inspection.getMaterialsStoragePath());
+        final FileResponse fileResponse = this.googleCloudStorageService.getFile(finder);
+
+        inspection.setMaterialsFileUrl(fileResponse.getUrl());
     }
 }

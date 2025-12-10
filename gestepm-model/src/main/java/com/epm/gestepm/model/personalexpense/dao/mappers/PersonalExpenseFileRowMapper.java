@@ -22,11 +22,12 @@ public class PersonalExpenseFileRowMapper implements RowMapper<PersonalExpenseFi
   public PersonalExpenseFile mapRow(ResultSet rs, int i) throws SQLException {
 
     final PersonalExpenseFile personalExpenseFile = new PersonalExpenseFile();
+    final byte[] bytes = FileUtils.decompressBytes(rs.getBytes(COL_PEF_CONTENT));
 
     personalExpenseFile.setId(rs.getInt(COL_PEF_ID));
     personalExpenseFile.setPersonalExpenseId(rs.getInt(COL_PEF_SHARE_ID));
     personalExpenseFile.setName(rs.getString(COL_PEF_NAME));
-    personalExpenseFile.setContent(Base64.getEncoder().encodeToString(FileUtils.decompressBytes(rs.getBytes(COL_PEF_CONTENT))));
+    personalExpenseFile.setContent(Base64.getEncoder().encodeToString(FileUtils.decompressBytes(rs.getBytes(COL_PEF_CONTENT)))); // (bytes != null ? bytes : rs.getBytes(COL_PEF_CONTENT));
 
     return personalExpenseFile;
   }

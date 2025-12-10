@@ -1,9 +1,15 @@
 package com.epm.gestepm.model.process;
 
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
+import com.epm.gestepm.model.inspection.service.mapper.MapIToInspectionUpdateDto;
+import com.epm.gestepm.modelapi.inspection.dto.InspectionDto;
 import com.epm.gestepm.modelapi.inspection.dto.InspectionFileDto;
 import com.epm.gestepm.modelapi.inspection.dto.filter.InspectionFileFilterDto;
+import com.epm.gestepm.modelapi.inspection.dto.filter.InspectionFilterDto;
+import com.epm.gestepm.modelapi.inspection.dto.updater.InspectionFileUpdateDto;
+import com.epm.gestepm.modelapi.inspection.dto.updater.InspectionUpdateDto;
 import com.epm.gestepm.modelapi.inspection.service.InspectionFileService;
+import com.epm.gestepm.modelapi.inspection.service.InspectionService;
 import com.epm.gestepm.modelapi.shares.construction.dto.ConstructionShareFileDto;
 import com.epm.gestepm.modelapi.shares.construction.dto.filter.ConstructionShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.construction.dto.updater.ConstructionShareFileUpdateDto;
@@ -43,6 +49,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.DELEGATOR;
+import static org.mapstruct.factory.Mappers.getMapper;
 
 @Validated
 @Service
@@ -56,6 +63,8 @@ public class MigrationStorageDelegator {
 
     private final GoogleCloudStorageService googleCloudStorageService;
 
+    private final InspectionService inspectionService;
+
     private final InspectionFileService inspectionFileService;
 
     private final NoProgrammedShareFileService noProgrammedShareFileService;
@@ -66,8 +75,9 @@ public class MigrationStorageDelegator {
 
     public void runMigration() {
         // this.migrateConstructionShareFiles();
-        this.migrateNoProgrammedShareFiles();
+        // this.migrateNoProgrammedShareFiles();
         // this.migrateProgrammedShareFiles();
+        this.migrateInspections();
         // this.migrateInspectionFiles();
         // this.migrateWorkShareFiles();
     }
@@ -160,21 +170,59 @@ public class MigrationStorageDelegator {
     }
 
     @SneakyThrows
-    private void migrateInspectionFiles() {
+    private void migrateInspections() {
+        final InspectionFilterDto filterDto = new InspectionFilterDto();
+        filterDto.setIds(List.of(18677));
+        // filterDto.setHasMaterialFile(true);
 
-        final List<InspectionFileDto> files = this.inspectionFileService.list(new InspectionFileFilterDto());
+        final List<InspectionDto> inspections = this.inspectionService.list(filterDto);
+
+        for (final InspectionDto inspection : inspections) {
+            final Path path = Paths.get(inspection.getMaterialsFileName());
+            final String contentType = Files.probeContentType(path);
+            final byte[] content = inspection.getMaterialsFile();
+
+            final MultipartCustomFile multipartCustomFile = new MultipartCustomFile(inspection.getMaterialsFileName(), contentType, content);
+
+            final FileResponse fileResponse = this.uploadFile(multipartCustomFile,  "inspection-materials");
+
+            final InspectionUpdateDto updateDto = getMapper(MapIToInspectionUpdateDto.class).from(inspection);
+            updateDto.setMaterialsStoragePath(fileResponse.getFileName());
+
+            this.inspectionService.update(updateDto);
+
+            log.info(String.format("Inspection [%s] has been migrated successfully.", inspection.getId()));
+
+            break;
+        }
+    }
+
+    @SneakyThrows
+    private void migrateInspectionFiles() {
+        final InspectionFileFilterDto filterDto = new InspectionFileFilterDto();
+        filterDto.setIds(List.of(23));
+
+        final List<InspectionFileDto> files = this.inspectionFileService.list(filterDto);
 
         for (final InspectionFileDto file : files) {
-
             final Path path = Paths.get(file.getName());
             final String contentType = Files.probeContentType(path);
-            final byte[] content = Base64.getDecoder().decode(file.getContent());
+            final byte[] content = this.compressImageToJpegBytes(file.getContent(), 1600, 0.8f);
 
             final MultipartCustomFile multipartCustomFile = new MultipartCustomFile(file.getName(), contentType, content);
 
-            final FileResponse fileResponse = this.uploadFile(multipartCustomFile, "inspections");
+            final FileResponse fileResponse = this.uploadFile(multipartCustomFile,  "inspections");
 
-            int i = 0;
+            final InspectionFileUpdateDto updateDto = new InspectionFileUpdateDto();
+            updateDto.setId(file.getId());
+            updateDto.setName(file.getName());
+            updateDto.setStoragePath(fileResponse.getFileName());
+
+            this.inspectionFileService.update(updateDto);
+
+            log.info(String.format("Inspection file [%s] has been migrated successfully.", file.getId()));
+
+            break;
         }
     }
 

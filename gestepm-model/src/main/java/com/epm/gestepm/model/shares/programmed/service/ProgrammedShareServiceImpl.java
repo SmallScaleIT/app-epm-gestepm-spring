@@ -210,8 +210,9 @@ public class ProgrammedShareServiceImpl implements ProgrammedShareService {
 
         this.sendMail(result, updateDto.getNotify());
 
-        if (updatePrg)
+        if (updatePrg) {
             this.sendUpdateEmail(result);
+        }
 
         return result;
     }

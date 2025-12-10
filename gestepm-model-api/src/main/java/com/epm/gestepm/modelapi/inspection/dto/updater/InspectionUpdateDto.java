@@ -4,6 +4,7 @@ import com.epm.gestepm.modelapi.inspection.dto.ActionEnumDto;
 import com.epm.gestepm.modelapi.inspection.dto.creator.InspectionFileCreateDto;
 import com.epm.gestepm.modelapi.inspection.dto.creator.MaterialCreateDto;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -42,13 +43,15 @@ public class InspectionUpdateDto {
 
     private List<MaterialCreateDto> materials;
 
-    private InspectionFileCreateDto materialsFile;
+    private MultipartFile materialsFile;
+
+    private String materialsStoragePath;
 
     private Integer equipmentHours;
 
     private Integer topicId;
 
-    private Set<InspectionFileCreateDto> files;
+    private List<MultipartFile> files;
 
     private Boolean notify;
 

@@ -7,6 +7,7 @@ sql:
       ifi.inspection_file_id,
       ifi.inspection_id,
       ifi.name,
+      ifi.storage_path,
       ifi.content
     FROM ${sch-gestepm}.inspection_file ifi
     
@@ -17,13 +18,25 @@ sql:
     INSERT INTO ${sch-gestepm}.inspection_file (
       inspection_id,
       name,
+      storage_path,
       content
     )
     VALUES (
       :attr_if_inspection_id,
       :attr_if_name,
+      :attr_if_storage_path,
       :attr_if_content
     )
+
+  qry-update-if: |
+
+    UPDATE
+      ${sch-gestepm}.inspection_file
+    SET
+      name = :attr_if_name,
+      storage_path = :attr_if_storage_path
+    WHERE
+      inspection_file_id = :attr_if_id
 
   qry-delete-if: |
     

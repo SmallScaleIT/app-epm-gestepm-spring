@@ -273,28 +273,44 @@
             const notify = editForm.querySelector('[name="clientNotif"]');
             const startDate = editForm.querySelector('[name="startDate"]');
             const endDate = editForm.querySelector('[name="endDate"]');
-
             const materials = materialsDataTable.rows().data().toArray().map(row => ({ ...row, id: row.id < 0 ? null : row.id}));
-            const materialsFile = await parseMaterialsFile(editForm);
-            const files = await parseFiles(editForm);
+            const materialsSelector = editForm.querySelector('[name="materialsFile"]');
+            const selector = editForm.querySelector('[name="files"]');
 
-            axios.patch('/v1' + window.location.pathname, {
+            let data = {
                 userId: ${user.id},
                 description: description ? description.value : null,
                 signature: !signatures.customer.isEmpty() ? signatures.customer.toDataURL() : null,
                 operatorSignature: !signatures.operator.isEmpty() ? signatures.operator.toDataURL() : null,
                 clientName: clientName ? clientName?.value?.trim() : null,
                 materials: materialsModified ? materials : null,
-                materialsFile: materialsFile,
                 equipmentHours: equipmentHours ? equipmentHours.value : null,
-                files: files,
                 notify: notify.checked,
                 startDate: startDate.value,
-                endDate: endDate ? endDate.value : null,
-            }).then((response) => {
-                const inspection = response.data.data;
-                window.location.replace('/shares/no-programmed/' + inspection.share.id);
-            }).catch(error => showNotify(error.response.data.detail, 'danger'))
+                endDate: endDate ? endDate.value : null
+            }
+
+            const formData = new FormData();
+            formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+
+            if (selector && selector.files) {
+                for (let i = 0; i < selector.files.length; i++) {
+                    formData.append('files', selector.files[i]);
+                }
+            }
+
+            if (materialsSelector && materialsSelector.files) {
+                for (let i = 0; i < materialsSelector.files.length; i++) {
+                    formData.append('materialsFile', materialsSelector.files[i]);
+                }
+            }
+
+            axios.patch('/v1' + window.location.pathname, formData)
+                .then((response) => {
+                    const inspection = response.data.data;
+                    window.location.replace('/shares/no-programmed/' + inspection.share.id);
+                })
+                .catch(error => showNotify(error.response.data.detail, 'danger'))
                 .finally(() => hideLoading());
         })
     }
@@ -334,14 +350,6 @@
             endDatePicker.parentElement.remove();
         }
 
-        let materialsFile = null;
-        if (inspection.materialsFile) {
-            materialsFile = {
-                name: inspection.materialsFileName,
-                content: inspection.materialsFile
-            }
-        }
-
         if (inspection.action === 'FOLLOWING') {
             $('.visibility-id').hide();
         }
@@ -352,6 +360,11 @@
         }
         else if (share.state !== 'CLOSED') {
             updateEditButton(editBtn);
+        }
+
+        const materialsFile = {
+            name: inspection.materialsFileName,
+            url: inspection.materialsFileUrl
         }
 
         loadFiles(inspection.files, materialsFile);
@@ -422,17 +435,9 @@
 
         if (files.length > 0) {
             const downloadBase64File = (file) => {
-                const binaryData = atob(file.content);
-                const byteNumbers = new Uint8Array(binaryData.length);
-
-                for (let i = 0; i < binaryData.length; i++) {
-                    byteNumbers[i] = binaryData.charCodeAt(i);
-                }
-
                 const link = document.createElement('a');
-                const blob = new Blob([byteNumbers], { type: 'application/octet-stream' });
 
-                link.href = URL.createObjectURL(blob);
+                link.href = file.url;
                 link.download = file.name;
                 link.textContent = file.name;
                 link.classList.add('btn', 'btn-outline-primary', 'btn-xs', 'mr-1');
@@ -457,17 +462,6 @@
 
             filesFormGroup.appendChild(linksContainer);
         }
-    }
-
-    async function parseMaterialsFile(editForm) {
-        const selector = editForm.querySelector('[name="materialsFile"]');
-        if (selector && selector.files && selector.files.length > 0) {
-            return {
-                name: selector.files[0].name,
-                content: await toBase64(selector.files[0])
-            }
-        }
-        return null;
     }
 
     function deleteFile(file, btn, link) {

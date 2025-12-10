@@ -26,11 +26,12 @@ public class WorkShareFileRowMapper implements RowMapper<WorkShareFile> {
   public WorkShareFile mapRow(ResultSet rs, int i) throws SQLException {
 
     final WorkShareFile workShareFile = new WorkShareFile();
+    final byte[] bytes = FileUtils.decompressBytes(rs.getBytes(COL_WSF_CONTENT));
 
     workShareFile.setId(rs.getInt(COL_WSF_ID));
     workShareFile.setShareId(rs.getInt(COL_WSF_SHARE_ID));
     workShareFile.setName(rs.getString(COL_WSF_NAME));
-    workShareFile.setContent(FileUtils.decompressBytes(rs.getBytes(COL_WSF_CONTENT)));
+    workShareFile.setContent(bytes != null ? bytes : rs.getBytes(COL_WSF_CONTENT));;
     workShareFile.setStoragePath(nullableString(rs, COL_WSF_STORAGE_PATH)); // FIXME: to remove
 
     return workShareFile;
