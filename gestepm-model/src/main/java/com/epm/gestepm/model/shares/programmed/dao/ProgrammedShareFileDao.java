@@ -1,7 +1,6 @@
 package com.epm.gestepm.model.shares.programmed.dao;
 
-import com.epm.gestepm.model.shares.construction.dao.entity.ConstructionShareFile;
-import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
+import com.epm.gestepm.lib.types.Page;
 import com.epm.gestepm.model.shares.programmed.dao.entity.ProgrammedShareFile;
 import com.epm.gestepm.model.shares.programmed.dao.entity.creator.ProgrammedShareFileCreate;
 import com.epm.gestepm.model.shares.programmed.dao.entity.deleter.ProgrammedShareFileDelete;
@@ -15,16 +14,18 @@ import java.util.Optional;
 
 public interface ProgrammedShareFileDao {
 
-  List<ProgrammedShareFile> list(@Valid ProgrammedShareFileFilter filter);
+    List<ProgrammedShareFile> list(@Valid ProgrammedShareFileFilter filter);
 
-  Optional<@Valid ProgrammedShareFile> find(@Valid ProgrammedShareFileByIdFinder finder);
+    Page<ProgrammedShareFile> list(@Valid ProgrammedShareFileFilter filter, Long offset, Long limit);
 
-  @Valid
-  ProgrammedShareFile create(@Valid ProgrammedShareFileCreate create);
+    Optional<@Valid ProgrammedShareFile> find(@Valid ProgrammedShareFileByIdFinder finder);
 
-  @Valid
-  ProgrammedShareFile update(@Valid ProgrammedShareFileUpdate update);
+    @Valid
+    ProgrammedShareFile create(@Valid ProgrammedShareFileCreate create);
 
-  void delete(@Valid ProgrammedShareFileDelete delete);
+    @Valid
+    ProgrammedShareFile update(@Valid ProgrammedShareFileUpdate update);
+
+    void delete(@Valid ProgrammedShareFileDelete delete);
 
 }

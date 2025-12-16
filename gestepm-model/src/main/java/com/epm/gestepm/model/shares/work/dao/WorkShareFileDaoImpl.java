@@ -6,11 +6,10 @@ import com.epm.gestepm.lib.jdbc.api.query.SQLInsert;
 import com.epm.gestepm.lib.jdbc.api.query.SQLQuery;
 import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchMany;
 import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchOne;
+import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchPage;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.lib.logging.annotation.LogExecution;
-import com.epm.gestepm.model.shares.construction.dao.entity.ConstructionShareFile;
-import com.epm.gestepm.model.shares.construction.dao.entity.finder.ConstructionShareFileByIdFinder;
-import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
+import com.epm.gestepm.lib.types.Page;
 import com.epm.gestepm.model.shares.work.dao.entity.WorkShareFile;
 import com.epm.gestepm.model.shares.work.dao.entity.creator.WorkShareFileCreate;
 import com.epm.gestepm.model.shares.work.dao.entity.deleter.WorkShareFileDelete;
@@ -26,7 +25,6 @@ import java.util.Optional;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.DAO;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.*;
-import static com.epm.gestepm.model.shares.construction.dao.constants.ConstructionShareFileQueries.QRY_UPDATE_CSF;
 import static com.epm.gestepm.model.shares.work.dao.constants.WorkShareFileQueries.*;
 
 @Component("workShareFileDao")
@@ -51,6 +49,26 @@ public class WorkShareFileDaoImpl implements WorkShareFileDao {
                 .useRowMapper(new WorkShareFileRowMapper())
                 .useQuery(QRY_LIST_OF_WSF)
                 .useFilter(FILTER_WSF_BY_PARAMS)
+                .withParams(filter.collectAttributes());
+
+        return this.sqlDatasource.fetch(sqlQuery);
+    }
+
+    @Override
+    @LogExecution(operation = OP_READ,
+            debugOut = true,
+            msgIn = "Querying page of work share files",
+            msgOut = "Querying page of work share files OK",
+            errorMsg = "Failed to query page of work share files")
+    public Page<WorkShareFile> list(WorkShareFileFilter filter, Long offset, Long limit) {
+
+        final SQLQueryFetchPage<WorkShareFile> sqlQuery = new SQLQueryFetchPage<WorkShareFile>()
+                .useRowMapper(new WorkShareFileRowMapper())
+                .useQuery(QRY_PAGE_OF_WSF)
+                .useCountQuery(QRY_COUNT_OF_WSF)
+                .useFilter(FILTER_WSF_BY_PARAMS)
+                .offset(offset)
+                .limit(limit)
                 .withParams(filter.collectAttributes());
 
         return this.sqlDatasource.fetch(sqlQuery);

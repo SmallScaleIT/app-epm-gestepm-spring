@@ -13,34 +13,37 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class InspectionFilterDto extends OrderableDto implements UsableAsCacheKey {
 
-  private List<Integer> ids;
+    private List<Integer> ids;
 
-  private Integer shareId;
+    private Integer shareId;
 
-  private Integer projectId;
+    private Integer projectId;
 
-  private LocalDateTime startDate;
+    private LocalDateTime startDate;
 
-  private LocalDateTime endDate;
+    private LocalDateTime endDate;
 
-  private Boolean current;
+    private Boolean current;
 
-  private Boolean hasMaterialFile;
+    private Boolean hasMaterialFile;
 
-  @Override
-  public String asCacheKey() {
+    private Boolean needMigration;
 
-    final CacheKeyBuilder cacheKeyBuilder = new CacheKeyBuilder();
+    @Override
+    public String asCacheKey() {
 
-    cacheKeyBuilder.addElement("ids", this.ids);
-    cacheKeyBuilder.addElement("shareId", shareId);
-    cacheKeyBuilder.addElement("projectId", this.projectId);
-    cacheKeyBuilder.addElement("startDate", this.startDate);
-    cacheKeyBuilder.addElement("endDate", this.endDate);
-    cacheKeyBuilder.addElement("current", this.current);
-    cacheKeyBuilder.addElement("hasMaterialFile", this.hasMaterialFile);
+        final CacheKeyBuilder cacheKeyBuilder = new CacheKeyBuilder();
 
-    return cacheKeyBuilder.toString();
-  }
+        cacheKeyBuilder.addElement("ids", this.ids);
+        cacheKeyBuilder.addElement("shareId", shareId);
+        cacheKeyBuilder.addElement("projectId", this.projectId);
+        cacheKeyBuilder.addElement("startDate", this.startDate);
+        cacheKeyBuilder.addElement("endDate", this.endDate);
+        cacheKeyBuilder.addElement("current", this.current);
+        cacheKeyBuilder.addElement("hasMaterialFile", this.hasMaterialFile);
+        cacheKeyBuilder.addElement("needMigration", this.needMigration);
+
+        return cacheKeyBuilder.toString();
+    }
 
 }

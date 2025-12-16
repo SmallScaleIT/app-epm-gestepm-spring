@@ -14,4 +14,6 @@ public abstract class InspectionFileAttributes {
 
   public static final String ATTR_IF_CONTENT = "attr_if_content";
 
+  public static final String ATTR_IF_NEED_MIGRATION = "attr_if_need_migration";
+
 }

@@ -14,4 +14,6 @@ public abstract class ProgrammedShareFileAttributes {
 
     public static final String ATTR_PSF_CONTENT = "attr_psf_content";
 
+    public static final String ATTR_PSF_NEED_MIGRATION = "attr_psf_need_migration";
+
 }

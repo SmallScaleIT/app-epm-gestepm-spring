@@ -2,7 +2,11 @@ package com.epm.gestepm.model.inspection.dao.constants;
 
 public abstract class InspectionFileQueries {
 
+    public static final String QRY_PAGE_OF_IF = "qry-page-of-if";
+
     public static final String QRY_LIST_OF_IF = "qry-list-of-if";
+
+    public static final String QRY_COUNT_OF_IF = "qry-count-of-if";
 
     public static final String FILTER_IF_BY_PARAMS = "filter-if-by-params";
 

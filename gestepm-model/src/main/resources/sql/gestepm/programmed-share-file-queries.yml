@@ -13,6 +13,20 @@ sql:
     
     #whereToken #filter
 
+  qry-page-of-psf: |
+
+    ${sql.qry-list-of-psf}
+    ${sql.paginated-query}
+
+  qry-count-of-psf: |
+
+    SELECT COUNT(DISTINCT programmed_share_file_id) AS "count"
+    FROM (
+      SELECT psf.programmed_share_file_id
+      FROM ${sch-gestepm}.programmed_share_file psf     
+      #whereToken #filter
+    ) final
+
   qry-create-psf: |
     
     INSERT INTO ${sch-gestepm}.programmed_share_file (
@@ -47,6 +61,7 @@ sql:
     -- [AND
       -- ${sql.predicate-for-psf-ids}
       -- ${sql.predicate-for-psf-share-id}
+      -- ${sql.predicate-for-psf-need-migration}
     -- AND]
 
   filter-psf-by-id: |
@@ -66,3 +81,7 @@ sql:
   predicate-for-psf-share-id: |
 
     psf.programmed_share_id = :attr_psf_share_id
+
+  predicate-for-psf-need-migration: |
+    
+    :attr_psf_need_migration = 1 AND psf.storage_path IS NULL

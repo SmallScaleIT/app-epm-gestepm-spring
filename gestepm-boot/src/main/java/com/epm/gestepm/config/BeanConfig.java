@@ -2,6 +2,7 @@ package com.epm.gestepm.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
@@ -22,5 +23,10 @@ public class BeanConfig {
 		tiles.setDefinitions("/ui/tiles/tiles.xml");
 		tiles.setCheckRefresh(false);
 		return tiles;
+	}
+
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
 	}
 }

@@ -106,6 +106,7 @@ sql:
       -- ${sql.predicate-for-i-end-date}
       -- ${sql.predicate-for-i-current}
       -- ${sql.predicate-for-i-has-material-file}
+      -- ${sql.predicate-for-i-need-migration}
     -- AND]
 
   filter-i-by-id: |
@@ -145,3 +146,7 @@ sql:
   predicate-for-i-has-material-file: |
     
     :attr_i_has_material_file = 1 AND i.materials_file_name IS NOT NULL
+
+  predicate-for-i-need-migration: |
+    
+    :attr_i_need_migration = 1 AND i.materials_storage_path IS NULL

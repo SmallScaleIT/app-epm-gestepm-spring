@@ -13,6 +13,20 @@ sql:
     
     #whereToken #filter
 
+  qry-page-of-wsf: |
+
+    ${sql.qry-list-of-wsf}
+    ${sql.paginated-query}
+
+  qry-count-of-wsf: |
+
+    SELECT COUNT(DISTINCT work_share_file_id) AS "count"
+    FROM (
+      SELECT wsf.work_share_file_id
+      FROM ${sch-gestepm}.work_share_file wsf     
+      #whereToken #filter
+    ) final
+
   qry-create-wsf: |
     
     INSERT INTO ${sch-gestepm}.work_share_file (
@@ -47,6 +61,7 @@ sql:
     -- [AND
       -- ${sql.predicate-for-wsf-ids}
       -- ${sql.predicate-for-wsf-share-id}
+      -- ${sql.predicate-for-wsf-need-migration}
     -- AND]
 
   filter-wsf-by-id: |
@@ -66,3 +81,7 @@ sql:
   predicate-for-wsf-share-id: |
 
     wsf.work_share_id = :attr_wsf_share_id
+
+  predicate-for-wsf-need-migration: |
+    
+    :attr_wsf_need_migration = 1 AND wsf.storage_path IS NULL

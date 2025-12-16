@@ -47,7 +47,7 @@ import static com.epm.gestepm.model.inspection.dao.mappers.InspectionRowMapper.*
 @EnableExecutionLog(layerMarker = DAO)
 public class InspectionDaoImpl implements InspectionDao {
 
-    private static final String PATH_FOLDER = "construction-shares";
+    private static final String PATH_FOLDER = "inspections";
 
     private final InspectionFileDao inspectionFileDao;
 

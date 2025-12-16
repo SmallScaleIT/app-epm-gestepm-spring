@@ -13,6 +13,20 @@ sql:
     
     #whereToken #filter
 
+  qry-page-of-if: |
+
+    ${sql.qry-list-of-if}
+    ${sql.paginated-query}
+
+  qry-count-of-if: |
+
+    SELECT COUNT(DISTINCT inspection_file_id) AS "count"
+    FROM (
+      SELECT ifi.inspection_file_id
+      FROM ${sch-gestepm}.inspection_file ifi
+      #whereToken #filter
+    ) final
+
   qry-create-if: |
     
     INSERT INTO ${sch-gestepm}.inspection_file (
@@ -47,6 +61,7 @@ sql:
     -- [AND
       -- ${sql.predicate-for-if-ids}
       -- ${sql.predicate-for-if-inspection-id}
+      -- ${sql.predicate-for-if-need-migration}
     -- AND]
 
   filter-if-by-id: |
@@ -66,3 +81,7 @@ sql:
   predicate-for-if-inspection-id: |
 
     ifi.inspection_id = :attr_if_inspection_id
+
+  predicate-for-if-need-migration: |
+    
+    :attr_if_need_migration = 1 AND ifi.storage_path IS NULL

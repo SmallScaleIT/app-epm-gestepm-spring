@@ -4829,48 +4829,59 @@ components:
                     - description
     CreatePersonalExpense:
       content:
-        application/json:
+        multipart/form-data:
           schema:
             type: object
             properties:
-              description:
-                type: string
+              data:
+                type: object
                 x-stoplight:
-                  id: jr6v1cexzkcdo
-              priceType:
-                type: string
-                x-stoplight:
-                  id: qg6k2yibwynol
-                enum:
-                  - FLY
-                  - FOOD
-                  - GAS
-                  - GASOIL
-                  - GASOLINE
-                  - HOTEL
-                  - KMS
-                  - OTHER
-                  - PARKING
-              startDate:
-                type: string
-                x-stoplight:
-                  id: sjz5o16wsimwj
-                format: date-time
-              quantity:
-                type: number
-                x-stoplight:
-                  id: mic9rzefz663g
-              amount:
-                type: number
-                x-stoplight:
-                  id: cyl57o1sot4ct
-              paymentType:
-                type: string
-                x-stoplight:
-                  id: 3yob56ej9ahd5
-                enum:
-                  - EPM_TARGET
-                  - OTHER
+                  id: 40adzy84xmt1f
+                required:
+                  - description
+                  - priceType
+                  - startDate
+                  - amount
+                  - paymentType
+                properties:
+                  description:
+                    type: string
+                    x-stoplight:
+                      id: jr6v1cexzkcdo
+                  priceType:
+                    type: string
+                    x-stoplight:
+                      id: qg6k2yibwynol
+                    enum:
+                      - FLY
+                      - FOOD
+                      - GAS
+                      - GASOIL
+                      - GASOLINE
+                      - HOTEL
+                      - KMS
+                      - OTHER
+                      - PARKING
+                  startDate:
+                    type: string
+                    x-stoplight:
+                      id: sjz5o16wsimwj
+                    format: date-time
+                  quantity:
+                    type: number
+                    x-stoplight:
+                      id: mic9rzefz663g
+                  amount:
+                    type: number
+                    x-stoplight:
+                      id: cyl57o1sot4ct
+                  paymentType:
+                    type: string
+                    x-stoplight:
+                      id: 3yob56ej9ahd5
+                    enum:
+                      - EPM_TARGET
+                      - OTHER
               files:
                 type: array
                 x-stoplight:
@@ -4878,66 +4889,64 @@ components:
                 items:
                   x-stoplight:
                     id: rucejqspgkan2
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                      x-stoplight:
-                        id: 5ihf6r4q7fmq6
-                    content:
-                      type: string
-                      x-stoplight:
-                        id: g8zehn74u5to8
+                  type: string
+                  format: binary
             required:
-              - description
-              - priceType
-              - quantity
-              - amount
-              - paymentType
+              - data
     UpdatePersonalExpense:
       content:
-        application/json:
+        multipart/form-data:
           schema:
             type: object
             properties:
-              description:
-                type: string
+              data:
+                type: object
                 x-stoplight:
-                  id: uou5wue0hjufo
-              priceType:
-                type: string
-                x-stoplight:
-                  id: illekvxb08mpl
-                enum:
-                  - FLY
-                  - FOOD
-                  - GAS
-                  - GASOIL
-                  - GASOLINE
-                  - HOTEL
-                  - KMS
-                  - OTHER
-                  - PARKING
-              startDate:
-                type: string
-                x-stoplight:
-                  id: 4sihv8jtqxl01
-                format: date-time
-              quantity:
-                type: number
-                x-stoplight:
-                  id: 8tcpvfpb8flkh
-              amount:
-                type: number
-                x-stoplight:
-                  id: 0ji21j8m32j50
-              paymentType:
-                type: string
-                x-stoplight:
-                  id: edle6xvid8apo
-                enum:
-                  - EPM_TARGET
-                  - OTHER
+                  id: donb8hysb678m
+                properties:
+                  description:
+                    type: string
+                    x-stoplight:
+                      id: uou5wue0hjufo
+                  priceType:
+                    type: string
+                    x-stoplight:
+                      id: illekvxb08mpl
+                    enum:
+                      - FLY
+                      - FOOD
+                      - GAS
+                      - GASOIL
+                      - GASOLINE
+                      - HOTEL
+                      - KMS
+                      - OTHER
+                      - PARKING
+                  startDate:
+                    type: string
+                    x-stoplight:
+                      id: 4sihv8jtqxl01
+                    format: date-time
+                  quantity:
+                    type: number
+                    x-stoplight:
+                      id: 8tcpvfpb8flkh
+                  amount:
+                    type: number
+                    x-stoplight:
+                      id: 0ji21j8m32j50
+                  paymentType:
+                    type: string
+                    x-stoplight:
+                      id: edle6xvid8apo
+                    enum:
+                      - EPM_TARGET
+                      - OTHER
+                required:
+                  - description
+                  - priceType
+                  - amount
+                  - paymentType
               files:
                 type: array
                 x-stoplight:
@@ -4945,22 +4954,8 @@ components:
                 items:
                   x-stoplight:
                     id: co481575metaf
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                      x-stoplight:
-                        id: 4y19docf4oq0i
-                    content:
-                      type: string
-                      x-stoplight:
-                        id: 04lxf4x5d5z2q
-            required:
-              - description
-              - priceType
-              - quantity
-              - amount
-              - paymentType
+                  type: string
+                  format: binary
     CreateTeleworkingSigning:
       content:
         application/json:

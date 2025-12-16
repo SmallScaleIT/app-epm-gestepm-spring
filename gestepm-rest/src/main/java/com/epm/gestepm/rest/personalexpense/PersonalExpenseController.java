@@ -28,9 +28,12 @@ import com.epm.gestepm.rest.personalexpense.response.ResponsesForPersonalExpense
 import com.epm.gestepm.rest.personalexpense.response.ResponsesForPersonalExpenseList;
 import com.epm.gestepm.restapi.openapi.api.PersonalExpenseV1Api;
 import com.epm.gestepm.restapi.openapi.model.*;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,19 +110,20 @@ public class PersonalExpenseController extends BaseController implements Persona
     @Override
     @RequirePermits(value = PRMT_EDIT_PE, action = "Create personal expense")
     @LogExecution(operation = OP_CREATE)
-    public ResponseEntity<CreatePersonalExpenseV1200Response> createPersonalExpenseV1(final Integer personalExpenseSheetId, final CreatePersonalExpenseV1Request reqCreatePersonalExpense) {
+    public ResponseEntity<CreatePersonalExpenseV1200Response> createPersonalExpenseV1(final Integer personalExpenseSheetId, final CreatePersonalExpenseV1RequestData data, final List<MultipartFile> files) {
 
-        final PersonalExpenseCreateDto createDto = getMapper(MapPEToPersonalExpenseCreateDto.class).from(reqCreatePersonalExpense);
+        final PersonalExpenseCreateDto createDto = getMapper(MapPEToPersonalExpenseCreateDto.class).from(data);
         createDto.setPersonalExpenseSheetId(personalExpenseSheetId);
+        createDto.setFiles(files);
 
-        final PersonalExpenseDto personalExpense = this.personalExpenseService.create(createDto);
+        final PersonalExpenseDto result = this.personalExpenseService.create(createDto);
 
         final APIMetadata metadata = this.getDefaultMetadata();
-        final PersonalExpense data = getMapper(MapPEToPersonalExpenseResponse.class).from(personalExpense);
+        final PersonalExpense personalExpense = getMapper(MapPEToPersonalExpenseResponse.class).from(result);
 
         final CreatePersonalExpenseV1200Response response = new CreatePersonalExpenseV1200Response();
         response.setMetadata(getMapper(MetadataMapper.class).from(metadata));
-        response.setData(data);
+        response.setData(personalExpense);
 
         return ResponseEntity.ok(response);
     }
@@ -127,19 +131,20 @@ public class PersonalExpenseController extends BaseController implements Persona
     @Override
     @RequirePermits(value = PRMT_EDIT_PE, action = "Update personal expense")
     @LogExecution(operation = OP_UPDATE)
-    public ResponseEntity<CreatePersonalExpenseV1200Response> updatePersonalExpenseV1(final Integer personalExpenseSheetId, final Integer id, final UpdatePersonalExpenseV1Request reqUpdatePersonalExpense) {
+    public ResponseEntity<CreatePersonalExpenseV1200Response> updatePersonalExpenseV1(final Integer personalExpenseSheetId, final Integer id, final UpdatePersonalExpenseV1RequestData data, final List<MultipartFile> files) {
 
-        final PersonalExpenseUpdateDto updateDto = getMapper(MapPEToPersonalExpenseUpdateDto.class).from(reqUpdatePersonalExpense);
+        final PersonalExpenseUpdateDto updateDto = getMapper(MapPEToPersonalExpenseUpdateDto.class).from(data);
         updateDto.setId(id);
+        updateDto.setFiles(files);
 
-        final PersonalExpenseDto personalExpense = this.personalExpenseService.update(updateDto);
+        final PersonalExpenseDto result = this.personalExpenseService.update(updateDto);
 
         final APIMetadata metadata = this.getDefaultMetadata();
-        final PersonalExpense data = getMapper(MapPEToPersonalExpenseResponse.class).from(personalExpense);
+        final PersonalExpense personalExpense = getMapper(MapPEToPersonalExpenseResponse.class).from(result);
 
         final CreatePersonalExpenseV1200Response response = new CreatePersonalExpenseV1200Response();
         response.setMetadata(getMapper(MetadataMapper.class).from(metadata));
-        response.setData(data);
+        response.setData(personalExpense);
 
         return ResponseEntity.ok(response);
     }

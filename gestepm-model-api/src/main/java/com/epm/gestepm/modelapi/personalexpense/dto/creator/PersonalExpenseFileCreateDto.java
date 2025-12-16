@@ -9,10 +9,9 @@ import javax.validation.constraints.NotNull;
 public class PersonalExpenseFileCreateDto {
 
     @NotNull
-    private String name;
+    private Integer personalExpenseId;
 
     @NotNull
-    @JsonIgnore
-    private String content;
+    private String name;
 
 }

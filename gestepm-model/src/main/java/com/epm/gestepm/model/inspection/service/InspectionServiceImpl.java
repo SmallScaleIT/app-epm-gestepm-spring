@@ -212,11 +212,11 @@ public class InspectionServiceImpl implements InspectionService {
         final NoProgrammedShareDto noProgrammedShare = this.noProgrammedShareService.findOrNotFound(
                 new NoProgrammedShareByIdFinderDto(inspection.getShareId()));
 
-        /*this.inspectionChecker.checker(noProgrammedShare, inspection, updateDto);
+        this.inspectionChecker.checker(noProgrammedShare, inspection, updateDto);
 
         if (updateDto.getEndDate() == null) {
             updateDto.setEndDate(LocalDateTime.now());
-        }*/
+        }
 
         final InspectionUpdate update = getMapper(MapIToInspectionUpdate.class).from(updateDto,
                 getMapper(MapIToInspectionUpdate.class).from(inspection));
@@ -228,18 +228,18 @@ public class InspectionServiceImpl implements InspectionService {
             update.setMaterialsStoragePath(fileResponse.getFileName());
         }
 
-        // FIXME: TO REMOVE: this.auditProvider.auditUpdate(update);
+        this.auditProvider.auditUpdate(update);
 
         final Inspection updated = this.inspectionDao.update(update);
         this.populateMaterialFileUrl(updated);
 
         final InspectionDto result = getMapper(MapIToInspectionDto.class).from(updated);
 
-        /*if (result.getTopicId() == null) {
+        if (result.getTopicId() == null) {
             this.createForumComment(result, noProgrammedShare);
-        }*/
+        }
 
-        // FIXME: this.sendMail(result, updateDto.getNotify());
+        this.sendMail(result, updateDto.getNotify());
 
         return result;
     }

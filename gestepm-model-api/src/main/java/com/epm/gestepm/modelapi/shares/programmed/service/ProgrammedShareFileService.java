@@ -1,7 +1,6 @@
 package com.epm.gestepm.modelapi.shares.programmed.service;
 
-import com.epm.gestepm.modelapi.shares.construction.dto.ConstructionShareFileDto;
-import com.epm.gestepm.modelapi.shares.construction.dto.updater.ConstructionShareFileUpdateDto;
+import com.epm.gestepm.lib.types.Page;
 import com.epm.gestepm.modelapi.shares.programmed.dto.ProgrammedShareFileDto;
 import com.epm.gestepm.modelapi.shares.programmed.dto.creator.ProgrammedShareFileCreateDto;
 import com.epm.gestepm.modelapi.shares.programmed.dto.deleter.ProgrammedShareFileDeleteDto;
@@ -16,7 +15,9 @@ import java.util.Optional;
 public interface ProgrammedShareFileService {
 
     List<@Valid ProgrammedShareFileDto> list(@Valid ProgrammedShareFileFilterDto filterDto);
-    
+
+    Page<@Valid ProgrammedShareFileDto> list(@Valid ProgrammedShareFileFilterDto filterDto, Long offset, Long limit);
+
     Optional<@Valid ProgrammedShareFileDto> find(@Valid ProgrammedShareFileByIdFinderDto finderDto);
 
     @Valid

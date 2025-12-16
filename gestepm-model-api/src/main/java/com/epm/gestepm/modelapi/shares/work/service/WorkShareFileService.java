@@ -1,5 +1,6 @@
 package com.epm.gestepm.modelapi.shares.work.service;
 
+import com.epm.gestepm.lib.types.Page;
 import com.epm.gestepm.modelapi.shares.work.dto.WorkShareFileDto;
 import com.epm.gestepm.modelapi.shares.work.dto.creator.WorkShareFileCreateDto;
 import com.epm.gestepm.modelapi.shares.work.dto.deleter.WorkShareFileDeleteDto;
@@ -14,7 +15,9 @@ import java.util.Optional;
 public interface WorkShareFileService {
 
     List<@Valid WorkShareFileDto> list(@Valid WorkShareFileFilterDto filterDto);
-    
+
+    Page<@Valid WorkShareFileDto> list(@Valid WorkShareFileFilterDto filterDto, Long offset, Long limit);
+
     Optional<@Valid WorkShareFileDto> find(@Valid WorkShareFileByIdFinderDto finderDto);
 
     @Valid

@@ -13,6 +13,8 @@ public class PersonalExpenseFileFilterDto implements UsableAsCacheKey {
 
   private Integer personalExpenseSheetId;
 
+  private Boolean needMigration;
+
   @Override
   public String asCacheKey() {
 
@@ -20,6 +22,7 @@ public class PersonalExpenseFileFilterDto implements UsableAsCacheKey {
 
     cacheKeyBuilder.addElement("ids", this.ids);
     cacheKeyBuilder.addElement("personalExpenseSheetId", this.personalExpenseSheetId);
+    cacheKeyBuilder.addElement("needMigration", this.needMigration);
 
     return cacheKeyBuilder.toString();
   }

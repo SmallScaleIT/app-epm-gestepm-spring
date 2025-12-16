@@ -6,6 +6,7 @@ import com.epm.gestepm.model.personalexpense.dao.entity.creator.PersonalExpenseF
 import com.epm.gestepm.modelapi.personalexpense.dto.PaymentTypeEnumDto;
 import com.epm.gestepm.modelapi.personalexpense.dto.PriceTypeEnumDto;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -33,7 +34,7 @@ public class PersonalExpenseUpdate implements CollectableAttributes {
 
     private PaymentTypeEnumDto paymentType;
 
-    private List<PersonalExpenseFileCreate> files;
+    private List<MultipartFile> files;
 
     @Override
     public AttributeMap collectAttributes() {

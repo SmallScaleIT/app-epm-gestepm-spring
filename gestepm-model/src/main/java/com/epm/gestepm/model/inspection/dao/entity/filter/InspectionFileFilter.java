@@ -6,8 +6,7 @@ import lombok.Data;
 
 import java.util.List;
 
-import static com.epm.gestepm.model.inspection.dao.constants.InspectionFileAttributes.ATTR_IF_IDS;
-import static com.epm.gestepm.model.inspection.dao.constants.InspectionFileAttributes.ATTR_IF_INSPECTION_ID;
+import static com.epm.gestepm.model.inspection.dao.constants.InspectionFileAttributes.*;
 
 @Data
 public class InspectionFileFilter implements CollectableAttributes {
@@ -16,6 +15,8 @@ public class InspectionFileFilter implements CollectableAttributes {
 
     private Integer inspectionId;
 
+    private Boolean needMigration;
+
     @Override
     public AttributeMap collectAttributes() {
 
@@ -23,6 +24,7 @@ public class InspectionFileFilter implements CollectableAttributes {
 
         map.putList(ATTR_IF_IDS, this.ids);
         map.put(ATTR_IF_INSPECTION_ID, this.inspectionId);
+        map.putBooleanAsInt(ATTR_IF_NEED_MIGRATION, this.needMigration);
 
         return map;
     }

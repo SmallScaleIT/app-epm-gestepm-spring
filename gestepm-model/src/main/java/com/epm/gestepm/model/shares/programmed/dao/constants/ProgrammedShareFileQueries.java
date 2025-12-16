@@ -2,7 +2,11 @@ package com.epm.gestepm.model.shares.programmed.dao.constants;
 
 public abstract class ProgrammedShareFileQueries {
 
+    public static final String QRY_PAGE_OF_PSF = "qry-page-of-psf";
+
     public static final String QRY_LIST_OF_PSF = "qry-list-of-psf";
+
+    public static final String QRY_COUNT_OF_PSF = "qry-count-of-psf";
 
     public static final String FILTER_PSF_BY_PARAMS = "filter-psf-by-params";
 

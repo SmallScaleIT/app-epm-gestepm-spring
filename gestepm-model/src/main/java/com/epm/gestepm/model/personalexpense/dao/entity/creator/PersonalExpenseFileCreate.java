@@ -10,6 +10,8 @@ import javax.validation.constraints.NotNull;
 import java.util.Base64;
 
 import static com.epm.gestepm.model.personalexpense.dao.constants.PersonalExpenseFileAttributes.*;
+import static com.epm.gestepm.model.shares.programmed.dao.constants.ProgrammedShareFileAttributes.ATTR_PSF_CONTENT;
+import static com.epm.gestepm.model.shares.programmed.dao.constants.ProgrammedShareFileAttributes.ATTR_PSF_STORAGE_PATH;
 
 @Data
 public class PersonalExpenseFileCreate implements CollectableAttributes {
@@ -21,8 +23,7 @@ public class PersonalExpenseFileCreate implements CollectableAttributes {
     private String name;
 
     @NotNull
-    @JsonIgnore
-    private String content;
+    private String storagePath;
 
     @Override
     public AttributeMap collectAttributes() {
@@ -31,7 +32,8 @@ public class PersonalExpenseFileCreate implements CollectableAttributes {
 
         map.put(ATTR_PEF_PE_ID, this.personalExpenseId);
         map.put(ATTR_PEF_NAME, this.name);
-        map.put(ATTR_PEF_CONTENT, FileUtils.compressBytes(Base64.getDecoder().decode(this.content)));
+        map.put(ATTR_PEF_STORAGE_PATH, this.storagePath);
+        map.put(ATTR_PEF_CONTENT, FileUtils.compressBytes("to-remove".getBytes())); // FIXME: remove
 
         return map;
     }

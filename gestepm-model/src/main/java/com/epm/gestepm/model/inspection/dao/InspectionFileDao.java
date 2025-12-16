@@ -1,5 +1,6 @@
 package com.epm.gestepm.model.inspection.dao;
 
+import com.epm.gestepm.lib.types.Page;
 import com.epm.gestepm.model.inspection.dao.entity.InspectionFile;
 import com.epm.gestepm.model.inspection.dao.entity.creator.InspectionFileCreate;
 import com.epm.gestepm.model.inspection.dao.entity.deleter.InspectionFileDelete;
@@ -14,6 +15,8 @@ import java.util.Optional;
 public interface InspectionFileDao {
 
     List<InspectionFile> list(@Valid InspectionFileFilter filter);
+
+    Page<InspectionFile> list(@Valid InspectionFileFilter filter, Long offset, Long limit);
 
     Optional<@Valid InspectionFile> find(@Valid InspectionFileByIdFinder finder);
 

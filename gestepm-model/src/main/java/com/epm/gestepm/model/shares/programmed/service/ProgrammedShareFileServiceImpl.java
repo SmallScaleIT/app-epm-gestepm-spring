@@ -3,6 +3,7 @@ package com.epm.gestepm.model.shares.programmed.service;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.lib.logging.annotation.LogExecution;
 import com.epm.gestepm.lib.security.annotation.RequirePermits;
+import com.epm.gestepm.lib.types.Page;
 import com.epm.gestepm.model.shares.construction.dao.entity.ConstructionShareFile;
 import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
 import com.epm.gestepm.model.shares.construction.service.mapper.MapCSFToConstructionShareFileDto;
@@ -58,13 +59,29 @@ public class ProgrammedShareFileServiceImpl implements ProgrammedShareFileServic
     @RequirePermits(value = PRMT_READ_PS, action = "List programmed shares")
     @LogExecution(operation = OP_READ,
             debugOut = true,
-            msgIn = "Paginating programmed share file files",
-            msgOut = "Paginating programmed share file files OK",
-            errorMsg = "Failed to paginate programmed share file files")
+            msgIn = "Listing programmed share file files",
+            msgOut = "Listing programmed share file files OK",
+            errorMsg = "Failed to list programmed share file files")
     public List<ProgrammedShareFileDto> list(ProgrammedShareFileFilterDto filterDto) {
         final ProgrammedShareFileFilter filter = getMapper(MapPSFToProgrammedShareFileFilter.class).from(filterDto);
 
         final List<ProgrammedShareFile> list = this.programmedShareFileDao.list(filter);
+        list.forEach(this::populateFileUrl);
+
+        return getMapper(MapPSFToProgrammedShareFileDto.class).from(list);
+    }
+
+    @Override
+    @RequirePermits(value = PRMT_READ_PS, action = "Page programmed shares")
+    @LogExecution(operation = OP_READ,
+            debugOut = true,
+            msgIn = "Paginating programmed share file files",
+            msgOut = "Paginating programmed share file files OK",
+            errorMsg = "Failed to paginate programmed share file files")
+    public Page<ProgrammedShareFileDto> list(ProgrammedShareFileFilterDto filterDto, Long offset, Long limit) {
+        final ProgrammedShareFileFilter filter = getMapper(MapPSFToProgrammedShareFileFilter.class).from(filterDto);
+
+        final Page<ProgrammedShareFile> list = this.programmedShareFileDao.list(filter, offset, limit);
         list.forEach(this::populateFileUrl);
 
         return getMapper(MapPSFToProgrammedShareFileDto.class).from(list);

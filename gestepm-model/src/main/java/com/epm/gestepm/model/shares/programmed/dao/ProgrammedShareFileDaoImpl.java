@@ -6,8 +6,10 @@ import com.epm.gestepm.lib.jdbc.api.query.SQLInsert;
 import com.epm.gestepm.lib.jdbc.api.query.SQLQuery;
 import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchMany;
 import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchOne;
+import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchPage;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.lib.logging.annotation.LogExecution;
+import com.epm.gestepm.lib.types.Page;
 import com.epm.gestepm.model.shares.construction.dao.entity.ConstructionShareFile;
 import com.epm.gestepm.model.shares.construction.dao.entity.finder.ConstructionShareFileByIdFinder;
 import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
@@ -28,6 +30,7 @@ import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.DAO;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.*;
 import static com.epm.gestepm.model.shares.construction.dao.constants.ConstructionShareFileQueries.QRY_UPDATE_CSF;
 import static com.epm.gestepm.model.shares.programmed.dao.constants.ProgrammedShareFileQueries.*;
+import static com.epm.gestepm.model.shares.programmed.dao.constants.ProgrammedShareFileQueries.QRY_PAGE_OF_PSF;
 
 @Component("programmedShareFileDao")
 @EnableExecutionLog(layerMarker = DAO)
@@ -51,6 +54,26 @@ public class ProgrammedShareFileDaoImpl implements ProgrammedShareFileDao {
                 .useRowMapper(new ProgrammedShareFileRowMapper())
                 .useQuery(QRY_LIST_OF_PSF)
                 .useFilter(FILTER_PSF_BY_PARAMS)
+                .withParams(filter.collectAttributes());
+
+        return this.sqlDatasource.fetch(sqlQuery);
+    }
+
+    @Override
+    @LogExecution(operation = OP_READ,
+            debugOut = true,
+            msgIn = "Querying page of programmed share files",
+            msgOut = "Querying page of programmed share files OK",
+            errorMsg = "Failed to query page of programmed share files")
+    public Page<ProgrammedShareFile> list(ProgrammedShareFileFilter filter, Long offset, Long limit) {
+
+        final SQLQueryFetchPage<ProgrammedShareFile> sqlQuery = new SQLQueryFetchPage<ProgrammedShareFile>()
+                .useRowMapper(new ProgrammedShareFileRowMapper())
+                .useQuery(QRY_PAGE_OF_PSF)
+                .useCountQuery(QRY_COUNT_OF_PSF)
+                .useFilter(FILTER_PSF_BY_PARAMS)
+                .offset(offset)
+                .limit(limit)
                 .withParams(filter.collectAttributes());
 
         return this.sqlDatasource.fetch(sqlQuery);
