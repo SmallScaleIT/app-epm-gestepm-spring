@@ -13,6 +13,8 @@ public class ProgrammedShareFileFilterDto implements UsableAsCacheKey {
 
   private Integer shareId;
 
+  private Boolean needMigration;
+
   @Override
   public String asCacheKey() {
 
@@ -20,6 +22,7 @@ public class ProgrammedShareFileFilterDto implements UsableAsCacheKey {
 
     cacheKeyBuilder.addElement("ids", this.ids);
     cacheKeyBuilder.addElement("shareId", this.shareId);
+    cacheKeyBuilder.addElement("needMigration", this.needMigration);
 
     return cacheKeyBuilder.toString();
   }

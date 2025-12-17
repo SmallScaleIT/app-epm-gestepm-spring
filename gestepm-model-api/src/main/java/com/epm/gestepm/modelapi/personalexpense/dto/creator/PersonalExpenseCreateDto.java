@@ -3,6 +3,7 @@ package com.epm.gestepm.modelapi.personalexpense.dto.creator;
 import com.epm.gestepm.modelapi.personalexpense.dto.PaymentTypeEnumDto;
 import com.epm.gestepm.modelapi.personalexpense.dto.PriceTypeEnumDto;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -31,6 +32,6 @@ public class PersonalExpenseCreateDto {
     @NotNull
     private PaymentTypeEnumDto paymentType;
 
-    private List<PersonalExpenseFileCreateDto> files;
+    private List<MultipartFile> files;
 
 }

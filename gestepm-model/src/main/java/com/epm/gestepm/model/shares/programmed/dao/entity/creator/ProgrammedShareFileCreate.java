@@ -3,11 +3,9 @@ package com.epm.gestepm.model.shares.programmed.dao.entity.creator;
 import com.epm.gestepm.lib.entity.AttributeMap;
 import com.epm.gestepm.lib.entity.CollectableAttributes;
 import com.epm.gestepm.lib.file.FileUtils;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import java.util.Base64;
 
 import static com.epm.gestepm.model.shares.programmed.dao.constants.ProgrammedShareFileAttributes.*;
 
@@ -21,8 +19,7 @@ public class ProgrammedShareFileCreate implements CollectableAttributes {
     private String name;
 
     @NotNull
-    @JsonIgnore
-    private String content;
+    private String storagePath;
 
     @Override
     public AttributeMap collectAttributes() {
@@ -31,7 +28,8 @@ public class ProgrammedShareFileCreate implements CollectableAttributes {
 
         map.put(ATTR_PSF_SHARE_ID, this.shareId);
         map.put(ATTR_PSF_NAME, this.name);
-        map.put(ATTR_PSF_CONTENT, FileUtils.compressBytes(Base64.getDecoder().decode(this.content)));
+        map.put(ATTR_PSF_STORAGE_PATH, this.storagePath);
+        map.put(ATTR_PSF_CONTENT, FileUtils.compressBytes("to-remove".getBytes())); // FIXME: remove
 
         return map;
     }

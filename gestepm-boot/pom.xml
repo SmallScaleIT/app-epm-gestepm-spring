@@ -52,6 +52,11 @@
             <artifactId>gestepm-email</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gestepm-storage</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -115,13 +115,12 @@ public class FileUtils {
 				outputStream.write(buffer, 0, count);
 			}
 			outputStream.close();
-		} catch (IOException ioe) {
+		} catch (IOException | DataFormatException ioe) {
 			log.error(ioe);
-		} catch (DataFormatException e) {
-			log.error(e);
+			return null;
 		}
 
-		return outputStream.toByteArray();
+        return outputStream.toByteArray();
 	}
 
 	private static String parseCompressionType(final String compressionType) {

@@ -6,13 +6,18 @@ import com.epm.gestepm.lib.types.Page;
 import com.epm.gestepm.modelapi.common.utils.ModelUtil;
 import com.epm.gestepm.modelapi.common.utils.classes.Constants;
 import com.epm.gestepm.modelapi.inspection.dto.InspectionDto;
+import com.epm.gestepm.modelapi.inspection.dto.InspectionFileDto;
+import com.epm.gestepm.modelapi.inspection.dto.filter.InspectionFileFilterDto;
 import com.epm.gestepm.modelapi.inspection.dto.finder.InspectionByIdFinderDto;
+import com.epm.gestepm.modelapi.inspection.service.InspectionFileService;
 import com.epm.gestepm.modelapi.inspection.service.InspectionService;
 import com.epm.gestepm.modelapi.role.dto.RoleDTO;
 import com.epm.gestepm.modelapi.shares.breaks.dto.ShareBreakDto;
 import com.epm.gestepm.modelapi.shares.breaks.dto.filter.ShareBreakFilterDto;
 import com.epm.gestepm.modelapi.shares.breaks.service.ShareBreakService;
 import com.epm.gestepm.modelapi.shares.common.dto.ShareStatusDto;
+import com.epm.gestepm.modelapi.shares.construction.dto.ConstructionShareFileDto;
+import com.epm.gestepm.modelapi.shares.construction.dto.filter.ConstructionShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.NoProgrammedShareDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.finder.NoProgrammedShareByIdFinderDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.service.NoProgrammedShareService;
@@ -29,8 +34,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.VIEW;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.OP_VIEW;
@@ -41,6 +48,8 @@ import static com.epm.gestepm.lib.logging.constants.LogOperations.OP_VIEW;
 public class InspectionViewController {
 
     private final InspectionService inspectionService;
+    
+    private final InspectionFileService inspectionFileService;
 
     private final NoProgrammedShareService noProgrammedShareService;
 
@@ -73,6 +82,9 @@ public class InspectionViewController {
         final InspectionDto inspection = this.inspectionService.findOrNotFound(new InspectionByIdFinderDto(id));
         model.addAttribute("inspection", inspection);
 
+        final InspectionFileFilterDto filterDto = new InspectionFileFilterDto();
+        filterDto.setInspectionId(id);
+        
         final ShareBreakFilterDto shareBreakFilterDto = new ShareBreakFilterDto();
         shareBreakFilterDto.setInspectionIds(List.of(id));
         shareBreakFilterDto.setStatus(ShareStatusDto.NOT_FINISHED);

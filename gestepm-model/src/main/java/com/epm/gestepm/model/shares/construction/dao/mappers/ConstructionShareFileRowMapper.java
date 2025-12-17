@@ -6,28 +6,33 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Base64;
+
+import static com.epm.gestepm.lib.jdbc.utils.ResultSetMappingUtils.nullableString;
 
 public class ConstructionShareFileRowMapper implements RowMapper<ConstructionShareFile> {
 
-  public static final String COL_CSF_ID = "construction_share_file_id";
+    public static final String COL_CSF_ID = "construction_share_file_id";
 
-  public static final String COL_CSF_SHARE_ID = "construction_share_id";
+    public static final String COL_CSF_SHARE_ID = "construction_share_id";
 
-  public static final String COL_CSF_NAME = "name";
+    public static final String COL_CSF_NAME = "name";
 
-  public static final String COL_CSF_CONTENT = "content";
+    public static final String COL_CSF_STORAGE_PATH = "storage_path";
 
-  @Override
-  public ConstructionShareFile mapRow(ResultSet rs, int i) throws SQLException {
+    public static final String COL_CSF_CONTENT = "content";
 
-    final ConstructionShareFile constructionShareFile = new ConstructionShareFile();
+    @Override
+    public ConstructionShareFile mapRow(ResultSet rs, int i) throws SQLException {
 
-    constructionShareFile.setId(rs.getInt(COL_CSF_ID));
-    constructionShareFile.setShareId(rs.getInt(COL_CSF_SHARE_ID));
-    constructionShareFile.setName(rs.getString(COL_CSF_NAME));
-    constructionShareFile.setContent(Base64.getEncoder().encodeToString(FileUtils.decompressBytes(rs.getBytes(COL_CSF_CONTENT))));
+        final ConstructionShareFile constructionShareFile = new ConstructionShareFile();
+        final byte[] bytes = FileUtils.decompressBytes(rs.getBytes(COL_CSF_CONTENT));
 
-    return constructionShareFile;
-  }
+        constructionShareFile.setId(rs.getInt(COL_CSF_ID));
+        constructionShareFile.setShareId(rs.getInt(COL_CSF_SHARE_ID));
+        constructionShareFile.setName(rs.getString(COL_CSF_NAME));
+        constructionShareFile.setContent(bytes != null ? bytes : rs.getBytes(COL_CSF_CONTENT));
+        constructionShareFile.setStoragePath(nullableString(rs, COL_CSF_STORAGE_PATH)); // FIXME: to remove
+
+        return constructionShareFile;
+    }
 }

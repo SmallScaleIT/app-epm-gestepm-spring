@@ -8,12 +8,22 @@ import java.io.Serializable;
 @Data
 public class InspectionFileDto implements Serializable {
 
+    @NotNull
     private Integer id;
+
+    @NotNull
+    private Integer inspectionId;
 
     @NotNull
     private String name;
 
+    // FIXME: @NotNull
+    private String storagePath;
+
     @NotNull
-    private String content;
+    private byte[] content;
+
+    // FIXME: @NotNull
+    private String url;
 
 }

@@ -21,14 +21,19 @@ import com.epm.gestepm.model.inspection.dao.entity.filter.InspectionFilter;
 import com.epm.gestepm.model.inspection.dao.entity.finder.InspectionByIdFinder;
 import com.epm.gestepm.model.inspection.dao.entity.updater.InspectionUpdate;
 import com.epm.gestepm.model.inspection.dao.mappers.InspectionRowMapper;
-import com.epm.gestepm.model.personalexpensesheet.dao.mappers.PersonalExpenseSheetRowMapper;
+import com.epm.gestepm.storageapi.dto.FileResponse;
+import com.epm.gestepm.storageapi.dto.creator.FileCreate;
+import com.epm.gestepm.storageapi.service.GoogleCloudStorageService;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.UUID;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.DAO;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.*;
@@ -37,18 +42,18 @@ import static com.epm.gestepm.model.inspection.dao.constants.MaterialQueries.QRY
 import static com.epm.gestepm.model.inspection.dao.constants.MaterialQueries.QRY_DELETE_M;
 import static com.epm.gestepm.model.inspection.dao.mappers.InspectionRowMapper.*;
 
+@RequiredArgsConstructor
 @Component("inspectionDao")
 @EnableExecutionLog(layerMarker = DAO)
 public class InspectionDaoImpl implements InspectionDao {
 
+    private static final String PATH_FOLDER = "inspections";
+
     private final InspectionFileDao inspectionFileDao;
 
-    private final SQLDatasource sqlDatasource;
+    private final GoogleCloudStorageService googleCloudStorageService;
 
-    public InspectionDaoImpl(InspectionFileDao inspectionFileDao, SQLDatasource sqlDatasource) {
-        this.inspectionFileDao = inspectionFileDao;
-        this.sqlDatasource = sqlDatasource;
-    }
+    private final SQLDatasource sqlDatasource;
 
     @Override
     @LogExecution(operation = OP_READ,
@@ -155,8 +160,8 @@ public class InspectionDaoImpl implements InspectionDao {
             this.createMaterials(update.getMaterials(), update.getId());
         }
 
-        if (update.getFiles() != null && !update.getFiles().isEmpty()) {
-            this.insertFiles(update.getFiles(), update.getId());
+        if (CollectionUtils.isNotEmpty(update.getFiles())) {
+            update.getFiles().forEach(file -> this.insertFiles(file, id));
         }
 
         return this.find(finder).orElse(null);
@@ -206,13 +211,6 @@ public class InspectionDaoImpl implements InspectionDao {
         this.sqlDatasource.execute(sqlQuery);
     }
 
-    private void insertFiles(final Set<InspectionFileCreate> files, final Integer inspectionId) {
-        files.forEach(fileCreate -> {
-            fileCreate.setInspectionId(inspectionId);
-            this.inspectionFileDao.create(fileCreate);
-        });
-    }
-
     private void setOrder(final SQLOrderByType order, final String orderBy, final SQLQueryFetchMany<Inspection> sqlQuery) {
         final String orderByStatement = StringUtils.isNoneBlank(orderBy) && !orderBy.equals("id")
                 ? this.getOrderColumn(orderBy)
@@ -230,5 +228,22 @@ public class InspectionDaoImpl implements InspectionDao {
             return COL_I_END_DATE;
         }
         return orderBy;
+    }
+
+    private void insertFiles(final MultipartFile file, final Integer id) {
+        final UUID storageUUID = UUID.randomUUID();
+
+        final FileCreate fileCreate = new FileCreate();
+        fileCreate.setName(PATH_FOLDER + "/" + storageUUID);
+        fileCreate.setFile(file);
+
+        final FileResponse fileResponse = this.googleCloudStorageService.uploadFile(fileCreate);
+
+        final InspectionFileCreate iFileCreate = new InspectionFileCreate();
+        iFileCreate.setInspectionId(id);
+        iFileCreate.setName(file.getOriginalFilename());
+        iFileCreate.setStoragePath(fileResponse.getFileName());
+
+        this.inspectionFileDao.create(iFileCreate);
     }
 }

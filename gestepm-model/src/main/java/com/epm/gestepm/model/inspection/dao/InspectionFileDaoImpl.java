@@ -6,15 +6,24 @@ import com.epm.gestepm.lib.jdbc.api.query.SQLInsert;
 import com.epm.gestepm.lib.jdbc.api.query.SQLQuery;
 import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchMany;
 import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchOne;
+import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchPage;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.lib.logging.annotation.LogExecution;
+import com.epm.gestepm.lib.types.Page;
 import com.epm.gestepm.model.inspection.dao.entity.InspectionFile;
 import com.epm.gestepm.model.inspection.dao.entity.creator.InspectionFileCreate;
 import com.epm.gestepm.model.inspection.dao.entity.deleter.InspectionFileDelete;
 import com.epm.gestepm.model.inspection.dao.entity.filter.InspectionFileFilter;
 import com.epm.gestepm.model.inspection.dao.entity.finder.InspectionFileByIdFinder;
+import com.epm.gestepm.model.inspection.dao.entity.updater.InspectionFileUpdate;
 import com.epm.gestepm.model.inspection.dao.mappers.InspectionFileRowMapper;
+import com.epm.gestepm.model.shares.construction.dao.entity.ConstructionShareFile;
+import com.epm.gestepm.model.shares.construction.dao.entity.finder.ConstructionShareFileByIdFinder;
+import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.deleter.NoProgrammedShareFileDelete;
+import com.epm.gestepm.model.shares.programmed.dao.entity.ProgrammedShareFile;
+import com.epm.gestepm.model.shares.programmed.dao.entity.filter.ProgrammedShareFileFilter;
+import com.epm.gestepm.model.shares.programmed.dao.mappers.ProgrammedShareFileRowMapper;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -24,7 +33,9 @@ import java.util.Optional;
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.DAO;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.*;
 import static com.epm.gestepm.model.inspection.dao.constants.InspectionFileQueries.*;
+import static com.epm.gestepm.model.shares.construction.dao.constants.ConstructionShareFileQueries.QRY_UPDATE_CSF;
 import static com.epm.gestepm.model.shares.noprogrammed.dao.constants.NoProgrammedShareFileQueries.QRY_DELETE_NPSF;
+import static com.epm.gestepm.model.shares.programmed.dao.constants.ProgrammedShareFileQueries.*;
 
 @Component("inspectionFileDao")
 @EnableExecutionLog(layerMarker = DAO)
@@ -48,6 +59,26 @@ public class InspectionFileDaoImpl implements InspectionFileDao {
                 .useRowMapper(new InspectionFileRowMapper())
                 .useQuery(QRY_LIST_OF_IF)
                 .useFilter(FILTER_IF_BY_PARAMS)
+                .withParams(filter.collectAttributes());
+
+        return this.sqlDatasource.fetch(sqlQuery);
+    }
+
+    @Override
+    @LogExecution(operation = OP_READ,
+            debugOut = true,
+            msgIn = "Querying page of inspection files",
+            msgOut = "Querying page of inspection files OK",
+            errorMsg = "Failed to query page of inspection files")
+    public Page<InspectionFile> list(InspectionFileFilter filter, Long offset, Long limit) {
+
+        final SQLQueryFetchPage<InspectionFile> sqlQuery = new SQLQueryFetchPage<InspectionFile>()
+                .useRowMapper(new InspectionFileRowMapper())
+                .useQuery(QRY_PAGE_OF_IF)
+                .useCountQuery(QRY_COUNT_OF_IF)
+                .useFilter(FILTER_IF_BY_PARAMS)
+                .offset(offset)
+                .limit(limit)
                 .withParams(filter.collectAttributes());
 
         return this.sqlDatasource.fetch(sqlQuery);
@@ -92,6 +123,29 @@ public class InspectionFileDaoImpl implements InspectionFileDao {
         return this.find(finder).orElse(null);
     }
 
+    @Override
+    @LogExecution(operation = OP_UPDATE,
+            debugOut = true,
+            msgIn = "Persisting inspection file",
+            msgOut = "Inspection file persisted OK",
+            errorMsg = "Failed to persist inspection file")
+    public InspectionFile update(InspectionFileUpdate update) {
+
+        final Integer id = update.getId();
+        final AttributeMap params = update.collectAttributes();
+
+        final InspectionFileByIdFinder finder = new InspectionFileByIdFinder();
+        finder.setId(id);
+
+        final SQLQuery sqlQuery = new SQLQuery()
+                .useQuery(QRY_UPDATE_IF)
+                .withParams(params);
+
+        this.sqlDatasource.execute(sqlQuery);
+
+        return this.find(finder).orElse(null);
+    }
+    
     @Override
     @LogExecution(operation = OP_DELETE,
             debugOut = true,

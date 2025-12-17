@@ -50,9 +50,11 @@ public class InspectionDto implements Serializable {
 
     private Set<MaterialDto> materials = new HashSet<>();
 
-    private String materialsFile;
+    private byte[] materialsFile; // FIXME
 
     private String materialsFileName;
+
+    private String materialsFileUrl;
 
     private Integer equipmentHours;
 

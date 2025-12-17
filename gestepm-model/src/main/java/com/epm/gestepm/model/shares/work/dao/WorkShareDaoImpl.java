@@ -11,35 +11,47 @@ import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchPage;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.lib.logging.annotation.LogExecution;
 import com.epm.gestepm.lib.types.Page;
+import com.epm.gestepm.model.shares.construction.dao.entity.creator.ConstructionShareFileCreate;
 import com.epm.gestepm.model.shares.work.dao.entity.WorkShare;
 import com.epm.gestepm.model.shares.work.dao.entity.creator.WorkShareCreate;
+import com.epm.gestepm.model.shares.work.dao.entity.creator.WorkShareFileCreate;
 import com.epm.gestepm.model.shares.work.dao.entity.deleter.WorkShareDelete;
 import com.epm.gestepm.model.shares.work.dao.entity.filter.WorkShareFilter;
 import com.epm.gestepm.model.shares.work.dao.entity.finder.WorkShareByIdFinder;
 import com.epm.gestepm.model.shares.work.dao.entity.updater.WorkShareUpdate;
 import com.epm.gestepm.model.shares.work.dao.mappers.WorkShareRowMapper;
+import com.epm.gestepm.storageapi.dto.FileResponse;
+import com.epm.gestepm.storageapi.dto.creator.FileCreate;
+import com.epm.gestepm.storageapi.service.GoogleCloudStorageService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.DAO;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.*;
 import static com.epm.gestepm.model.shares.work.dao.constants.WorkShareQueries.*;
 import static com.epm.gestepm.model.shares.work.dao.mappers.WorkShareRowMapper.*;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Component("workShareDao")
 @EnableExecutionLog(layerMarker = DAO)
 public class WorkShareDaoImpl implements WorkShareDao {
 
-    private final WorkShareFileDao workShareFileDao;
+    private static final String PATH_FOLDER = "work-shares";
+    
+    private final GoogleCloudStorageService googleCloudStorageService;
 
     private final SQLDatasource sqlDatasource;
+    
+    private final WorkShareFileDao workShareFileDao;
 
     @Override
     @LogExecution(operation = OP_READ,
@@ -142,9 +154,7 @@ public class WorkShareDaoImpl implements WorkShareDao {
         this.sqlDatasource.execute(sqlQuery);
 
         if (CollectionUtils.isNotEmpty(update.getFiles())) {
-            update.getFiles().stream()
-                    .peek(file -> file.setShareId(id))
-                    .forEach(workShareFileDao::create);
+            update.getFiles().forEach(file -> this.insertFiles(file, id));
         }
 
         return this.find(finder).orElse(null);
@@ -188,5 +198,22 @@ public class WorkShareDaoImpl implements WorkShareDao {
             return COL_WS_END_DATE;
         }
         return orderBy;
+    }
+
+    private void insertFiles(final MultipartFile file, final Integer id) {
+        final UUID storageUUID = UUID.randomUUID();
+
+        final FileCreate fileCreate = new FileCreate();
+        fileCreate.setName(PATH_FOLDER + "/" + storageUUID);
+        fileCreate.setFile(file);
+
+        final FileResponse fileResponse = this.googleCloudStorageService.uploadFile(fileCreate);
+
+        final WorkShareFileCreate wsFileCreate = new WorkShareFileCreate();
+        wsFileCreate.setShareId(id);
+        wsFileCreate.setName(file.getOriginalFilename());
+        wsFileCreate.setStoragePath(fileResponse.getFileName());
+
+        this.workShareFileDao.create(wsFileCreate);
     }
 }

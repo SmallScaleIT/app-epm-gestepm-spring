@@ -3,20 +3,40 @@ package com.epm.gestepm.model.inspection.service;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.lib.logging.annotation.LogExecution;
 import com.epm.gestepm.lib.security.annotation.RequirePermits;
+import com.epm.gestepm.lib.types.Page;
 import com.epm.gestepm.model.inspection.dao.InspectionFileDao;
 import com.epm.gestepm.model.inspection.dao.entity.InspectionFile;
 import com.epm.gestepm.model.inspection.dao.entity.creator.InspectionFileCreate;
 import com.epm.gestepm.model.inspection.dao.entity.deleter.InspectionFileDelete;
 import com.epm.gestepm.model.inspection.dao.entity.filter.InspectionFileFilter;
 import com.epm.gestepm.model.inspection.dao.entity.finder.InspectionFileByIdFinder;
+import com.epm.gestepm.model.inspection.dao.entity.updater.InspectionFileUpdate;
 import com.epm.gestepm.model.inspection.service.mapper.*;
+import com.epm.gestepm.model.shares.construction.dao.entity.ConstructionShareFile;
+import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
+import com.epm.gestepm.model.shares.construction.service.mapper.MapCSFToConstructionShareFileDto;
+import com.epm.gestepm.model.shares.construction.service.mapper.MapCSFToConstructionShareFileUpdate;
+import com.epm.gestepm.model.shares.programmed.dao.entity.ProgrammedShareFile;
+import com.epm.gestepm.model.shares.programmed.dao.entity.filter.ProgrammedShareFileFilter;
+import com.epm.gestepm.model.shares.programmed.service.mapper.MapPSFToProgrammedShareFileDto;
+import com.epm.gestepm.model.shares.programmed.service.mapper.MapPSFToProgrammedShareFileFilter;
 import com.epm.gestepm.modelapi.inspection.dto.InspectionFileDto;
 import com.epm.gestepm.modelapi.inspection.dto.creator.InspectionFileCreateDto;
 import com.epm.gestepm.modelapi.inspection.dto.deleter.InspectionFileDeleteDto;
 import com.epm.gestepm.modelapi.inspection.dto.filter.InspectionFileFilterDto;
 import com.epm.gestepm.modelapi.inspection.dto.finder.InspectionFileByIdFinderDto;
+import com.epm.gestepm.modelapi.inspection.dto.updater.InspectionFileUpdateDto;
 import com.epm.gestepm.modelapi.inspection.exception.InspectionFileNotFoundException;
 import com.epm.gestepm.modelapi.inspection.service.InspectionFileService;
+import com.epm.gestepm.modelapi.shares.construction.dto.ConstructionShareFileDto;
+import com.epm.gestepm.modelapi.shares.construction.dto.updater.ConstructionShareFileUpdateDto;
+import com.epm.gestepm.modelapi.shares.programmed.dto.ProgrammedShareFileDto;
+import com.epm.gestepm.modelapi.shares.programmed.dto.filter.ProgrammedShareFileFilterDto;
+import com.epm.gestepm.storageapi.dto.FileResponse;
+import com.epm.gestepm.storageapi.dto.deleter.FileDelete;
+import com.epm.gestepm.storageapi.dto.finder.FileByNameFinder;
+import com.epm.gestepm.storageapi.service.GoogleCloudStorageService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -29,32 +49,50 @@ import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.SERVICE;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.*;
 import static com.epm.gestepm.modelapi.inspection.security.InspectionPermission.PRMT_EDIT_I;
 import static com.epm.gestepm.modelapi.inspection.security.InspectionPermission.PRMT_READ_I;
+import static com.epm.gestepm.modelapi.shares.construction.security.ConstructionSharePermission.PRMT_EDIT_CS;
+import static com.epm.gestepm.modelapi.shares.programmed.security.ProgrammedSharePermission.PRMT_READ_PS;
 import static org.mapstruct.factory.Mappers.getMapper;
 
 @Service
 @Validated
+@RequiredArgsConstructor
 @EnableExecutionLog(layerMarker = SERVICE)
 public class InspectionFileServiceImpl implements InspectionFileService {
 
-    private final InspectionFileDao inspectionDao;
+    private final GoogleCloudStorageService googleCloudStorageService;
 
-    public InspectionFileServiceImpl(InspectionFileDao inspectionDao) {
-        this.inspectionDao = inspectionDao;
-    }
+    private final InspectionFileDao inspectionFileDao;
 
     @Override
-    @RequirePermits(value = PRMT_READ_I, action = "List countries")
+    @RequirePermits(value = PRMT_READ_I, action = "List inspection files")
     @LogExecution(operation = OP_READ,
             debugOut = true,
-            msgIn = "Paginating inspection file files",
-            msgOut = "Paginating inspection file files OK",
-            errorMsg = "Failed to paginate inspection file files")
+            msgIn = "Paginating inspection files",
+            msgOut = "Paginating inspection files OK",
+            errorMsg = "Failed to paginate inspection files")
     public List<InspectionFileDto> list(InspectionFileFilterDto filterDto) {
         final InspectionFileFilter filter = getMapper(MapIFToInspectionFileFilter.class).from(filterDto);
 
-        final List<InspectionFile> page = this.inspectionDao.list(filter);
+        final List<InspectionFile> list = this.inspectionFileDao.list(filter);
+        list.forEach(this::populateFileUrl);
 
-        return getMapper(MapIFToInspectionFileDto.class).from(page);
+        return getMapper(MapIFToInspectionFileDto.class).from(list);
+    }
+
+    @Override
+    @RequirePermits(value = PRMT_READ_PS, action = "Page inspection files")
+    @LogExecution(operation = OP_READ,
+            debugOut = true,
+            msgIn = "Paginating inspection files",
+            msgOut = "Paginating inspection files OK",
+            errorMsg = "Failed to paginate inspection files")
+    public Page<InspectionFileDto> list(InspectionFileFilterDto filterDto, Long offset, Long limit) {
+        final InspectionFileFilter filter = getMapper(MapIFToInspectionFileFilter.class).from(filterDto);
+
+        final Page<InspectionFile> list = this.inspectionFileDao.list(filter, offset, limit);
+        list.forEach(this::populateFileUrl);
+
+        return getMapper(MapIFToInspectionFileDto.class).from(list);
     }
 
     @Override
@@ -67,7 +105,8 @@ public class InspectionFileServiceImpl implements InspectionFileService {
     public Optional<InspectionFileDto> find(final InspectionFileByIdFinderDto finderDto) {
         final InspectionFileByIdFinder finder = getMapper(MapIFToInspectionFileByIdFinder.class).from(finderDto);
 
-        final Optional<InspectionFile> found = this.inspectionDao.find(finder);
+        final Optional<InspectionFile> found = this.inspectionFileDao.find(finder);
+        found.ifPresent(this::populateFileUrl);
 
         return found.map(getMapper(MapIFToInspectionFileDto.class)::from);
     }
@@ -96,11 +135,29 @@ public class InspectionFileServiceImpl implements InspectionFileService {
     public InspectionFileDto create(InspectionFileCreateDto createDto) {
         final InspectionFileCreate create = getMapper(MapIFToInspectionFileCreate.class).from(createDto);
 
-        final InspectionFile result = this.inspectionDao.create(create);
+        final InspectionFile result = this.inspectionFileDao.create(create);
+        this.populateFileUrl(result);
 
         return getMapper(MapIFToInspectionFileDto.class).from(result);
     }
 
+    @Override
+    @Transactional
+    @RequirePermits(value = PRMT_EDIT_CS, action = "Update inspection file")
+    @LogExecution(operation = OP_CREATE,
+            debugOut = true,
+            msgIn = "Updating inspection file",
+            msgOut = "Inspection file OK",
+            errorMsg = "Failed to update inspection file")
+    public InspectionFileDto update(InspectionFileUpdateDto updateDto) {
+        final InspectionFileUpdate update = getMapper(MapIFToInspectionFileUpdate.class).from(updateDto);
+
+        final InspectionFile result = this.inspectionFileDao.update(update);
+        this.populateFileUrl(result);
+
+        return getMapper(MapIFToInspectionFileDto.class).from(result);
+    }
+    
     @Override
     @RequirePermits(value = PRMT_EDIT_I, action = "Delete inspection file")
     @LogExecution(operation = OP_DELETE,
@@ -112,10 +169,23 @@ public class InspectionFileServiceImpl implements InspectionFileService {
 
         final InspectionFileByIdFinderDto finderDto = new InspectionFileByIdFinderDto(deleteDto.getId());
 
-        findOrNotFound(finderDto);
+        final InspectionFileDto fileDto = this.findOrNotFound(finderDto);
+
+        this.googleCloudStorageService.deleteFile(new FileDelete(fileDto.getStoragePath()));
 
         final InspectionFileDelete delete = getMapper(MapIFToInspectionFileDelete.class).from(deleteDto);
 
-        this.inspectionDao.delete(delete);
+        this.inspectionFileDao.delete(delete);
+    }
+
+    private void populateFileUrl(final InspectionFile file) {
+        if (file.getStoragePath() == null) { // FIXME: to remove
+            return;
+        }
+
+        final FileByNameFinder finder = new FileByNameFinder(file.getStoragePath());
+        final FileResponse fileResponse = this.googleCloudStorageService.getFile(finder);
+
+        file.setUrl(fileResponse.getUrl());
     }
 }

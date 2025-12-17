@@ -119,8 +119,6 @@
     const modal = document.querySelector('#personalExpenseModal')
     const form = document.querySelector('#personalExpenseForm');
 
-    let filesData = [];
-
     function onChangePriceType() {
         const priceType = form.querySelector('[name="priceType"]');
 
@@ -199,13 +197,20 @@
             startDate: form.querySelector('[name="startDate"]').value,
             quantity: form.querySelector('[name="quantity"]').value,
             amount: form.querySelector('[name="amount"]').value,
-            paymentType: form.querySelector('[name="paymentType"]').value,
-            files: filesData
+            paymentType: form.querySelector('[name="paymentType"]').value
         };
+        const selector = form.querySelector('[name="files"]');
 
-        filesData = [];
+        const formData = new FormData();
+        formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
 
-        axios[method](endpoint, data).then((response) => {
+        if (selector && selector.files) {
+            for (let i = 0; i < selector.files.length; i++) {
+                formData.append('files', selector.files[i]);
+            }
+        }
+
+        axios[method](endpoint, formData).then((response) => {
             form.reset();
             modal.removeAttribute('data-id');
             dTable.ajax.reload();
@@ -228,26 +233,8 @@
         });
     }
 
-    function getFiles() {
-        form.querySelector('[name="files"]').addEventListener('change', function(event) {
-            const files = event.target.files;
-
-            for (let i = 0; i < files.length; i++) {
-                const reader = new FileReader();
-                reader.onloadend = function() {
-                    filesData.push({
-                        name: files[i].name,
-                        content: reader.result.split(',')[1]
-                    });
-                }
-                reader.readAsDataURL(files[i]);
-            }
-        });
-    }
-
     $(document).ready(function() {
         onChangePriceType();
-        getFiles();
     });
 
 </script>

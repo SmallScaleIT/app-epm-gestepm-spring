@@ -13,6 +13,7 @@ import com.epm.gestepm.model.shares.construction.dao.entity.creator.Construction
 import com.epm.gestepm.model.shares.construction.dao.entity.deleter.ConstructionShareFileDelete;
 import com.epm.gestepm.model.shares.construction.dao.entity.filter.ConstructionShareFileFilter;
 import com.epm.gestepm.model.shares.construction.dao.entity.finder.ConstructionShareFileByIdFinder;
+import com.epm.gestepm.model.shares.construction.dao.entity.updater.ConstructionShareFileUpdate;
 import com.epm.gestepm.model.shares.construction.dao.mappers.ConstructionShareFileRowMapper;
 import org.springframework.stereotype.Component;
 
@@ -86,6 +87,29 @@ public class ConstructionShareFileDaoImpl implements ConstructionShareFileDao {
                 .onGeneratedKey(f -> finder.setId(f.intValue()));
 
         this.sqlDatasource.insert(sqlInsert);
+
+        return this.find(finder).orElse(null);
+    }
+
+    @Override
+    @LogExecution(operation = OP_UPDATE,
+            debugOut = true,
+            msgIn = "Persisting construction share file",
+            msgOut = "Construction share file persisted OK",
+            errorMsg = "Failed to persist construction share file")
+    public ConstructionShareFile update(ConstructionShareFileUpdate update) {
+
+        final Integer id = update.getId();
+        final AttributeMap params = update.collectAttributes();
+
+        final ConstructionShareFileByIdFinder finder = new ConstructionShareFileByIdFinder();
+        finder.setId(id);
+
+        final SQLQuery sqlQuery = new SQLQuery()
+                .useQuery(QRY_UPDATE_CSF)
+                .withParams(params);
+
+        this.sqlDatasource.execute(sqlQuery);
 
         return this.find(finder).orElse(null);
     }
