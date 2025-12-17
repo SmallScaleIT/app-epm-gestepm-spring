@@ -20,19 +20,6 @@ public class InterventionPrShareRepositoryImpl implements InterventionPrShareRep
 	private EntityManager entityManager;
 
 	@Override
-	public List<InterventionPrShare> findWeekSigningsByUserId(LocalDateTime startDate, LocalDateTime endDate, Long userId) {
-		
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<InterventionPrShare> cq = cb.createQuery(InterventionPrShare.class);
-		
-		Root<InterventionPrShare> root = cq.from(InterventionPrShare.class);
-		
-		cq.select(root).where(cb.and(cb.between(root.get("endDate"), startDate, endDate), cb.equal(root.get("user"), userId)));
-		
-		return entityManager.createQuery(cq).getResultList();
-	}
-
-	@Override
 	public List<ExpensesMonthDTO> findExpensesMonthDTOByProjectId(Long projectId, Integer year) {
 		
 		try {

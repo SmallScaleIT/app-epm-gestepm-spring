@@ -6,8 +6,7 @@ import lombok.Data;
 
 import java.util.List;
 
-import static com.epm.gestepm.model.shares.programmed.dao.constants.ProgrammedShareFileAttributes.ATTR_PSF_IDS;
-import static com.epm.gestepm.model.shares.programmed.dao.constants.ProgrammedShareFileAttributes.ATTR_PSF_SHARE_ID;
+import static com.epm.gestepm.model.shares.programmed.dao.constants.ProgrammedShareFileAttributes.*;
 
 @Data
 public class ProgrammedShareFileFilter implements CollectableAttributes {
@@ -16,6 +15,8 @@ public class ProgrammedShareFileFilter implements CollectableAttributes {
 
     private Integer shareId;
 
+    private Boolean needMigration;
+
     @Override
     public AttributeMap collectAttributes() {
 
@@ -23,6 +24,7 @@ public class ProgrammedShareFileFilter implements CollectableAttributes {
 
         map.putList(ATTR_PSF_IDS, this.ids);
         map.put(ATTR_PSF_SHARE_ID, this.shareId);
+        map.putBooleanAsInt(ATTR_PSF_NEED_MIGRATION, this.needMigration);
 
         return map;
     }

@@ -19,12 +19,19 @@ import com.epm.gestepm.model.personalexpense.dao.entity.filter.PersonalExpenseFi
 import com.epm.gestepm.model.personalexpense.dao.entity.finder.PersonalExpenseByIdFinder;
 import com.epm.gestepm.model.personalexpense.dao.entity.updater.PersonalExpenseUpdate;
 import com.epm.gestepm.model.personalexpense.dao.mappers.PersonalExpenseRowMapper;
+import com.epm.gestepm.storageapi.dto.FileResponse;
+import com.epm.gestepm.storageapi.dto.creator.FileCreate;
+import com.epm.gestepm.storageapi.service.GoogleCloudStorageService;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.DAO;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.*;
@@ -32,18 +39,18 @@ import static com.epm.gestepm.model.inspection.dao.mappers.InspectionRowMapper.C
 import static com.epm.gestepm.model.personalexpense.dao.constants.PersonalExpenseQueries.*;
 import static com.epm.gestepm.model.personalexpense.dao.mappers.PersonalExpenseRowMapper.COL_PE_ID;
 
+@RequiredArgsConstructor
 @Component("personalExpenseDao")
 @EnableExecutionLog(layerMarker = DAO)
 public class PersonalExpenseDaoImpl implements PersonalExpenseDao {
 
+    private static final String PATH_FOLDER = "personal-expenses";
+
+    private final GoogleCloudStorageService googleCloudStorageService;
+
     private final PersonalExpenseFileDao personalExpenseFileDao;
 
     private final SQLDatasource sqlDatasource;
-
-    public PersonalExpenseDaoImpl(PersonalExpenseFileDao personalExpenseFileDao, SQLDatasource sqlDatasource) {
-        this.personalExpenseFileDao = personalExpenseFileDao;
-        this.sqlDatasource = sqlDatasource;
-    }
 
     @Override
     @LogExecution(operation = OP_READ,
@@ -122,8 +129,8 @@ public class PersonalExpenseDaoImpl implements PersonalExpenseDao {
 
         this.sqlDatasource.insert(sqlInsert);
 
-        if (create.getFiles() != null && !create.getFiles().isEmpty()) {
-            this.insertFiles(create.getFiles(), finder.getId());
+        if (CollectionUtils.isNotEmpty(create.getFiles())) {
+            create.getFiles().forEach(file -> this.insertFiles(file, finder.getId()));
         }
 
         return this.find(finder).orElse(null);
@@ -149,8 +156,8 @@ public class PersonalExpenseDaoImpl implements PersonalExpenseDao {
 
         this.sqlDatasource.execute(sqlQuery);
 
-        if (update.getFiles() != null && !update.getFiles().isEmpty()) {
-            this.insertFiles(update.getFiles(), id);
+        if (CollectionUtils.isNotEmpty(update.getFiles())) {
+            update.getFiles().forEach(file -> this.insertFiles(file, id));
         }
 
         return this.find(finder).orElse(null);
@@ -191,10 +198,20 @@ public class PersonalExpenseDaoImpl implements PersonalExpenseDao {
         return orderBy;
     }
 
-    private void insertFiles(final List<PersonalExpenseFileCreate> files, final Integer personalExpenseId) {
-        files.forEach(fileCreate -> {
-            fileCreate.setPersonalExpenseId(personalExpenseId);
-            this.personalExpenseFileDao.create(fileCreate);
-        });
+    private void insertFiles(final MultipartFile file, final Integer id) {
+        final UUID storageUUID = UUID.randomUUID();
+
+        final FileCreate fileCreate = new FileCreate();
+        fileCreate.setName(PATH_FOLDER + "/" + storageUUID);
+        fileCreate.setFile(file);
+
+        final FileResponse fileResponse = this.googleCloudStorageService.uploadFile(fileCreate);
+
+        final PersonalExpenseFileCreate peFileCreate = new PersonalExpenseFileCreate();
+        peFileCreate.setPersonalExpenseId(id);
+        peFileCreate.setName(file.getOriginalFilename());
+        peFileCreate.setStoragePath(fileResponse.getFileName());
+
+        this.personalExpenseFileDao.create(peFileCreate);
     }
 }

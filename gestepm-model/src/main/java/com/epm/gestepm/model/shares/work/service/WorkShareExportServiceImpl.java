@@ -125,16 +125,9 @@ public class WorkShareExportServiceImpl implements WorkShareExportService {
 
         for (Integer fileId : dto.getFileIds()) {
             final WorkShareFileDto file = workShareFileService.findOrNotFound(new WorkShareFileByIdFinderDto(fileId));
-            if (StringUtils.isNotBlank(file.getContent())) {
 
-                final byte[] imageBytes = Base64.getDecoder().decode(file.getContent());
-                final byte[] compressedBytes = ImageUtils.compressImage(imageBytes, IMAGE_COMPRESSION_QUALITY);
-
-                if (compressedBytes == null) {
-                    continue;
-                }
-
-                final Image image = Image.getInstance(compressedBytes);
+            if (StringUtils.isNotBlank(file.getUrl())) {
+                final Image image = Image.getInstance(file.getUrl());
 
                 float margin = 36f;
                 float availableWidth = pageWidth - 2 * margin;

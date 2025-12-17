@@ -31,6 +31,7 @@ import com.epm.gestepm.rest.shares.programmed.response.ResponsesForProgrammedSha
 import com.epm.gestepm.rest.shares.programmed.response.ResponsesForProgrammedShareList;
 import com.epm.gestepm.restapi.openapi.api.ProgrammedShareV1Api;
 import com.epm.gestepm.restapi.openapi.model.*;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
@@ -39,7 +40,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -147,19 +150,20 @@ public class ProgrammedShareController extends BaseController implements Program
     @Override
     @RequirePermits(value = PRMT_EDIT_PS, action = "Update programmed share")
     @LogExecution(operation = OP_UPDATE)
-    public ResponseEntity<CreateProgrammedShareV1200Response> updateProgrammedShareV1(final Integer id, final UpdateProgrammedShareV1Request reqUpdateProgrammedShare) {
+    public ResponseEntity<CreateProgrammedShareV1200Response> updateProgrammedShareV1(final Integer id, final UpdateProgrammedShareV1RequestData data, final List<MultipartFile> files) {
 
-        final ProgrammedShareUpdateDto updateDto = getMapper(MapPSToProgrammedShareUpdateDto.class).from(reqUpdateProgrammedShare);
+        final ProgrammedShareUpdateDto updateDto = getMapper(MapPSToProgrammedShareUpdateDto.class).from(data);
         updateDto.setId(id);
+        updateDto.setFiles(files);
 
         final ProgrammedShareDto countryDto = this.programmedShareService.update(updateDto);
 
         final APIMetadata metadata = this.getDefaultMetadata();
-        final ProgrammedShare data = getMapper(MapPSToProgrammedShareResponse.class).from(countryDto);
+        final ProgrammedShare programmedShare = getMapper(MapPSToProgrammedShareResponse.class).from(countryDto);
 
         final CreateProgrammedShareV1200Response response = new CreateProgrammedShareV1200Response();
         response.setMetadata(getMapper(MetadataMapper.class).from(metadata));
-        response.setData(data);
+        response.setData(programmedShare);
 
         return ResponseEntity.ok(response);
     }

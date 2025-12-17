@@ -9,19 +9,21 @@ import java.util.List;
 @Data
 public class WorkShareFileFilterDto implements UsableAsCacheKey {
 
-  private List<Integer> ids;
+    private List<Integer> ids;
 
-  private Integer shareId;
+    private Integer shareId;
 
-  @Override
-  public String asCacheKey() {
+    private Boolean needMigration;
 
-    final CacheKeyBuilder cacheKeyBuilder = new CacheKeyBuilder();
+    @Override
+    public String asCacheKey() {
 
-    cacheKeyBuilder.addElement("ids", this.ids);
-    cacheKeyBuilder.addElement("shareId", this.shareId);
+        final CacheKeyBuilder cacheKeyBuilder = new CacheKeyBuilder();
 
-    return cacheKeyBuilder.toString();
-  }
+        cacheKeyBuilder.addElement("ids", this.ids);
+        cacheKeyBuilder.addElement("shareId", this.shareId);
+        cacheKeyBuilder.addElement("needMigration", this.needMigration);
 
+        return cacheKeyBuilder.toString();
+    }
 }

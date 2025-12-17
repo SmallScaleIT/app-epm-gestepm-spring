@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -60,6 +61,8 @@ public class PersonalExpenseSheetExportServiceImpl implements PersonalExpenseShe
     private final PersonalExpenseFileService personalExpenseFileService;
 
     private final ProjectService projectService;
+
+    private final RestTemplate restTemplate;
 
     private final UserService userService;
 
@@ -137,8 +140,7 @@ public class PersonalExpenseSheetExportServiceImpl implements PersonalExpenseShe
 
         for (final PersonalExpenseFileDto file : files) {
             if (isPDF(file)) {
-
-                final byte[] pdfBytes = Base64.getDecoder().decode(file.getContent());
+                final byte[] pdfBytes = this.getPdfBytesFromUrl(file.getUrl());
                 final InputStream inputStream = new ByteArrayInputStream(pdfBytes);
                 final PdfReader pdfReader = new PdfReader(inputStream);
 
@@ -164,15 +166,7 @@ public class PersonalExpenseSheetExportServiceImpl implements PersonalExpenseShe
                     }
                 }
             } else {
-
-                final byte[] imageBytes = Base64.getDecoder().decode(file.getContent());
-                final byte[] compressedBytes = ImageUtils.compressImage(imageBytes, 0.5f);
-
-                if (compressedBytes == null) {
-                    continue;
-                }
-
-                final Image image = Image.getInstance(compressedBytes);
+                final Image image = Image.getInstance(file.getUrl());
 
                 final float marginLeft = 36;
                 final float marginRight = 36;
@@ -206,5 +200,9 @@ public class PersonalExpenseSheetExportServiceImpl implements PersonalExpenseShe
 
     private boolean isPDF(final PersonalExpenseFileDto file) {
         return file.getName().toLowerCase().endsWith(".pdf");
+    }
+
+    public byte[] getPdfBytesFromUrl(final String url) {
+        return restTemplate.getForObject(url, byte[].class);
     }
 }

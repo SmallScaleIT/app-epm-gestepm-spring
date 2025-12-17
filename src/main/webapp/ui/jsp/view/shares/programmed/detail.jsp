@@ -282,10 +282,10 @@
                 const observations = editForm.querySelector('[name="observations"]').value;
                 const customerSignature = !signatures.customer.isEmpty() ? signatures.customer.toDataURL() : null;
                 const operatorSignature = !signatures.operator.isEmpty() ? signatures.operator.toDataURL() : null;
-                const files = await parseFiles(editForm);
+                const selector = editForm.querySelector('[name="files"]');
                 const notify = editForm.querySelector('[name="clientNotif"]');
 
-                let params = {
+                let data = {
                     projectId: projectId,
                     startDate: startDate,
                     endDate: endDate,
@@ -293,13 +293,21 @@
                     observations: observations,
                     customerSignature: customerSignature,
                     operatorSignature: operatorSignature,
-                    files: files,
                     notify: notify.checked
                 };
 
-                axios.put('/v1' + window.location.pathname, params).then(() => {
-                    location.reload();
-                }).catch(error => showNotify(error.response.data.detail, 'danger'))
+                const formData = new FormData();
+                formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+
+                if (selector && selector.files) {
+                    for (let i = 0; i < selector.files.length; i++) {
+                        formData.append('files', selector.files[i]);
+                    }
+                }
+
+                axios.put('/v1' + window.location.pathname, formData)
+                    .then(() => location.reload())
+                    .catch(error => showNotify(error.response.data.detail, 'danger'))
                     .finally(() => hideLoading());
             }
         })
@@ -338,17 +346,9 @@
 
         if (files.length > 0) {
             const downloadBase64File = (file) => {
-                const binaryData = atob(file.content);
-                const byteNumbers = new Uint8Array(binaryData.length);
-
-                for (let i = 0; i < binaryData.length; i++) {
-                    byteNumbers[i] = binaryData.charCodeAt(i);
-                }
-
                 const link = document.createElement('a');
-                const blob = new Blob([byteNumbers], { type: 'application/octet-stream' });
 
-                link.href = URL.createObjectURL(blob);
+                link.href = file.url;
                 link.download = file.name;
                 link.textContent = file.name;
                 link.classList.add('btn', 'btn-outline-primary', 'btn-xs', 'mr-1');

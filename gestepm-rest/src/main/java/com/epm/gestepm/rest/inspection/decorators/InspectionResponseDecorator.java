@@ -7,7 +7,9 @@ import com.epm.gestepm.lib.logging.annotation.LogExecution;
 import com.epm.gestepm.modelapi.inspection.dto.InspectionFileDto;
 import com.epm.gestepm.modelapi.inspection.dto.filter.InspectionFileFilterDto;
 import com.epm.gestepm.modelapi.inspection.service.InspectionFileService;
-import com.epm.gestepm.modelapi.deprecated.user.service.UserServiceOld;
+import com.epm.gestepm.modelapi.user.dto.UserDto;
+import com.epm.gestepm.modelapi.user.dto.finder.UserByIdFinderDto;
+import com.epm.gestepm.modelapi.user.service.UserService;
 import com.epm.gestepm.rest.inspection.mappers.MapIFToFileResponse;
 import com.epm.gestepm.rest.inspection.request.InspectionFindRestRequest;
 import com.epm.gestepm.restapi.openapi.model.Inspection;
@@ -35,12 +37,12 @@ public class InspectionResponseDecorator extends BaseResponseDataDecorator<Inspe
 
     private final InspectionFileService inspectionFileService;
 
-    private final UserServiceOld userServiceOld;
+    private final UserService userService;
     
-    public InspectionResponseDecorator(ApplicationContext applicationContext, InspectionFileService inspectionFileService, UserServiceOld userServiceOld) {
+    public InspectionResponseDecorator(ApplicationContext applicationContext, InspectionFileService inspectionFileService, UserService userService) {
         super(applicationContext);
         this.inspectionFileService = inspectionFileService;
-        this.userServiceOld = userServiceOld;
+        this.userService = userService;
     }
 
     @Override
@@ -51,7 +53,6 @@ public class InspectionResponseDecorator extends BaseResponseDataDecorator<Inspe
     public void decorate(RestRequest request, Inspection data) {
 
         if (request.getLinks()) {
-
             final InspectionFindRestRequest selfReq = new InspectionFindRestRequest(data.getId(), data.getShare().getId());
             selfReq.commonValuesFrom(request);
         }
@@ -70,7 +71,7 @@ public class InspectionResponseDecorator extends BaseResponseDataDecorator<Inspe
         if (request.hasExpand(I_FIRST_TECHNICAL_EXPAND) && data.getFirstTechnical() != null && data.getFirstTechnical().getId() != null) {
             final Integer firstTechnicalId = data.getFirstTechnical().getId();
 
-            final com.epm.gestepm.modelapi.deprecated.user.dto.User userDto = this.userServiceOld.getUserById(Long.valueOf(firstTechnicalId));
+            final UserDto userDto = this.userService.findOrNotFound(new UserByIdFinderDto(firstTechnicalId));
             final User response = new User().id(firstTechnicalId).name(userDto.getName()).surnames(userDto.getSurnames());
 
             data.setFirstTechnical(response);
@@ -79,7 +80,7 @@ public class InspectionResponseDecorator extends BaseResponseDataDecorator<Inspe
         if (request.hasExpand(I_SECOND_TECHNICAL_EXPAND) && data.getSecondTechnical() != null && data.getSecondTechnical().getId() != null) {
             final Integer secondTechnicalId = data.getSecondTechnical().getId();
 
-            final com.epm.gestepm.modelapi.deprecated.user.dto.User userDto = this.userServiceOld.getUserById(Long.valueOf(secondTechnicalId));
+            final UserDto userDto = this.userService.findOrNotFound(new UserByIdFinderDto(secondTechnicalId));
             final User response = new User().id(secondTechnicalId).name(userDto.getName()).surnames(userDto.getSurnames());
 
             data.setSecondTechnical(response);

@@ -8,9 +8,11 @@ import com.epm.gestepm.model.shares.noprogrammed.dao.constants.NoProgrammedShare
 import com.epm.gestepm.model.shares.programmed.dao.entity.creator.ProgrammedShareFileCreate;
 import lombok.Data;
 import lombok.Singular;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import static com.epm.gestepm.model.shares.programmed.dao.constants.ProgrammedShareAttributes.*;
@@ -44,7 +46,7 @@ public class ProgrammedShareUpdate implements AuditClose, AuditUpdate, Collectab
     private Integer updatedBy;
     
     @Singular
-    private Set<ProgrammedShareFileCreate> files;
+    private List<MultipartFile> files;
 
     @Override
     public AttributeMap collectAttributes() {

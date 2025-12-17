@@ -7,6 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper
 public interface MapIFToInspectionFileFilter {
 
-  InspectionFileFilter from(InspectionFileFilterDto filterDto);
+    InspectionFileFilter from(InspectionFileFilterDto filterDto);
 
 }

@@ -19,6 +19,7 @@ sql:
       i.client_name,
       i.materials_file,
       i.materials_file_name,
+      i.materials_storage_path,
       i.equipment_hours,   
       i.topic_id,
       i.modified_at,
@@ -82,8 +83,8 @@ sql:
       signature = :attr_i_signature, 
       operator_signature = :attr_i_operator_signature, 
       client_name = :attr_i_client_name, 
-      materials_file = :attr_i_materials_file, 
       materials_file_name = :attr_i_materials_file_name,
+      materials_storage_path = :attr_i_materials_storage_path,
       equipment_hours = :attr_i_equipment_hours,
       topic_id = :attr_i_topic_id,
       modified_at = :attr_i_modified_at,
@@ -104,6 +105,8 @@ sql:
       -- ${sql.predicate-for-i-start-date}
       -- ${sql.predicate-for-i-end-date}
       -- ${sql.predicate-for-i-current}
+      -- ${sql.predicate-for-i-has-material-file}
+      -- ${sql.predicate-for-i-need-migration}
     -- AND]
 
   filter-i-by-id: |
@@ -137,4 +140,13 @@ sql:
     i.end_date > :attr_i_end_date
 
   predicate-for-i-current: |
+    
     ((:attr_i_current IS TRUE AND i.end_date IS NULL) OR (:attr_i_current IS FALSE AND i.end_date IS NOT NULL))
+
+  predicate-for-i-has-material-file: |
+    
+    :attr_i_has_material_file = 1 AND i.materials_file_name IS NOT NULL
+
+  predicate-for-i-need-migration: |
+    
+    :attr_i_need_migration = 1 AND i.materials_storage_path IS NULL

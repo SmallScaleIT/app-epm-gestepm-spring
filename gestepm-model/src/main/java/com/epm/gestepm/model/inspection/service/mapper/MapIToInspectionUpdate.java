@@ -8,13 +8,11 @@ import org.mapstruct.*;
 @Mapper
 public interface MapIToInspectionUpdate {
 
-  @Mapping(source = "materialsFile.content", target = "materialsFile")
-  @Mapping(source = "materialsFile.name", target = "materialsFileName")
+  @Mapping(target = "materialsFile", ignore = true)
   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   InspectionUpdate from(InspectionUpdateDto source, @MappingTarget InspectionUpdate target);
 
-  @Mapping(source = "materialsFile.content", target = "materialsFile")
-  @Mapping(source = "materialsFile.name", target = "materialsFileName")
+  @Mapping(target = "materialsFile", ignore = true)
   InspectionUpdate from(InspectionUpdateDto updateDto);
 
   InspectionUpdate from(InspectionDto dto);

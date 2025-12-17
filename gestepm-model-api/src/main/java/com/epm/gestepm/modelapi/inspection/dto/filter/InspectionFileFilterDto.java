@@ -9,19 +9,21 @@ import java.util.List;
 @Data
 public class InspectionFileFilterDto implements UsableAsCacheKey {
 
-  private List<Integer> ids;
+    private List<Integer> ids;
 
-  private Integer inspectionId;
+    private Integer inspectionId;
 
-  @Override
-  public String asCacheKey() {
+    private Boolean needMigration;
 
-    final CacheKeyBuilder cacheKeyBuilder = new CacheKeyBuilder();
+    @Override
+    public String asCacheKey() {
 
-    cacheKeyBuilder.addElement("ids", this.ids);
-    cacheKeyBuilder.addElement("inspectionId", this.inspectionId);
+        final CacheKeyBuilder cacheKeyBuilder = new CacheKeyBuilder();
 
-    return cacheKeyBuilder.toString();
-  }
+        cacheKeyBuilder.addElement("ids", this.ids);
+        cacheKeyBuilder.addElement("inspectionId", this.inspectionId);
+        cacheKeyBuilder.addElement("needMigration", this.needMigration);
 
+        return cacheKeyBuilder.toString();
+    }
 }

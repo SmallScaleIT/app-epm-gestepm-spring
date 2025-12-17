@@ -34,6 +34,7 @@ import com.epm.gestepm.rest.inspection.response.ResponsesForInspection;
 import com.epm.gestepm.rest.inspection.response.ResponsesForInspectionList;
 import com.epm.gestepm.restapi.openapi.api.InspectionV1Api;
 import com.epm.gestepm.restapi.openapi.model.*;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
@@ -42,7 +43,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -147,20 +150,22 @@ public class InspectionController extends BaseController implements InspectionV1
     @Override
     @RequirePermits(value = PRMT_EDIT_I, action = "Update inspection")
     @LogExecution(operation = OP_UPDATE)
-    public ResponseEntity<CreateInspectionV1200Response> updateInspectionV1(final Integer shareId, final Integer inspectionId, final UpdateInspectionV1Request reqUpdateInspection) {
+    public ResponseEntity<CreateInspectionV1200Response> updateInspectionV1(final Integer shareId, final Integer inspectionId, final UpdateInspectionV1RequestData data, final List<MultipartFile> files, final MultipartFile materialsFile) {
 
-        final InspectionUpdateDto updateDto = getMapper(MapIToInspectionUpdateDto.class).from(reqUpdateInspection);
+        final InspectionUpdateDto updateDto = getMapper(MapIToInspectionUpdateDto.class).from(data);
         updateDto.setId(inspectionId);
         updateDto.setShareId(shareId);
+        updateDto.setFiles(files);
+        updateDto.setMaterialsFile(materialsFile);
 
         final InspectionDto inspectionDto = this.inspectionService.update(updateDto);
 
         final APIMetadata metadata = this.getDefaultMetadata();
-        final Inspection data = getMapper(MapIToInspectionResponse.class).from(inspectionDto);
+        final Inspection inspection = getMapper(MapIToInspectionResponse.class).from(inspectionDto);
 
         final CreateInspectionV1200Response response = new CreateInspectionV1200Response();
         response.setMetadata(getMapper(MetadataMapper.class).from(metadata));
-        response.setData(data);
+        response.setData(inspection);
 
         return ResponseEntity.ok(response);
     }

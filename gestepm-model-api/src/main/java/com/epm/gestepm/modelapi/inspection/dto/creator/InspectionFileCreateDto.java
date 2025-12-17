@@ -9,10 +9,9 @@ import javax.validation.constraints.NotNull;
 public class InspectionFileCreateDto {
 
     @NotNull
-    private String name;
+    private Integer inspectionId;
 
     @NotNull
-    @JsonIgnore
-    private String content;
+    private String name;
 
 }

@@ -50,6 +50,8 @@ public class InspectionRowMapper extends CommonRowMapper implements RowMapper<In
 
     public static final String COL_I_MATERIALS_FILE_NAME = "materials_file_name";
 
+    public static final String COL_I_MATERIALS_STORAGE_PATH = "materials_storage_path";
+
     public static final String COL_I_EQUIPMENT_HOURS = "equipment_hours";
 
     public static final String COL_I_TOPIC_ID = "topic_id";
@@ -75,10 +77,12 @@ public class InspectionRowMapper extends CommonRowMapper implements RowMapper<In
         inspection.setSignature(nullableString(rs, COL_I_SIGNATURE));
         inspection.setOperatorSignature(nullableString(rs, COL_I_OPERATOR_SIGNATURE));
         inspection.setClientName(nullableString(rs, COL_I_CLIENT_NAME));
-        if (hasValue(rs, COL_I_MATERIALS_FILE)) {
-            inspection.setMaterialsFile(Base64.getEncoder().encodeToString(FileUtils.decompressBytes(rs.getBytes(COL_I_MATERIALS_FILE))));
-            inspection.setMaterialsFileName(nullableString(rs, COL_I_MATERIALS_FILE_NAME));
+        if (hasValue(rs, COL_I_MATERIALS_FILE)) { // FIXME: to remove
+            final byte[] bytes = FileUtils.decompressBytes(rs.getBytes(COL_I_MATERIALS_FILE));
+            inspection.setMaterialsFile(bytes != null ? bytes : rs.getBytes(COL_I_MATERIALS_FILE));
         }
+        inspection.setMaterialsFileName(nullableString(rs, COL_I_MATERIALS_FILE_NAME));
+        inspection.setMaterialsStoragePath(nullableString(rs, COL_I_MATERIALS_STORAGE_PATH));
         inspection.setEquipmentHours(nullableInt(rs, COL_I_EQUIPMENT_HOURS));
         inspection.setTopicId(nullableInt(rs, COL_I_TOPIC_ID));
 

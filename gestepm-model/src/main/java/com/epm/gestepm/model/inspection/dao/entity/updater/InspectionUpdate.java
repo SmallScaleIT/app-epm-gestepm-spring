@@ -10,6 +10,7 @@ import com.epm.gestepm.model.inspection.dao.entity.creator.InspectionFileCreate;
 import com.epm.gestepm.model.inspection.dao.entity.creator.MaterialCreate;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -52,15 +53,17 @@ public class InspectionUpdate implements AuditUpdate, CollectableAttributes {
 
     private List<MaterialCreate> materials;
 
-    private String materialsFile;
+    private byte[] materialsFile; // FIXME: to remove
 
     private String materialsFileName;
+
+    private String materialsStoragePath;
 
     private Integer equipmentHours;
 
     private Integer topicId;
 
-    private Set<InspectionFileCreate> files;
+    private List<MultipartFile> files;
 
     private LocalDateTime updatedAt;
 
@@ -82,8 +85,10 @@ public class InspectionUpdate implements AuditUpdate, CollectableAttributes {
         map.put(InspectionAttributes.ATTR_I_SIGNATURE, this.signature);
         map.put(InspectionAttributes.ATTR_I_OPERATOR_SIGNATURE, this.operatorSignature);
         map.put(InspectionAttributes.ATTR_I_CLIENT_NAME, this.clientName);
-        map.put(InspectionAttributes.ATTR_I_MATERIALS_FILE, StringUtils.isNoneEmpty(this.materialsFile) ? FileUtils.compressBytes(Base64.getDecoder().decode(this.materialsFile)) : null);
+        // map.put(InspectionAttributes.ATTR_I_MATERIALS_FILE, StringUtils.isNoneEmpty(this.materialsFile) ? FileUtils.compressBytes(Base64.getDecoder().decode(this.materialsFile)) : null);
+        map.put(InspectionAttributes.ATTR_I_MATERIALS_FILE, null);
         map.put(InspectionAttributes.ATTR_I_MATERIALS_FILE_NAME, this.materialsFileName);
+        map.put(InspectionAttributes.ATTR_I_MATERIALS_STORAGE_PATH, this.materialsStoragePath);
         map.put(InspectionAttributes.ATTR_I_EQUIPMENT_HOURS, this.equipmentHours);
         map.put(InspectionAttributes.ATTR_I_TOPIC_ID, this.topicId);
         map.put(InspectionAttributes.ATTR_I_MODIFIED_AT, this.updatedAt);

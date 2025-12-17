@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface InterventionPrShareRepositoryCustom {
 
-	List<InterventionPrShare> findWeekSigningsByUserId(LocalDateTime startDate, LocalDateTime endDate, Long userId);
 	List<ExpensesMonthDTO> findExpensesMonthDTOByProjectId(Long projectId, Integer year);
 
 }

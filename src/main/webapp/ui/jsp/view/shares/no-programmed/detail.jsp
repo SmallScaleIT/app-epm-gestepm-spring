@@ -1,7 +1,13 @@
+<%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+<%
+    final ObjectMapper mapper = new ObjectMapper();
+    final String filesJson = mapper.writeValueAsString(request.getAttribute("files"));
+%>
 
 <style>
     .content {
@@ -263,6 +269,7 @@
     let canUpdate = ${canUpdate};
 
     let share;
+    const files = <%= filesJson %>;
     let nextAction = '${nextAction}';
     let currentMode;
 
@@ -304,43 +311,6 @@
         return response.data.data;
     }
 
-    function actionEditClosed(editForm, filesData, id) {
-        axios.patch('/v1/shares/no-programmed/' + id, {
-            userId: ${user.id},
-            familyId: editForm.querySelector('[name="familyId"]').value,
-            subFamilyId: editForm.querySelector('[name="subFamilyId"]').value,
-            description: editForm.querySelector('[name="description"]').value,
-            startDate: editForm.querySelector('[name="startDate"]').value,
-            endDate: editForm.querySelector('[name="endDate"]').value,
-            state: 'CLOSED',
-            files: filesData
-        }).then(async (response) => {
-            share = await getShare(response.data.data.id);
-            getPermissions();
-            update(share);
-            showNotify(messages.shares.noprogrammed.update.success)
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
-        .finally(() => hideLoading());
-    }
-
-    function actionEdit(editForm, filesData, id) {
-        axios.patch('/v1/shares/no-programmed/' + id, {
-            userId: ${user.id},
-            familyId: editForm.querySelector('[name="familyId"]').value,
-            subFamilyId: editForm.querySelector('[name="subFamilyId"]').value,
-            description: editForm.querySelector('[name="description"]').value,
-            startDate: editForm.querySelector('[name="startDate"]').value,
-            state: 'INITIALIZED',
-            files: filesData
-        }).then(async (response) => {
-            share = await getShare(response.data.data.id);
-            getPermissions();
-            update(share);
-            showNotify(messages.shares.noprogrammed.update.success)
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
-        .finally(() => hideLoading());
-    }
-
     function edit(id) {
         const editBtn = $('#editBtn');
         const editForm = document.querySelector('#editForm');
@@ -366,32 +336,35 @@
 
         showLoading();
 
-        const files = form.querySelector('[name="files"]')?.files;
-        let filesData = [];
+        const familyId = form.querySelector('[name="familyId"]').value;
+        const subFamilyId = form.querySelector('[name="subFamilyId"]').value;
+        const description = form.querySelector('[name="description"]').value;
+        const startDate = form.querySelector('[name="startDate"]').value;
+        const endDate = form.querySelector('[name="endDate"]') ? form.querySelector('[name="endDate"]').value : null;
+        const selector = form.querySelector('[name="files"]');
 
-        for (let i = 0; i < files?.length; i++) {
-            const file = files[i];
+        let data = {
+            userId: ${user.id},
+            familyId: familyId,
+            subFamilyId: subFamilyId,
+            description: description,
+            startDate: startDate,
+            endDate: endDate,
+            state: state
+        };
 
-            filesData.push({
-                name: file.name,
-                content: await toBase64(file)
-            });
+        const formData = new FormData();
+        formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+
+        if (selector && selector.files) {
+            for (let i = 0; i < selector.files.length; i++) {
+                formData.append('files', selector.files[i]);
+            }
         }
 
-        const endDateInput = form.querySelector('[name="endDate"]');
-
-        axios.patch('/v1/shares/no-programmed/' + id, {
-            userId: ${user.id},
-            familyId: form.querySelector('[name="familyId"]').value,
-            subFamilyId: form.querySelector('[name="subFamilyId"]').value,
-            description: form.querySelector('[name="description"]').value,
-            startDate: form.querySelector('[name="startDate"]').value,
-            endDate: endDateInput ? endDateInput.value : null,
-            state: state,
-            files: filesData
-        }).then(() => {
-            location.reload();
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        axios.patch('/v1/shares/no-programmed/' + id, formData)
+            .then(() => location.reload())
+            .catch(error => showNotify(error.response.data.detail, 'danger'))
             .finally(() => hideLoading());
     }
 
@@ -502,12 +475,12 @@
         const form = document.querySelector('#editForm');
         form.querySelector('[name="endDate"]').parentElement.remove();
 
-        const files = form.querySelector('[name="files"]');
+        const selector = form.querySelector('[name="files"]');
 
-        files.value = '';
-        files.disabled = false;
+        selector.value = '';
+        selector.disabled = false;
 
-        showFiles();
+        loadFiles(files);
     }
 
     function setCompletedMode() {
@@ -532,7 +505,7 @@
             createInspectionBtn.classList.add('d-none');
         }
 
-        showFiles();
+        loadFiles(files);
     }
 
     function appendElementToList(element, list) {
@@ -605,9 +578,15 @@
         }
     }
 
-    function showFiles() {
+    function loadFiles(files) {
+        if (files && files.length) {
+            showFiles(files, 'files', '#filesFormGroup');
+        }
+    }
+
+    function showFiles(files, inputName, filesId) {
         const form = document.querySelector('#editForm');
-        const filesFormGroup = form.querySelector('#filesFormGroup');
+        const filesFormGroup = form.querySelector(filesId);
         const filesAttachmentContainer = filesFormGroup.querySelector('.attachment-contianer');
 
         if (filesAttachmentContainer) {
@@ -617,26 +596,16 @@
         const linksContainer = document.createElement('div');
         linksContainer.classList.add('attachment-contianer');
 
-        const files = share.files;
-
-        const selector = form.querySelector('[name="files"]');
+        const selector = form.querySelector('[name="' + inputName + '"]');
         if (selector && share.state === 'CLOSED') {
             selector.remove();
         }
 
         if (files.length > 0) {
             const downloadBase64File = (file) => {
-                const binaryData = atob(file.content);
-                const byteNumbers = new Uint8Array(binaryData.length);
-
-                for (let i = 0; i < binaryData.length; i++) {
-                    byteNumbers[i] = binaryData.charCodeAt(i);
-                }
-
                 const link = document.createElement('a');
-                const blob = new Blob([byteNumbers], {type: 'application/octet-stream'});
 
-                link.href = URL.createObjectURL(blob);
+                link.href = file.url;
                 link.download = file.name;
                 link.textContent = file.name;
                 link.classList.add('btn', 'btn-outline-primary', 'btn-xs', 'mr-1');

@@ -14,8 +14,4 @@ public class ProgrammedShareFileCreateDto {
     @NotNull
     private String name;
 
-    @NotNull
-    @JsonIgnore
-    private String content;
-
 }

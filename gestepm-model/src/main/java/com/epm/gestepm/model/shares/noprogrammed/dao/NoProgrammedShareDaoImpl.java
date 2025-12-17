@@ -11,21 +11,29 @@ import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchPage;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.lib.logging.annotation.LogExecution;
 import com.epm.gestepm.lib.types.Page;
+import com.epm.gestepm.model.shares.construction.dao.entity.creator.ConstructionShareFileCreate;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.NoProgrammedShare;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.creator.NoProgrammedShareCreate;
+import com.epm.gestepm.model.shares.noprogrammed.dao.entity.creator.NoProgrammedShareFileCreate;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.deleter.NoProgrammedShareDelete;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.filter.NoProgrammedShareFilter;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.finder.NoProgrammedShareByIdFinder;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.updater.NoProgrammedShareUpdate;
 import com.epm.gestepm.model.shares.noprogrammed.dao.mappers.NoProgrammedShareRowMapper;
+import com.epm.gestepm.storageapi.dto.FileResponse;
+import com.epm.gestepm.storageapi.dto.creator.FileCreate;
+import com.epm.gestepm.storageapi.service.GoogleCloudStorageService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.DAO;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.*;
@@ -33,10 +41,14 @@ import static com.epm.gestepm.model.shares.noprogrammed.dao.constants.NoProgramm
 import static com.epm.gestepm.model.shares.noprogrammed.dao.mappers.NoProgrammedShareRowMapper.*;
 import static com.epm.gestepm.model.shares.programmed.dao.mappers.ProgrammedShareRowMapper.*;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Component("noProgrammedShareDao")
 @EnableExecutionLog(layerMarker = DAO)
 public class NoProgrammedShareDaoImpl implements NoProgrammedShareDao {
+
+    private static final String PATH_FOLDER = "no-programmed-shares";
+
+    private final GoogleCloudStorageService googleCloudStorageService;
 
     private final NoProgrammedShareFileDao noProgrammedShareFileDao;
 
@@ -143,9 +155,7 @@ public class NoProgrammedShareDaoImpl implements NoProgrammedShareDao {
         this.sqlDatasource.execute(sqlQuery);
 
         if (CollectionUtils.isNotEmpty(update.getFiles())) {
-            update.getFiles().stream()
-                    .peek(file -> file.setShareId(id))
-                    .forEach(noProgrammedShareFileDao::create);
+            update.getFiles().forEach(file -> this.insertFiles(file, id));
         }
 
         return this.find(finder).orElse(null);
@@ -191,5 +201,22 @@ public class NoProgrammedShareDaoImpl implements NoProgrammedShareDao {
             return COL_NPS_FORUM_TITLE;
         }
         return orderBy;
+    }
+
+    private void insertFiles(final MultipartFile file, final Integer id) {
+        final UUID storageUUID = UUID.randomUUID();
+
+        final FileCreate fileCreate = new FileCreate();
+        fileCreate.setName(PATH_FOLDER + "/" + storageUUID);
+        fileCreate.setFile(file);
+
+        final FileResponse fileResponse = this.googleCloudStorageService.uploadFile(fileCreate);
+
+        final NoProgrammedShareFileCreate npsFileCreate = new NoProgrammedShareFileCreate();
+        npsFileCreate.setShareId(id);
+        npsFileCreate.setName(file.getOriginalFilename());
+        npsFileCreate.setStoragePath(fileResponse.getFileName());
+
+        this.noProgrammedShareFileDao.create(npsFileCreate);
     }
 }

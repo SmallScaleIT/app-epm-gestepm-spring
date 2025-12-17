@@ -47,6 +47,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -154,19 +155,20 @@ public class ConstructionShareController extends BaseController implements Const
     @Override
     @RequirePermits(value = PRMT_EDIT_CS, action = "Update construction share")
     @LogExecution(operation = OP_UPDATE)
-    public ResponseEntity<CreateConstructionShareV1200Response> updateConstructionShareV1(final Integer id, final UpdateConstructionShareV1Request reqUpdateConstructionShare) {
+    public ResponseEntity<CreateConstructionShareV1200Response> updateConstructionShareV1(final Integer id, final UpdateConstructionShareV1RequestData data, final List<MultipartFile> files) {
 
-        final ConstructionShareUpdateDto updateDto = getMapper(MapCSToConstructionShareUpdateDto.class).from(reqUpdateConstructionShare);
+        final ConstructionShareUpdateDto updateDto = getMapper(MapCSToConstructionShareUpdateDto.class).from(data);
         updateDto.setId(id);
+        updateDto.setFiles(files);
 
-        final ConstructionShareDto countryDto = this.constructionShareService.update(updateDto);
+        final ConstructionShareDto constructionShareDto = this.constructionShareService.update(updateDto);
 
         final APIMetadata metadata = this.getDefaultMetadata();
-        final ConstructionShare data = getMapper(MapCSToConstructionShareResponse.class).from(countryDto);
+        final ConstructionShare constructionShare = getMapper(MapCSToConstructionShareResponse.class).from(constructionShareDto);
 
         final CreateConstructionShareV1200Response response = new CreateConstructionShareV1200Response();
         response.setMetadata(getMapper(MetadataMapper.class).from(metadata));
-        response.setData(data);
+        response.setData(constructionShare);
 
         return ResponseEntity.ok(response);
     }

@@ -16,31 +16,36 @@ import static com.epm.gestepm.model.shares.noprogrammed.dao.constants.NoProgramm
 @EqualsAndHashCode(callSuper = true)
 public class InspectionFilter extends Orderable implements CollectableAttributes {
 
-  private List<Integer> ids;
+    private List<Integer> ids;
 
-  private Integer shareId;
+    private Integer shareId;
 
-  private Integer projectId;
+    private Integer projectId;
 
-  private LocalDateTime startDate;
+    private LocalDateTime startDate;
 
-  private LocalDateTime endDate;
+    private LocalDateTime endDate;
 
-  private Boolean current;
+    private Boolean current;
 
-  @Override
-  public AttributeMap collectAttributes() {
+    private Boolean hasMaterialFile;
 
-    final AttributeMap map = new AttributeMap();
+    private Boolean needMigration;
 
-    map.putList(ATTR_I_IDS, this.ids);
-    map.put(ATTR_I_SHARE_ID, this.shareId);
-    map.put(ATTR_NPS_P_ID, this.projectId);
-    map.putTimestamp(ATTR_I_START_DATE, this.startDate);
-    map.putTimestamp(ATTR_I_END_DATE, this.endDate);
-    map.put(ATTR_I_CURRENT, this.current);
+    @Override
+    public AttributeMap collectAttributes() {
 
-    return map;
-  }
+        final AttributeMap map = new AttributeMap();
 
+        map.putList(ATTR_I_IDS, this.ids);
+        map.put(ATTR_I_SHARE_ID, this.shareId);
+        map.put(ATTR_NPS_P_ID, this.projectId);
+        map.putTimestamp(ATTR_I_START_DATE, this.startDate);
+        map.putTimestamp(ATTR_I_END_DATE, this.endDate);
+        map.put(ATTR_I_CURRENT, this.current);
+        map.putBooleanAsInt(ATTR_I_HAS_MATERIAL_FILE, this.hasMaterialFile);
+        map.putBooleanAsInt(ATTR_I_NEED_MIGRATION, this.needMigration);
+
+        return map;
+    }
 }
