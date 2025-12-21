@@ -10,6 +10,7 @@ import com.epm.gestepm.modelapi.deprecated.project.service.ProjectOldService;
 import com.epm.gestepm.modelapi.deprecated.user.dto.User;
 import com.epm.gestepm.modelapi.family.FamilyMapper;
 import com.epm.gestepm.modelapi.family.dto.Family;
+import com.epm.gestepm.modelapi.family.dto.FamilyDTO;
 import com.epm.gestepm.modelapi.family.dto.FamilyTableDTO;
 import com.epm.gestepm.modelapi.family.service.FamilyService;
 import com.epm.gestepm.modelapi.userholiday.dto.UserHoliday;
@@ -211,6 +212,42 @@ public class RefactorController {
             // Return data
             return new ResponseEntity<>(messageSource.getMessage("project.detail.families.success", new Object[] {}, locale), HttpStatus.OK);
 
+        } catch (Exception e) {
+            log.error(e);
+            return new ResponseEntity<>(messageSource.getMessage("project.detail.families.error", new Object[] {}, locale), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @ResponseBody
+    @PutMapping("/v1/projects/{id}/families/{familyId}/edit")
+    public ResponseEntity<String> editProjectFamiliesRest(@RequestBody FamilyDTO familyDTO, @PathVariable Long id, @PathVariable Long familyId, Locale locale) {
+
+        try {
+            if (familyDTO.getSubfamilies() == null || familyDTO.getSubfamilies().isEmpty()) {
+                return new ResponseEntity<>(messageSource.getMessage("families.admin.create.sub.empty", new Object[] {}, locale), HttpStatus.NOT_FOUND);
+            }
+
+            // Recover user
+            User user = Utiles.getUsuario();
+
+            Family currentFamily = familyService.getById(familyId);
+
+            if (currentFamily == null) {
+                log.error("Error al actualizar la familia: No existe la familia con id " + familyId);
+                return new ResponseEntity<>(messageSource.getMessage("families.admin.update.error", new Object[] {}, locale), HttpStatus.NOT_FOUND);
+            }
+
+            // Update container
+            Family family = FamilyMapper.mapDTOToFamily(familyDTO);
+            family.setId(familyId);
+            family.setProject(currentFamily.getProject()); // important many to many
+
+            family = familyService.update(family, currentFamily);
+
+            log.info("Familia " + familyId + " actualizada con éxito por parte del usuario " + user.getId());
+
+            // Return data
+            return new ResponseEntity<>("", HttpStatus.OK);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(messageSource.getMessage("project.detail.families.error", new Object[] {}, locale), HttpStatus.NOT_FOUND);

@@ -83,7 +83,7 @@ function create() {
 
 function edit(id) {
 
-    const editModal = $('#editModal');
+    /*const editModal = $('#editModal');
     const saveBtn = $('#saveBtn');
     const editElement = document.getElementById('editModal');
     const editForm = editElement.querySelector('#editForm');
@@ -121,7 +121,9 @@ function edit(id) {
                 hideLoading();
                 editModal.modal('hide');
             });
-    });
+    });*/
+
+    window.location.href = `${viewEndpoint}/families/${id}`;
 }
 
 function remove(id) {

@@ -9,15 +9,24 @@ import com.epm.gestepm.modelapi.customer.dto.CustomerDto;
 import com.epm.gestepm.modelapi.customer.dto.finder.CustomerByProjectIdFinderDto;
 import com.epm.gestepm.modelapi.customer.service.CustomerService;
 import com.epm.gestepm.modelapi.deprecated.user.dto.User;
+import com.epm.gestepm.modelapi.family.dto.Family;
 import com.epm.gestepm.modelapi.family.dto.FamilyDTO;
 import com.epm.gestepm.modelapi.family.service.FamilyService;
 import com.epm.gestepm.modelapi.project.dto.ProjectDto;
 import com.epm.gestepm.modelapi.project.dto.finder.ProjectByIdFinderDto;
 import com.epm.gestepm.modelapi.project.service.ProjectService;
+import com.epm.gestepm.modelapi.subfamily.dto.SubFamilyOldDTO;
+import com.epm.gestepm.modelapi.subfamily.service.SubFamilyService;
+import com.epm.gestepm.modelapi.subrole.dto.SubRole;
+import com.epm.gestepm.modelapi.subrole.service.SubRoleService;
 import com.epm.gestepm.modelapi.user.dto.UserDto;
 import com.epm.gestepm.modelapi.user.dto.finder.UserByIdFinderDto;
 import com.epm.gestepm.modelapi.user.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,6 +63,14 @@ public class ProjectViewController {
     private final UserService userService;
 
     private final UserForumService userForumService;
+
+    private final SubFamilyService subFamilyService;
+
+    private final SubRoleService subRoleService;
+
+    private final ObjectMapper objectMapper;
+
+    private static final Log log = LogFactory.getLog(ProjectViewController.class);
 
     @ModelAttribute
     public User loadCommonModelView(final Locale locale, final Model model) {
@@ -215,6 +232,40 @@ public class ProjectViewController {
         model.addAttribute("tab", "families");
 
         return "project-detail";
+    }
+
+    @GetMapping("/projects/{id}/families/{familyId}")
+    @LogExecution(operation = OP_VIEW)
+    public String viewProjectFamilyDetailPage(@PathVariable final Integer id
+            , @PathVariable final Integer familyId, final Locale locale, final Model model) {
+
+        try {
+            this.loadCommonModelView(locale, model);
+
+            final ProjectDto currentProject = this.projectService.findOrNotFound(new ProjectByIdFinderDto(id));
+            model.addAttribute("currentProject", currentProject);
+
+            final Family currentFamily = this.familyService.getById(familyId.longValue());
+
+            final List<SubFamilyOldDTO> subFamilies = subFamilyService.getByFamily(familyId.longValue());
+
+            final List<SubRole> subRoles = subRoleService.getAll();
+
+            final List<FamilyDTO> notFamilies = this.familyService.getClonableFamilyDTOs(locale);
+            model.addAttribute("notFamilies", notFamilies);
+            model.addAttribute("tableActionButtons", ModelUtil.getTableModifyActionButtons());
+            model.addAttribute("family", currentFamily);
+            model.addAttribute("importPath", "project-family");
+            model.addAttribute("subRoles", subRoles);
+            model.addAttribute("dataRows", this.objectMapper.writeValueAsString(subFamilies));
+            model.addAttribute("loadingPath", "projects");
+            model.addAttribute("type", "family");
+
+            return "project-family";
+        } catch (JsonProcessingException e) {
+            log.error(e);
+            return "redirect:/login";
+        }
     }
 
     @GetMapping("/projects-view")

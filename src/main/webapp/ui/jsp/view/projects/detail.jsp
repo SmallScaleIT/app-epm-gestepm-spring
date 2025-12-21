@@ -96,6 +96,7 @@
 
 <script>
     const endpoint = '/v1/projects/${currentProject.id}';
+    const viewEndpoint = '/projects/${currentProject.id}';
     const sessionRoleId = <%= sessionRoleId %>;
     const currentProject = <%= currentProject %>;
     const currentUser = <%= currentUser %>;

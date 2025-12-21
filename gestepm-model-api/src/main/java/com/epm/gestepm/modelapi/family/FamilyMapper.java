@@ -26,6 +26,9 @@ public class  FamilyMapper {
 		family.setNameES(familyDTO.getNameES());
 		family.setNameFR(familyDTO.getNameFR());
 		family.setCommon(familyDTO.getCommon());
+		family.setBrand(familyDTO.getBrand());
+		family.setModel(familyDTO.getModel());
+		family.setEnrollment(familyDTO.getEnrollment());
 		
 		List<SubFamily> subFamilies = new ArrayList<>();
 		

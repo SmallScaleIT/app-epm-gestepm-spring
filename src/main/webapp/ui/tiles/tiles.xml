@@ -154,7 +154,11 @@
     <definition name="project-detail" extends="mainFrameLayout">
         <put-attribute name="body" value="/ui/jsp/view/projects/detail.jsp" />
     </definition>
-    
+
+    <definition name="project-family" extends="mainFrameLayout">
+        <put-attribute name="body" value="/ui/jsp/view/projects/family-detail.jsp" />
+    </definition>
+
     <definition name="projects-view" extends="mainFrameLayout">
         <put-attribute name="body" value="/ui/jsp/view/projects/projects-view.jsp" />
     </definition>
