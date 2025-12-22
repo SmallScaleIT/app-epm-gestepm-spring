@@ -93,7 +93,15 @@ function edit(id) {
         // const projectMaterial = response.data.data;
         const projectFamily = response.data;
 
-        $(editForm.querySelector('[name="familyId"]')).val(projectFamily.familyId ? 'true' : 'false').trigger('change');
+        if (projectFamily.familyId)
+        {
+            $(editForm.querySelector('[name="familyId"]')).val(projectFamily.familyId).trigger('change');
+        }
+        else
+        {
+            $(editForm.querySelector('[name="familyId"]')).val(null).trigger('change');
+        }
+
         editForm.querySelector('[name="nameES"]').value = projectFamily.nameES;
         editForm.querySelector('[name="nameFR"]').value = projectFamily.nameFR;
         editForm.querySelector('[name="brand"]').value = projectFamily.brand;

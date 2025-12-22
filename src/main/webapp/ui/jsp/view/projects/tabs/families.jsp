@@ -35,22 +35,22 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label class="col-form-label w-100 bootstrap-select"><spring:message code="family"/>
-                                    <select class="form-control" name="familyId" required>
-                                        <c:forEach items="${notFamilies}" var="family">
-                                            <option value="${family.id}">
-                                                <c:choose>
-                                                    <c:when test="${locale == 'es'}">
-                                                        ${family.nameES}
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        ${family.nameFR}
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </option>
-                                        </c:forEach>
-                                    </select>
+                                <label for="familyId" class="col-form-label w-100 bootstrap-select"><spring:message code="family"/>
                                 </label>
+                                <select class="form-control" name="familyId" required>
+                                    <c:forEach items="${notFamilies}" var="family">
+                                        <option value="${family.id}">
+                                            <c:choose>
+                                                <c:when test="${locale == 'es'}">
+                                                    ${family.nameES}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    ${family.nameFR}
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </option>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -138,22 +138,22 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label class="col-form-label w-100 bootstrap-select"><spring:message code="family"/>
-                                    <select class="form-control" name="familyId" required>
-                                        <c:forEach items="${notFamilies}" var="family">
-                                            <option value="${family.id}">
-                                                <c:choose>
-                                                    <c:when test="${locale == 'es'}">
-                                                        ${family.nameES}
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        ${family.nameFR}
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </option>
-                                        </c:forEach>
-                                    </select>
+                                <label for="familyId" class="col-form-label w-100 bootstrap-select"><spring:message code="family"/>
                                 </label>
+                                <select class="form-control" name="familyId" required>
+                                    <c:forEach items="${notFamilies}" var="family">
+                                        <option value="${family.id}">
+                                            <c:choose>
+                                                <c:when test="${locale == 'es'}">
+                                                    ${family.nameES}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    ${family.nameFR}
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </option>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </div>
                     </div>

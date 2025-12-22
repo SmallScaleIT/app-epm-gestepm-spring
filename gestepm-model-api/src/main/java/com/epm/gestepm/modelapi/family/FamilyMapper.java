@@ -84,10 +84,20 @@ public class  FamilyMapper {
 	
 	public static FamilyDTO mapToDTO(Family family) {
 		
-		FamilyDTO familyDTO = new FamilyDTO();
+		final FamilyDTO familyDTO = new FamilyDTO();
+		final Family parent = family.getFamily();
 		
 		familyDTO.setId(family.getId());
-		familyDTO.setFamilyId(family.getFamily().getId());
+
+		if (parent != null)
+		{
+			familyDTO.setFamilyId(parent.getId());
+		}
+		else
+		{
+			familyDTO.setFamilyId(null);
+		}
+
 		familyDTO.setNameES(family.getNameES());
 		familyDTO.setNameFR(family.getNameFR());
 		familyDTO.setBrand(family.getBrand());
