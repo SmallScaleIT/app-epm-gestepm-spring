@@ -11,6 +11,7 @@ import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchPage;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.lib.logging.annotation.LogExecution;
 import com.epm.gestepm.lib.types.Page;
+import com.epm.gestepm.model.common.gcs.OptimizeImageHelper;
 import com.epm.gestepm.model.shares.construction.dao.entity.creator.ConstructionShareFileCreate;
 import com.epm.gestepm.model.shares.work.dao.entity.WorkShare;
 import com.epm.gestepm.model.shares.work.dao.entity.creator.WorkShareCreate;
@@ -203,9 +204,11 @@ public class WorkShareDaoImpl implements WorkShareDao {
     private void insertFiles(final MultipartFile file, final Integer id) {
         final UUID storageUUID = UUID.randomUUID();
 
+        final MultipartFile compressedImage = OptimizeImageHelper.compressImageToMultipartFile(file, 1600, 0.8f);
+
         final FileCreate fileCreate = new FileCreate();
         fileCreate.setName(PATH_FOLDER + "/" + storageUUID);
-        fileCreate.setFile(file);
+        fileCreate.setFile(compressedImage);
 
         final FileResponse fileResponse = this.googleCloudStorageService.uploadFile(fileCreate);
 
