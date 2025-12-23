@@ -138,6 +138,12 @@
             "success": "Le chef de projet {0} a été supprimé avec succès."
         }
     },
+    "user": {
+        "delete" : {
+            "alert": "Êtes-vous sûr de vouloir supprimer l'utilisateur {0}?",
+            "success": "Utilisateur {0} supprimé avec succès."
+        }
+    },
     "signings": {
         "manual": {
             "name": "Absence"
