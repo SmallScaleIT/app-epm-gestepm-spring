@@ -138,6 +138,12 @@
             "success": "Jefe de proyecto {0} eliminado con éxito."
         }
     },
+    "user": {
+        "delete" : {
+            "alert": "¿Está seguro que quiere borrar el usuario {0}?",
+            "success": "Usuario {0} eliminado con éxito."
+        }
+    },
     "signings": {
         "manual": {
             "name": "Ausencia"
