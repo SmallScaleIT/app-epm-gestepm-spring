@@ -35,8 +35,9 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label class="col-form-label w-100 bootstrap-select"><spring:message code="family"/>
-                                    <select class="form-control" name="familyId" required>
+                                <label class="col-form-label w-100 bootstrap-select">
+                                    <spring:message code="family"/>
+                                    <select class="form-control select2" data-control="select2" name="familyId" required>
                                         <c:forEach items="${notFamilies}" var="family">
                                             <option value="${family.id}">
                                                 <c:choose>

@@ -1,3 +1,5 @@
+const familyEndpoint = '/v1' + window.location.pathname;
+
 $(document).ready(function() {
     initializeDataTables();
     initializeSelects();
@@ -48,7 +50,7 @@ function initializeSelects() {
     // # EditForm
     const editForm = document.querySelector('#editForm');
 
-    createBasicSelect2($(editForm.querySelector('[name="required"]')), 'editForm');
+    createBasicSelect2($(editForm.querySelector('[name="familyId"]')), 'editForm');
 }
 
 function initializeActions() {
@@ -89,11 +91,10 @@ function edit(id) {
     const editForm = editElement.querySelector('#editForm');
     const editFormJQ = $('#editForm');
 
-    axios.get(endpoint + '/families/' + id).then((response) => {
-        // const projectMaterial = response.data.data;
+    axios.get(familyEndpoint + '/' + id).then((response) => {
         const projectFamily = response.data;
 
-        $(editForm.querySelector('[name="familyId"]')).val(projectFamily.familyId ? 'true' : 'false').trigger('change');
+        $(editForm.querySelector('[name="familyId"]')).val(projectFamily.familyId).trigger('change');
         editForm.querySelector('[name="nameES"]').value = projectFamily.nameES;
         editForm.querySelector('[name="nameFR"]').value = projectFamily.nameFR;
         editForm.querySelector('[name="brand"]').value = projectFamily.brand;
