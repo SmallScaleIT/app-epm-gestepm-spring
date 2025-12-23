@@ -11,6 +11,7 @@ import com.epm.gestepm.lib.jdbc.api.query.fetch.SQLQueryFetchPage;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.lib.logging.annotation.LogExecution;
 import com.epm.gestepm.lib.types.Page;
+import com.epm.gestepm.model.common.gcs.OptimizeImageHelper;
 import com.epm.gestepm.model.shares.construction.dao.entity.ConstructionShare;
 import com.epm.gestepm.model.shares.construction.dao.entity.creator.ConstructionShareFileCreate;
 import com.epm.gestepm.model.shares.construction.dao.entity.filter.ConstructionShareFilter;
@@ -24,6 +25,7 @@ import com.epm.gestepm.storageapi.dto.creator.FileCreate;
 import com.epm.gestepm.storageapi.service.GoogleCloudStorageService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -201,12 +203,15 @@ public class ConstructionShareDaoImpl implements ConstructionShareDao {
         return orderBy;
     }
 
+    @SneakyThrows
     private void insertFiles(final MultipartFile file, final Integer id) {
         final UUID storageUUID = UUID.randomUUID();
 
+        final MultipartFile compressedImage = OptimizeImageHelper.compressImageToMultipartFile(file, 1600, 0.8f);
+
         final FileCreate fileCreate = new FileCreate();
         fileCreate.setName(PATH_FOLDER + "/" + storageUUID);
-        fileCreate.setFile(file);
+        fileCreate.setFile(compressedImage);
 
         final FileResponse fileResponse = this.googleCloudStorageService.uploadFile(fileCreate);
 
