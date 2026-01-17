@@ -44,9 +44,11 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -266,7 +268,6 @@ public class WorkShareServiceImpl implements WorkShareService {
 
     private void sendMail(final WorkShareDto workShare, final Boolean notify) {
         final byte[] pdf = this.workShareExportService.generate(workShare);
-        final String base64PDF = Base64.getEncoder().encodeToString(pdf);
 
         final User user = Utiles.getCurrentUser();
 
@@ -278,10 +279,7 @@ public class WorkShareServiceImpl implements WorkShareService {
                 Utiles.transform(workShare.getStartDate(), "dd-MM-yyyy")
         }, locale) + ".pdf";
 
-        final Attachment attachment = new Attachment();
-        attachment.setFileName(fileName);
-        attachment.setFileData(base64PDF);
-        attachment.setContentType("application/pdf");
+        final MultipartFile attachment = new MockMultipartFile(fileName, fileName, "application/pdf", pdf);
 
         final String subject = messageSource.getMessage("email.workshare.close.subject", new Object[] {
                 workShare.getId()

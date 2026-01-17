@@ -62,7 +62,7 @@ public class LogExecutionAspect {
         final boolean isCached = (boolean) cacheInfo.getOrDefault(LOG_CODE_TRACE_METHOD_CACHE_INFO_IS_CACHED, false);
         final boolean isEvict = (boolean) cacheInfo.getOrDefault(LOG_CODE_TRACE_METHOD_CACHE_INFO_IS_EVICT, false);
 
-        final boolean enableInfo = isInfoLogEnabledForLayer(parent.layerMarker());
+        // final boolean enableInfo = isInfoLogEnabledForLayer(parent.layerMarker());
 
         logInfoHandler
             .layer(parent.layerMarker())
@@ -91,12 +91,12 @@ public class LogExecutionAspect {
             logMsg = isCached ? "[[!] Might put in cache] - ".concat(logMsg) : logMsg;
             logMsg = isEvict ? "[[!] Might evict cache] - ".concat(logMsg) : logMsg;
 
-            if (enableInfo) {
+            // if (enableInfo) {
                 logInfoHandler.flowIn()
                         .msg(logMsg)
                         .data(inputData)
                         .logAs(execution.level());
-            }
+            // }
 
             logDebugHandler.data(inputData);
         }
@@ -141,13 +141,13 @@ public class LogExecutionAspect {
             logMsg = isCached ? "[[!] Might put in cache] - ".concat(logMsg) : logMsg;
             logMsg = isEvict ? "[[!] Might evict cache] - ".concat(logMsg) : logMsg;
 
-            if (enableInfo) {
+            // if (enableInfo) {
                 logInfoHandler.flowOut()
                         .msg(logMsg)
                         .execTime(executionTime)
                         .data(LOG_CODE_TRACE_OUTPUT, shortOutputData)
                         .logAs(execution.level());
-            }
+            // }
 
             if (execution.debugOut() && logDebugHandler.isLevelActive(Level.DEBUG)) {
 

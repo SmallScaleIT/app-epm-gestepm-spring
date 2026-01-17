@@ -2,6 +2,7 @@ package com.epm.gestepm.modelapi.shares.noprogrammed.dto.updater;
 
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.NoProgrammedShareStateEnumDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.creator.NoProgrammedShareFileCreateDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Singular;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,7 +36,7 @@ public class NoProgrammedShareUpdateDto {
 
     private NoProgrammedShareStateEnumDto state;
 
-    @Singular
+    @JsonIgnore
     private List<MultipartFile> files;
 
     private Boolean checkPermissions = true;

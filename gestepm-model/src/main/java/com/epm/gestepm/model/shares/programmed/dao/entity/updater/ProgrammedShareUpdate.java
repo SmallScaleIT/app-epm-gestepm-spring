@@ -6,6 +6,7 @@ import com.epm.gestepm.lib.entity.AttributeMap;
 import com.epm.gestepm.lib.entity.CollectableAttributes;
 import com.epm.gestepm.model.shares.noprogrammed.dao.constants.NoProgrammedShareAttributes;
 import com.epm.gestepm.model.shares.programmed.dao.entity.creator.ProgrammedShareFileCreate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Singular;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,8 +45,8 @@ public class ProgrammedShareUpdate implements AuditClose, AuditUpdate, Collectab
     private LocalDateTime updatedAt;
 
     private Integer updatedBy;
-    
-    @Singular
+
+    @JsonIgnore
     private List<MultipartFile> files;
 
     @Override

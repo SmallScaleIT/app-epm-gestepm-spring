@@ -6,6 +6,7 @@ import com.epm.gestepm.lib.entity.CollectableAttributes;
 import com.epm.gestepm.model.shares.noprogrammed.dao.constants.NoProgrammedShareAttributes;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.NoProgrammedShareStateEnum;
 import com.epm.gestepm.model.shares.noprogrammed.dao.entity.creator.NoProgrammedShareFileCreate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Singular;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,7 +42,7 @@ public class NoProgrammedShareUpdate implements AuditUpdate, CollectableAttribut
 
     private Integer updatedBy;
 
-    @Singular
+    @JsonIgnore
     private List<MultipartFile> files;
 
     @Override

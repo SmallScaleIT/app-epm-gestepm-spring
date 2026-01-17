@@ -3,6 +3,7 @@ package com.epm.gestepm.modelapi.inspection.dto.updater;
 import com.epm.gestepm.modelapi.inspection.dto.ActionEnumDto;
 import com.epm.gestepm.modelapi.inspection.dto.creator.InspectionFileCreateDto;
 import com.epm.gestepm.modelapi.inspection.dto.creator.MaterialCreateDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,6 +52,7 @@ public class InspectionUpdateDto {
 
     private Integer topicId;
 
+    @JsonIgnore
     private List<MultipartFile> files;
 
     private Boolean notify;
