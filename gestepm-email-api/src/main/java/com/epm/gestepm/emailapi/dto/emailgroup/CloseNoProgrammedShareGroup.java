@@ -5,6 +5,7 @@ import com.epm.gestepm.emailapi.dto.EmailGroup;
 import com.epm.gestepm.emailapi.util.EmailUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -64,7 +65,7 @@ public class CloseNoProgrammedShareGroup extends EmailGroup {
     }
 
     @Override
-    public List<Attachment> getAttachments() {
+    public List<MultipartFile> getAttachments() {
         return List.of();
     }
 }

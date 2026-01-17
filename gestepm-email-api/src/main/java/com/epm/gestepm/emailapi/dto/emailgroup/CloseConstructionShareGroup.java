@@ -1,10 +1,10 @@
 package com.epm.gestepm.emailapi.dto.emailgroup;
 
-import com.epm.gestepm.emailapi.dto.Attachment;
 import com.epm.gestepm.emailapi.dto.EmailGroup;
 import com.epm.gestepm.emailapi.util.EmailUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -34,7 +34,7 @@ public class CloseConstructionShareGroup extends EmailGroup {
     private LocalDateTime closedAt;
 
     @NotNull
-    private List<Attachment> attachments;
+    private List<MultipartFile> attachments;
 
     @Override
     public String getEmailTemplate() {
@@ -59,7 +59,7 @@ public class CloseConstructionShareGroup extends EmailGroup {
     }
 
     @Override
-    public List<Attachment> getAttachments() {
+    public List<MultipartFile> getAttachments() {
         return this.attachments;
     }
 

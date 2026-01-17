@@ -1,6 +1,8 @@
 package com.epm.gestepm.emailapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -25,6 +27,7 @@ public abstract class EmailGroup {
 
     public abstract Boolean containsAttachments();
 
-    public abstract List<Attachment> getAttachments();
+    @JsonIgnore
+    public abstract List<MultipartFile> getAttachments();
 
 }
