@@ -13,6 +13,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.LocaleResolver;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -23,6 +24,7 @@ import javax.mail.util.ByteArrayDataSource;
 
 import java.util.Base64;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.*;
 import static com.epm.gestepm.lib.logging.constants.LogOperations.OP_PROCESS;
@@ -66,8 +68,8 @@ public class EmailServiceImpl implements EmailService {
             helper.setFrom(this.from);
 
             if (emailData.containsAttachments()) {
-                for (final Attachment attachment : emailData.getAttachments()) {
-                    helper.addAttachment(attachment.getFileName(), new ByteArrayDataSource(Base64.getDecoder().decode(attachment.getFileData()), attachment.getContentType()));
+                for (final MultipartFile attachment : emailData.getAttachments()) {
+                    helper.addAttachment(Objects.requireNonNull(attachment.getOriginalFilename()), attachment);
                 }
             }
 

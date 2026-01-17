@@ -8,6 +8,7 @@ import com.epm.gestepm.model.inspection.dao.constants.InspectionAttributes;
 import com.epm.gestepm.model.inspection.dao.entity.ActionEnum;
 import com.epm.gestepm.model.inspection.dao.entity.creator.InspectionFileCreate;
 import com.epm.gestepm.model.inspection.dao.entity.creator.MaterialCreate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,6 +64,7 @@ public class InspectionUpdate implements AuditUpdate, CollectableAttributes {
 
     private Integer topicId;
 
+    @JsonIgnore
     private List<MultipartFile> files;
 
     private LocalDateTime updatedAt;

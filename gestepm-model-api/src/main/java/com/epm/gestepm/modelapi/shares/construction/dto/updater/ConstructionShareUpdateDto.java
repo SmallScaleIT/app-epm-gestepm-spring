@@ -1,6 +1,7 @@
 package com.epm.gestepm.modelapi.shares.construction.dto.updater;
 
 import com.epm.gestepm.modelapi.shares.construction.dto.creator.ConstructionShareFileCreateDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Singular;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +27,7 @@ public class ConstructionShareUpdateDto {
 
     private String operatorSignature;
 
-    @Singular
+    @JsonIgnore
     private List<MultipartFile> files;
 
     private Boolean notify;

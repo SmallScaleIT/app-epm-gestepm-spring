@@ -57,6 +57,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -340,7 +341,6 @@ public class InspectionServiceImpl implements InspectionService {
 
     private void sendMail(final InspectionDto inspection, final Boolean notify) {
         final byte[] pdf = this.inspectionExportService.generate(inspection);
-        final String base64PDF = Base64.getEncoder().encodeToString(pdf);
 
         final User user = Utiles.getCurrentUser();
         final NoProgrammedShareDto noProgrammedShare = this.noProgrammedShareService
@@ -355,10 +355,7 @@ public class InspectionServiceImpl implements InspectionService {
                 Utiles.transform(inspection.getStartDate(), "yyyyMMdd")
         }, locale) + ".pdf";
 
-        final Attachment attachment = new Attachment();
-        attachment.setFileName(fileName);
-        attachment.setFileData(base64PDF);
-        attachment.setContentType("application/pdf");
+        final MultipartFile attachment = new MockMultipartFile(fileName, fileName, "application/pdf", pdf);
 
         final String action = this.messageSource.getMessage(inspection.getAction().toString().toLowerCase(), new Object[] {}, locale);
         final String subject = messageSource.getMessage("email.inspection.close.subject", new Object[] {

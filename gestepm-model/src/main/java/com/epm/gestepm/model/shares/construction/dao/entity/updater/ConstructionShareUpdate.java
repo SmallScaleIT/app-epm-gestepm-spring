@@ -5,6 +5,7 @@ import com.epm.gestepm.lib.audit.AuditUpdate;
 import com.epm.gestepm.lib.entity.AttributeMap;
 import com.epm.gestepm.lib.entity.CollectableAttributes;
 import com.epm.gestepm.model.shares.construction.dao.entity.creator.ConstructionShareFileCreate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Singular;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,8 +40,8 @@ public class ConstructionShareUpdate implements AuditClose, AuditUpdate, Collect
     private LocalDateTime updatedAt;
 
     private Integer updatedBy;
-    
-    @Singular
+
+    @JsonIgnore
     private List<MultipartFile> files;
 
     @Override
