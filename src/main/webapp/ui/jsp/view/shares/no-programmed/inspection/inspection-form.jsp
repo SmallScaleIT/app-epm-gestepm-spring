@@ -310,7 +310,7 @@
                     const inspection = response.data.data;
                     window.location.replace('/shares/no-programmed/' + inspection.share.id);
                 })
-                .catch(error => showNotify(error.response.data.detail, 'danger'))
+                .catch(error => catchError(error))
                 .finally(() => hideLoading());
         })
     }
@@ -476,7 +476,7 @@
                 link.remove();
                 btn.remove();
                 showNotify(successMessage);
-            }).catch(error => showNotify(error.response.data.detail, 'danger'))
+            }).catch(error => catchError(error))
                 .finally(() => hideLoading());
         }
     }

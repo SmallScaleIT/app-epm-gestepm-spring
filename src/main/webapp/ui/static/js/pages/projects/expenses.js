@@ -106,7 +106,7 @@ function validate(personalExpenseSheetId) {
         }).then(() => {
             dTable.ajax.reload();
             showNotify(messages.personalExpenseSheet.update.success.replace('{0}', personalExpenseSheetId))
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 }
@@ -131,7 +131,7 @@ function declineAction() {
     }).then(() => {
         dTable.ajax.reload();
         showNotify(messages.personalExpenseSheet.update.success.replace('{0}', personalExpenseSheetId))
-    }).catch(error => showNotify(error.response.data.detail, 'danger'))
+    }).catch(error => catchError(error))
         .finally(() => {
             hideLoading();
             modal.modal('hide');

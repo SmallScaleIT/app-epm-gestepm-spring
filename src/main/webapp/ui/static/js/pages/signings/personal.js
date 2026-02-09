@@ -67,7 +67,7 @@ function edit(id) {
         }).then(() => {
             dTable.ajax.reload(function() { dTable.page(dTable.page()).draw(false); }, false);
             showNotify(messages.signings.personal.update.success.replace('{0}', id), 'success');
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => {
                 hideLoading();
                 editModal.modal('hide');
@@ -84,7 +84,7 @@ function remove(id) {
         axios.delete(endpoint + '/' + id).then(() => {
             dTable.ajax.reload(function() { dTable.page(dTable.page()).draw(false); }, false);
             showNotify(messages.signings.personal.delete.success.replace('{0}', id));
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 }

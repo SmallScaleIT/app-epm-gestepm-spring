@@ -54,7 +54,7 @@ async function getCurrentTeleworking() {
     }).then((response) => {
         currentTeleworking = response.data.data[0];
         updateForm();
-    }).catch(error => showNotify(error.response.data.detail, 'danger'));
+    }).catch(error => catchError(error));
 }
 
 function updateForm() {
@@ -112,5 +112,5 @@ function endTeleworking(location) {
         closedLocation: location
     }).then(() => {
         window.location.reload();
-    }).catch(error => showNotify(error.response.data.detail, 'danger'));
+    }).catch(error => catchError(error));
 }

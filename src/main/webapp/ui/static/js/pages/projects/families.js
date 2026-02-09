@@ -78,7 +78,7 @@ function create() {
                 dTable.page(dTable.page()).draw(false);
             }, false);
             createFromJQ.trigger('reset');
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => { hideLoading(); createModal.modal('hide'); });
     }
 }
@@ -117,7 +117,7 @@ function edit(id) {
                     dTable.page(dTable.page()).draw(false);
                 }, false);
             })
-            .catch(error => showNotify(error.response.data.detail, 'danger'))
+            .catch(error => catchError(error))
             .finally(() => {
                 hideLoading();
                 editModal.modal('hide');
@@ -135,7 +135,7 @@ function remove(id) {
                 dTable.page(dTable.page()).draw(false);
             }, false);
             showNotify(messages.families.delete.success.replace('{0}', id));
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 }
@@ -151,7 +151,7 @@ function uploadFile(file) {
             dTable.ajax.reload(function () {
                 dTable.page(dTable.page()).draw(false);
             }, false);
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
         .finally(() => hideLoading());
 }
 

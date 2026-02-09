@@ -112,7 +112,7 @@ function createSigning() {
 
         axios.post(signingEndpoint, createFromJQ.serialize())
             .then(() => calendar.refetchEvents())
-            .catch(error => showNotify(error.response.data.detail, 'danger'))
+            .catch(error => catchError(error))
             .finally(() => { hideLoading(); createModal.modal('hide'); });
     }
 }

@@ -364,7 +364,7 @@
 
         axios.patch('/v1/shares/no-programmed/' + id, formData)
             .then(() => location.reload())
-            .catch(error => showNotify(error.response.data.detail, 'danger'))
+            .catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 
@@ -443,7 +443,7 @@
                     response.data.forEach((element) => {
                         appendElementToList(element, subFamily);
                     })
-                }).catch(error => showNotify(error.response.data.detail, 'danger'));
+                }).catch(error => catchError(error));
         }
     }
 
@@ -670,7 +670,7 @@
         }).then((response) => {
             const inspection = response.data.data;
             window.location.replace(window.location.pathname + '/inspections/' + inspection.id);
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => {
                 hideLoading();
                 $('#createModal').modal('hide');
@@ -697,7 +697,7 @@
                 dTable.ajax.reload();
                 const successMessage = messages.inspections.delete.success.replace('{0}', inspectionId);
                 showNotify(successMessage);
-            }).catch(error => showNotify(error.response.data.detail, 'danger'))
+            }).catch(error => catchError(error))
                 .finally(() => hideLoading());
         }
     }
@@ -732,7 +732,7 @@
                 btn.remove();
                 const successMessage = messages.shares.noprogrammed.files.delete.success.replace('{0}', file.name);
                 showNotify(successMessage);
-            }).catch(error => showNotify(error.response.data.detail, 'danger'))
+            }).catch(error => catchError(error))
                 .finally(() => hideLoading());
         }
     }

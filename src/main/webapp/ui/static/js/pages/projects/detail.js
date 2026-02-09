@@ -83,7 +83,7 @@ function edit() {
             state: state
         }).then(() => {
             location.reload();
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 }
@@ -111,7 +111,7 @@ function editCustomer() {
             secondaryEmail: secondaryEmail
         }).then(() => {
             location.reload();
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 }
@@ -121,6 +121,6 @@ function duplicate() {
         console.log(response);
         const project = response.data.data;
         window.location.replace(viewUrl + '/' + project.id);
-    }).catch(error => showNotify(error.response.data.detail, 'danger'))
+    }).catch(error => catchError(error))
         .finally(() => hideLoading());
 }

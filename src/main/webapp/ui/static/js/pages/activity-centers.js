@@ -40,7 +40,7 @@ function create() {
 			createFromJQ[0].reset();
 			dTable.ajax.reload(function() { dTable.page(dTable.page()).draw(false); }, false);
 			showNotify(messages.activitycenters.create.success);
-		}).catch(error => showNotify(error.response.data.detail, 'danger'))
+		}).catch(error => catchError(error))
 			.finally(() => {
 				hideLoading();
 				createModal.modal('hide');
@@ -71,7 +71,7 @@ function edit(id) {
 		}).then(() => {
 			dTable.ajax.reload(function() { dTable.page(dTable.page()).draw(false); }, false);
 			showNotify(messages.activitycenters.update.success);
-		}).catch(error => showNotify(error.response.data.detail, 'danger'))
+		}).catch(error => catchError(error))
 			.finally(() => {
 				hideLoading();
 				editModal.modal('hide');
@@ -88,7 +88,7 @@ function remove(id) {
 		axios.delete('/v1/activity-centers/' + id).then(() => {
 			dTable.ajax.reload(function() { dTable.page(dTable.page()).draw(false); }, false);
 			showNotify(messages.activitycenters.delete.success);
-		}).catch(error => showNotify(error.response.data.detail, 'danger'))
+		}).catch(error => catchError(error))
 			.finally(() => hideLoading());
 	}
 }

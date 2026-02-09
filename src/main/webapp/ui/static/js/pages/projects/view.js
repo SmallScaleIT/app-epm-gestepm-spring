@@ -152,7 +152,7 @@ function create() {
         }).then((response) => {
             const project = response.data.data;
             window.location.replace(view + '/' + project.id);
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 }
@@ -168,7 +168,7 @@ function remove(id) {
                 dTable.page(dTable.page()).draw(false);
             }, false);
             showNotify(messages.projects.delete.success.replace('{0}', id));
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 }

@@ -152,7 +152,7 @@
 
                 axios.patch('/v1' + window.location.pathname, params).then(() => {
                     showNotify(messages.signings.teleworking.update.success);
-                }).catch(error => showNotify(error.response.data.detail, 'danger'))
+                }).catch(error => catchError(error))
                     .finally(() => hideLoading());
             }
         })

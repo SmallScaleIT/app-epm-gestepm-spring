@@ -54,7 +54,7 @@ function addUserToProject() {
         axios.post('/v1/projects/' + projectId + '/members', {
             userId: currentUser.id
     }).then(() => dTable.ajax.reload())
-            .catch(error => showNotify(error.response.data.detail, 'danger'))
+            .catch(error => catchError(error))
             .finally(() => { hideLoading(); createModal.modal('hide'); });
     }
 }
@@ -65,7 +65,7 @@ function remove(projectId) {
 
         axios.delete('/v1/projects/' + projectId + '/members/' + currentUser.id, { })
             .then(() => dTable.ajax.reload())
-            .catch(error => showNotify(error.response.data.detail, 'danger'))
+            .catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 }

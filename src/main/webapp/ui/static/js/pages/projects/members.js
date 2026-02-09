@@ -48,7 +48,7 @@ function create() {
             dTable.ajax.reload(function () {
                 dTable.page(dTable.page()).draw(false);
             }, false);
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => { hideLoading(); createModal.modal('hide'); });
     }
 }
@@ -63,7 +63,7 @@ function remove(id) {
                 dTable.page(dTable.page()).draw(false);
             }, false);
             showNotify(messages.projectMembers.delete.success.replace('{0}', id));
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 }

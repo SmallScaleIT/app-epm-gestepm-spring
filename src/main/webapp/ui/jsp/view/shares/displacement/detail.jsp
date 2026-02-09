@@ -161,7 +161,7 @@
 
                 axios.put('/v1' + window.location.pathname, params).then(() => {
                     showNotify(messages.shares.displacement.update.success);
-                }).catch(error => showNotify(error.response.data.detail, 'danger'))
+                }).catch(error => catchError(error))
                     .finally(() => hideLoading());
             }
         })

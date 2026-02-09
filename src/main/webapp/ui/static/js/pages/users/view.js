@@ -149,7 +149,7 @@ function create() {
 		}).then((response) => {
 			const user = response.data.data;
 			window.location.replace(view + '/' + user.id);
-		}).catch(error => showNotify(error.response.data.detail, 'danger'))
+		}).catch(error => catchError(error))
 			.finally(() => hideLoading());
 	}
 }
@@ -165,7 +165,7 @@ function remove(id) {
 				dTable.page(dTable.page()).draw(false);
 			}, false);
 			showNotify(messages.user.delete.success.replace('{0}', id));
-		}).catch(error => showNotify(error.response.data.detail, 'danger'))
+		}).catch(error => catchError(error))
 			.finally(() => hideLoading());
 	}
 }

@@ -70,7 +70,7 @@ function close(id) {
                   const successMessage = messages.signings.warehouse.update.success.replace('{0}', id);
                   showNotify(successMessage);
             })
-            .catch(error => showNotify(error.response.data.detail, 'danger'))
+            .catch(error => catchError(error))
             .finally(() => {
                 hideLoading();
             });
@@ -156,7 +156,7 @@ function createWorkshop() {
             const workshop = response.data.data;
             window.location.replace(window.location.pathname + '/workshop-signings/' + workshop.id);
         })
-            .catch(error => showNotify(error.response.data.detail, 'danger'))
+            .catch(error => catchError(error))
             .finally(() => {
                 hideLoading();
                 $('#createModal').modal('hide');
@@ -178,7 +178,7 @@ function remove(id) {
             const successMessage = messages.signings.workshop.delete.success.replace('{0}', id);
             showNotify(successMessage);
         })
-        .catch(error => showNotify(error.response.data.detail, 'danger'))
+        .catch(error => catchError(error))
         .finally(() => hideLoading());
 }
 

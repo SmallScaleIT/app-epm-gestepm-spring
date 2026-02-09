@@ -71,6 +71,30 @@ function showError(error, modalId) {
 	$(modal).modal('show');
 }
 
+function catchError(error) {
+	const isControlled =
+		error?.response?.data &&
+		typeof error.response.data.detail === 'string';
+
+	if (isControlled) {
+		showNotify(error.response.data.detail, 'danger');
+		return;
+	}
+
+	// No controlado
+	const traceId = error?.response?.data?.traceId;
+
+	if (traceId) {
+		console.error('Unexpected error traceId:', traceId, error);
+		showNotify(`Ha ocurrido un error inesperado. Código: ${traceId}`, 'danger');
+		return;
+	}
+
+	// Sin respuesta / network
+	console.error('Network or unknown error', error);
+	showNotify('No se pudo completar la operación. Inténtalo más tarde o contacte con soporte.', 'danger');
+}
+
 function showNotify(msg, type) {
 	$.notify({ message: msg }, { type: type });
 }

@@ -102,7 +102,7 @@ function validateHoliday(holidayId) {
 
     axios.post('/holidays/validate/' + holidayId, { })
         .then(() => dTable.ajax.reload())
-        .catch(error => showNotify(error.response.data.detail, 'danger'))
+        .catch(error => catchError(error))
         .finally(() => hideLoading());
 }
 
@@ -114,7 +114,7 @@ function declineHoliday() {
 
     axios.post('/holidays/decline/' + holidayId, $('#declineForm').serialize())
         .then(() => dTable.ajax.reload())
-        .catch(error => showNotify(error.response.data.detail, 'danger'))
+        .catch(error => catchError(error))
         .finally(() => { hideLoading(); declineModal.modal('hide'); });
 }
 
@@ -129,7 +129,7 @@ function deleteHoliday(holidayId) {
 
         axios.delete('/holidays/delete/' + holidayId, { })
             .then(() => dTable.ajax.reload())
-            .catch(error => showNotify(error.response.data.detail, 'danger'))
+            .catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 }

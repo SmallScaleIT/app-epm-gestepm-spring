@@ -85,13 +85,13 @@
     async function getInspection() {
         await axios.get('/v1' + window.location.pathname, { params: { _expand: 'files,firstTechnical,secondTechnical' }}).then((response) => {
             inspection = response.data.data;
-        }).catch(error => showNotify(error.response.data.detail, 'danger'));
+        }).catch(error => catchError(error));
     }
 
     async function getShare(id) {
         await axios.get('/v1/shares/no-programmed/' + id).then((response) => {
             share = response.data.data;
-        }).catch(error => showNotify(error.response.data.detail, 'danger'));
+        }).catch(error => catchError(error));
     }
 
     function init() {
@@ -158,7 +158,7 @@
 
         axios.post('/v1/shares/no-programmed/${inspection.shareId}/inspections/${inspection.id}/breaks', { })
             .then(() => location.reload())
-            .catch(error => showNotify(error.response.data.detail, 'danger'))
+            .catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 
@@ -167,7 +167,7 @@
 
         axios.put('/v1/shares/no-programmed/${inspection.shareId}/inspections/${inspection.id}/breaks/${currentShareBreak.id}', { })
             .then(() => location.reload())
-            .catch(error => showNotify(error.response.data.detail, 'danger'))
+            .catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 
@@ -181,7 +181,7 @@
                 dTable.ajax.reload();
                 const successMessage = messages.breaks.delete.success;
                 showNotify(successMessage);
-            }).catch(error => showNotify(error.response.data.detail, 'danger'))
+            }).catch(error => catchError(error))
                 .finally(() => hideLoading());
         }
     }

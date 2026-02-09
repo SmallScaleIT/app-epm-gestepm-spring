@@ -89,7 +89,7 @@ function remove(id) {
         }, false);
         showNotify(messages.signings.warehouse.delete.success.replace('{0}', id));
     })
-    .catch(error => showNotify(error.response.data.detail, 'danger'))
+    .catch(error => catchError(error))
     .finally(() => hideLoading());
 
     hideLoading();

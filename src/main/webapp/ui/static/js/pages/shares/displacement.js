@@ -40,7 +40,7 @@ function remove(id) {
 		axios.delete('/v1/shares/displacement/' + id).then(() => {
 			dTable.ajax.reload(function() { dTable.page(dTable.page()).draw(false); }, false);
 			showNotify(messages.shares.displacement.delete.success.replace('{0}', id));
-		}).catch(error => showNotify(error.response.data.detail, 'danger'))
+		}).catch(error => catchError(error))
 			.finally(() => hideLoading());
 	}
 }

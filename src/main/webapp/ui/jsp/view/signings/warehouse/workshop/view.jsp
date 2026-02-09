@@ -46,7 +46,7 @@
         .then(response => {
             workshop = response.data.data;
         })
-        .catch(error => showNotify(error.response.data.detail, 'danger'));
+        .catch(error => catchError(error));
     }
 
     function loadHeader() {

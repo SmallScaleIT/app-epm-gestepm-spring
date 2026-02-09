@@ -18,7 +18,7 @@ function create() {
         }).then(() => {
             dTable.ajax.reload();
             showNotify(messages.countries.create.success);
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => {
                 hideLoading();
                 createModal.modal('hide');
@@ -49,7 +49,7 @@ function edit(id) {
         }).then(() => {
             dTable.ajax.reload();
             showNotify(messages.countries.update.success);
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => {
                 hideLoading();
                 editModal.modal('hide');
@@ -66,7 +66,7 @@ function remove(id) {
         axios.delete('/v1/countries/' + id).then(() => {
             dTable.ajax.reload();
             showNotify(messages.countries.delete.success);
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 }

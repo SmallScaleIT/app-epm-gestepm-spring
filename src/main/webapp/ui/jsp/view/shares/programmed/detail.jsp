@@ -307,7 +307,7 @@
 
                 axios.put('/v1' + window.location.pathname, formData)
                     .then(() => location.reload())
-                    .catch(error => showNotify(error.response.data.detail, 'danger'))
+                    .catch(error => catchError(error))
                     .finally(() => hideLoading());
             }
         })
@@ -386,7 +386,7 @@
                 link.remove();
                 btn.remove();
                 showNotify(successMessage);
-            }).catch(error => showNotify(error.response.data.detail, 'danger'))
+            }).catch(error => catchError(error))
                 .finally(() => hideLoading());
         }
     }
@@ -430,7 +430,7 @@
 
         axios.post('/v1/shares/programmed/${programmedShare.id}/breaks', { })
             .then(() => location.reload())
-            .catch(error => showNotify(error.response.data.detail, 'danger'))
+            .catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 
@@ -439,7 +439,7 @@
 
         axios.put('/v1/shares/programmed/${programmedShare.id}/breaks/${currentShareBreak.id}', { })
             .then(() => location.reload())
-            .catch(error => showNotify(error.response.data.detail, 'danger'))
+            .catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 
@@ -453,7 +453,7 @@
                 dTable.ajax.reload();
                 const successMessage = messages.breaks.delete.success;
                 showNotify(successMessage);
-            }).catch(error => showNotify(error.response.data.detail, 'danger'))
+            }).catch(error => catchError(error))
                 .finally(() => hideLoading());
         }
     }

@@ -135,7 +135,7 @@ function remove(id) {
                 dTable.page(dTable.page()).draw(false);
             }, false);
             showNotify(messages.shares.noprogrammed.delete.success.replace('{0}', id));
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 }

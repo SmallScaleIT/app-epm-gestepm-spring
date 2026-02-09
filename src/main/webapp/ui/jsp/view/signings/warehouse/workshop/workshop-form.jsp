@@ -71,7 +71,7 @@
                 const workshop = response.data.data;
                 window.location.replace('/signings/warehouse/' + workshop.warehouse.id);
             })
-            .catch(error => showNotify(error.response.data.detail, 'danger'))
+            .catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 

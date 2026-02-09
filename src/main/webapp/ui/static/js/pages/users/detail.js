@@ -66,7 +66,7 @@ function create() {
             workingHours: workingHours
         }).then(() => {
             location.reload();
-        }).catch(error => showNotify(error.response.data.detail, 'danger'))
+        }).catch(error => catchError(error))
             .finally(() => hideLoading());
     }
 }
