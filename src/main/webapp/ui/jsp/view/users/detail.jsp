@@ -5,7 +5,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<c:set var="userTabs" value="${fn:split('signings,expenses,projects,holidays', ',')}" />
+<c:set var="userTabs" value="${fn:split('signings,expenses,projects', ',')}" />
 
 <%
     final ObjectMapper mapper = new ObjectMapper();
