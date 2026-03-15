@@ -12,7 +12,6 @@ import com.epm.gestepm.modelapi.family.dto.Family;
 import com.epm.gestepm.modelapi.holiday.dto.Holiday;
 import com.epm.gestepm.modelapi.deprecated.interventionshare.dto.InterventionShare;
 import com.epm.gestepm.modelapi.deprecated.interventionsubshare.dto.InterventionSubShare;
-import com.epm.gestepm.modelapi.deprecated.materialrequired.dto.MaterialRequired;
 import com.epm.gestepm.modelapi.deprecated.project.dto.Project;
 import com.epm.gestepm.modelapi.subrole.dto.SubRole;
 import com.epm.gestepm.modelapi.deprecated.user.dto.User;
@@ -248,8 +247,6 @@ public class DataTableUtil {
 				return InterventionShare.class;
 			case "iss":
 				return InterventionSubShare.class;
-			case "mr":
-				return MaterialRequired.class;
 			case "pr":
 				return Project.class;
 			case "pv":

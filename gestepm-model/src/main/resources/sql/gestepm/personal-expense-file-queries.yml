@@ -7,8 +7,7 @@ sql:
       pef.personal_expense_file_id,
       pef.personal_expense_id,
       pef.name,
-      pef.storage_path,
-      pef.content
+      pef.storage_path
     FROM ${sch-gestepm}.personal_expense_file pef
     
     #whereToken #filter
@@ -32,14 +31,12 @@ sql:
     INSERT INTO ${sch-gestepm}.personal_expense_file (
       personal_expense_id,
       name,
-      storage_path,
-      content
+      storage_path
     )
     VALUES (
       :attr_pef_pe_id,
       :attr_pef_name,
-      :attr_pef_storage_path,
-      :attr_pef_content
+      :attr_pef_storage_path
     )
 
   qry-update-pef: |
@@ -61,7 +58,6 @@ sql:
     -- [AND
       -- ${sql.predicate-for-pef-ids}
       -- ${sql.predicate-for-pef-pe-id}
-      -- ${sql.predicate-for-pef-need-migration}
     -- AND]
 
   filter-pef-by-id: |
@@ -81,7 +77,3 @@ sql:
   predicate-for-pef-pe-id: |
 
     pef.personal_expense_id = :attr_pef_pe_id
-
-  predicate-for-pef-need-migration: |
-    
-    :attr_pef_need_migration = 1 AND pef.storage_path IS NULL

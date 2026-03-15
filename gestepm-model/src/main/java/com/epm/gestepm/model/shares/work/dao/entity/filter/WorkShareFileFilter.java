@@ -6,7 +6,8 @@ import lombok.Data;
 
 import java.util.List;
 
-import static com.epm.gestepm.model.shares.work.dao.constants.WorkShareFileAttributes.*;
+import static com.epm.gestepm.model.shares.work.dao.constants.WorkShareFileAttributes.ATTR_WSF_IDS;
+import static com.epm.gestepm.model.shares.work.dao.constants.WorkShareFileAttributes.ATTR_WSF_SHARE_ID;
 
 @Data
 public class WorkShareFileFilter implements CollectableAttributes {
@@ -24,7 +25,6 @@ public class WorkShareFileFilter implements CollectableAttributes {
 
         map.putList(ATTR_WSF_IDS, this.ids);
         map.put(ATTR_WSF_SHARE_ID, this.shareId);
-        map.putBooleanAsInt(ATTR_WSF_NEED_MIGRATION, this.needMigration);
 
         return map;
     }

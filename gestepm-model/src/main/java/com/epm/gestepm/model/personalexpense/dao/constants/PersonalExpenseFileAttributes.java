@@ -12,8 +12,4 @@ public abstract class PersonalExpenseFileAttributes {
 
     public static final String ATTR_PEF_STORAGE_PATH = "attr_pef_storage_path";
 
-    public static final String ATTR_PEF_CONTENT = "attr_pef_content";
-
-    public static final String ATTR_PEF_NEED_MIGRATION = "attr_pef_need_migration";
-
 }

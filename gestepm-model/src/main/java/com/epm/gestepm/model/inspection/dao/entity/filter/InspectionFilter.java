@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.epm.gestepm.model.inspection.dao.constants.InspectionAttributes.*;
-import static com.epm.gestepm.model.shares.noprogrammed.dao.constants.NoProgrammedShareAttributes.*;
+import static com.epm.gestepm.model.shares.noprogrammed.dao.constants.NoProgrammedShareAttributes.ATTR_NPS_P_ID;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -44,7 +44,6 @@ public class InspectionFilter extends Orderable implements CollectableAttributes
         map.putTimestamp(ATTR_I_END_DATE, this.endDate);
         map.put(ATTR_I_CURRENT, this.current);
         map.putBooleanAsInt(ATTR_I_HAS_MATERIAL_FILE, this.hasMaterialFile);
-        map.putBooleanAsInt(ATTR_I_NEED_MIGRATION, this.needMigration);
 
         return map;
     }

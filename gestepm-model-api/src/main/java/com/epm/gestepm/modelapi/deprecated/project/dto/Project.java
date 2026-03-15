@@ -7,7 +7,6 @@ import com.epm.gestepm.modelapi.deprecated.expensesheet.dto.ExpenseSheet;
 import com.epm.gestepm.modelapi.family.dto.Family;
 import com.epm.gestepm.modelapi.deprecated.interventionprshare.dto.InterventionPrShare;
 import com.epm.gestepm.modelapi.deprecated.interventionshare.dto.InterventionShare;
-import com.epm.gestepm.modelapi.deprecated.materialrequired.dto.MaterialRequired;
 import com.epm.gestepm.modelapi.deprecated.user.dto.User;
 import com.epm.gestepm.modelapi.deprecated.workshare.WorkShare;
 import com.epm.gestepm.modelapi.project.dto.ProjectTypeDto;
@@ -71,9 +70,6 @@ public class Project {
 	
 	@OneToMany(mappedBy = "project")
 	private List<Family> families;
-	
-	@OneToMany(mappedBy = "project")
-	private List<MaterialRequired> materialsRequired;
 
 	@ManyToMany(mappedBy = "bossProjects")
 	private List<User> bossUsers;
