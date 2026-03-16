@@ -12,9 +12,6 @@ import com.epm.gestepm.modelapi.family.FamilyMapper;
 import com.epm.gestepm.modelapi.family.dto.Family;
 import com.epm.gestepm.modelapi.family.dto.FamilyTableDTO;
 import com.epm.gestepm.modelapi.family.service.FamilyService;
-import com.epm.gestepm.modelapi.userholiday.dto.UserHoliday;
-import com.epm.gestepm.modelapi.userholiday.dto.UserHolidayDTO;
-import com.epm.gestepm.modelapi.userholiday.service.UserHolidaysService;
 import lombok.Data;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,39 +40,6 @@ public class RefactorController {
     private final MessageSource messageSource;
 
     private final ProjectOldService projectOldService;
-
-    private final UserHolidaysService userHolidaysService;
-
-    @ResponseBody
-    @GetMapping("/users/{id}/holidays/dt")
-    public DataTableResults<UserHolidayDTO> userHolidaysDatatable(@PathVariable Long id, HttpServletRequest request, Locale locale) {
-
-        try {
-
-            DataTableRequest<UserHoliday> dataTableInRQ = new DataTableRequest<>(request);
-            PaginationCriteria pagination = dataTableInRQ.getPaginationRequest();
-
-            List<UserHolidayDTO> userHolidays = userHolidaysService.getUserHolidaysDTOsByUserId(id, pagination);
-
-            Long totalRecords = userHolidaysService.getUserHolidaysCountByUser(id);
-
-            DataTableResults<UserHolidayDTO> dataTableResult = new DataTableResults<>();
-            dataTableResult.setDraw(dataTableInRQ.getDraw());
-            dataTableResult.setData(userHolidays);
-            dataTableResult.setRecordsTotal(String.valueOf(totalRecords));
-            dataTableResult.setRecordsFiltered(Long.toString(totalRecords));
-
-            if (userHolidays != null && !userHolidays.isEmpty() && !dataTableInRQ.getPaginationRequest().isFilterByEmpty()) {
-                dataTableResult.setRecordsFiltered(Integer.toString(userHolidays.size()));
-            }
-
-            return dataTableResult;
-
-        } catch (Exception e) {
-            log.error(e);
-            return null;
-        }
-    }
 
     @GetMapping("/v1/projects/{id}/export")
     public HttpEntity<ByteArrayResource> generateExcel(@PathVariable Long id, @RequestParam(required = false) Integer year, Locale locale) throws IOException {

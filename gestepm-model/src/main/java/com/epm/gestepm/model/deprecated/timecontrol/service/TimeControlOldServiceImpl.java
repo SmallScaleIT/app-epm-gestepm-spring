@@ -2,18 +2,16 @@ package com.epm.gestepm.model.deprecated.timecontrol.service;
 
 import com.epm.gestepm.model.deprecated.holiday.dao.HolidayRepository;
 import com.epm.gestepm.model.deprecated.user.dao.UserRepository;
-import com.epm.gestepm.model.userholiday.dao.UserHolidaysRepository;
 import com.epm.gestepm.modelapi.common.helpers.DatesModel;
 import com.epm.gestepm.modelapi.common.utils.Utiles;
+import com.epm.gestepm.modelapi.deprecated.timecontrol.dto.TimeControlTableDTO;
+import com.epm.gestepm.modelapi.deprecated.timecontrol.service.TimeControlOldService;
+import com.epm.gestepm.modelapi.deprecated.user.dto.User;
 import com.epm.gestepm.modelapi.holiday.dto.Holiday;
 import com.epm.gestepm.modelapi.timecontrol.dto.TimeControlDto;
 import com.epm.gestepm.modelapi.timecontrol.dto.TimeControlTypeEnumDto;
 import com.epm.gestepm.modelapi.timecontrol.dto.filter.TimeControlFilterDto;
 import com.epm.gestepm.modelapi.timecontrol.service.TimeControlService;
-import com.epm.gestepm.modelapi.deprecated.timecontrol.dto.TimeControlTableDTO;
-import com.epm.gestepm.modelapi.deprecated.timecontrol.service.TimeControlOldService;
-import com.epm.gestepm.modelapi.deprecated.user.dto.User;
-import com.epm.gestepm.modelapi.userholiday.dto.UserHoliday;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -35,9 +33,6 @@ public class TimeControlOldServiceImpl implements TimeControlOldService {
 	
 	@Autowired
 	private UserRepository userRepository;
-	
-	@Autowired
-	private UserHolidaysRepository userHolidaysRepository;
 
     @Autowired
     private TimeControlService timeControlService;
@@ -66,7 +61,6 @@ public class TimeControlOldServiceImpl implements TimeControlOldService {
 		}
 
 		final List<Holiday> holidays = holidayRepository.findHolidaysByActivityCenter(activityCenter);
-		final List<UserHoliday> userHolidays = userHolidaysRepository.findHolidaysByUserId(userId, year);
 		
 		for (int i = 1; i <= monthMaxDay; i++) {
 
@@ -95,8 +89,6 @@ public class TimeControlOldServiceImpl implements TimeControlOldService {
 				timeControl.setReason("1" + messageSource.getMessage("time.control.weekend", null, locale));
 			} else if (isHoliday(i, month, holidays)) {
 				timeControl.setReason("1" + messageSource.getMessage("time.control.holiday", null, locale));
-			} else if (isUserHoliday(timeControlDate, userHolidays)) {
-				timeControl.setReason("1" + messageSource.getMessage("time.control.user.holidays", null, locale));
 			} else if (userManualFullDay != null) {
 				timeControl.setReason("1" + userManualFullDay.getDescription());
 			} else {
@@ -337,10 +329,6 @@ public class TimeControlOldServiceImpl implements TimeControlOldService {
 	
 	private boolean isHoliday(int day, int month, List<Holiday> holidays) {
 		return holidays.stream().anyMatch(h -> h.getDay() == day && h.getMonth() == month);
-	}
-	
-	private boolean isUserHoliday(LocalDateTime date, List<UserHoliday> userHolidays) {
-		return userHolidays.stream().anyMatch(h -> Utiles.convertToLocalDateViaInstant(h.getDate()).isEqual(date.toLocalDate()));
 	}
 
 	private TimeControlDto isUserManualFullDay(final List<TimeControlDto> userManualSignings, final Long journeyMillis) {

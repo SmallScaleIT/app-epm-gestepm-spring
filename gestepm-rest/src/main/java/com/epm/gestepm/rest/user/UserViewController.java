@@ -166,23 +166,6 @@ public class UserViewController {
         return "user-detail";
     }
 
-    @GetMapping("/users/{id}/holidays")
-    @LogExecution(operation = OP_VIEW)
-    public String viewUserHolidaysPage(@PathVariable final Integer id, final Locale locale, final Model model) {
-
-        this.loadCommonModelView(locale, model);
-
-        final UserDto currentUser = this.userService.findOrNotFound(new UserByIdFinderDto(id));
-        model.addAttribute("currentUser", currentUser);
-
-        model.addAttribute("importPath", "user-holidays");
-        model.addAttribute("loadingPath", "users");
-        model.addAttribute("type", "holidays");
-        model.addAttribute("tab", "holidays");
-
-        return "user-detail";
-    }
-
     private void loadCommonSelects(final Model model) {
 
         final List<ActivityCenterDto> activityCenters = this.activityCenterService.list(new ActivityCenterFilterDto()).stream()

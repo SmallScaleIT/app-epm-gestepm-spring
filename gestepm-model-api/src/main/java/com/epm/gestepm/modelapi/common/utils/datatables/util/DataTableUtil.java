@@ -1,23 +1,22 @@
 package com.epm.gestepm.modelapi.common.utils.datatables.util;
 
-import com.epm.gestepm.modelapi.deprecated.activitycenter.dto.ActivityCenter;
 import com.epm.gestepm.modelapi.common.utils.datatables.PaginationCriteria;
 import com.epm.gestepm.modelapi.common.utils.datatables.SortOrder;
+import com.epm.gestepm.modelapi.deprecated.activitycenter.dto.ActivityCenter;
 import com.epm.gestepm.modelapi.deprecated.country.dto.Country;
 import com.epm.gestepm.modelapi.deprecated.displacementshare.dto.DisplacementShare;
 import com.epm.gestepm.modelapi.deprecated.expense.dto.Expense;
-import com.epm.gestepm.modelapi.expensecorrective.dto.ExpenseCorrective;
 import com.epm.gestepm.modelapi.deprecated.expensesheet.dto.ExpenseSheet;
-import com.epm.gestepm.modelapi.family.dto.Family;
-import com.epm.gestepm.modelapi.holiday.dto.Holiday;
 import com.epm.gestepm.modelapi.deprecated.interventionshare.dto.InterventionShare;
 import com.epm.gestepm.modelapi.deprecated.interventionsubshare.dto.InterventionSubShare;
 import com.epm.gestepm.modelapi.deprecated.project.dto.Project;
-import com.epm.gestepm.modelapi.subrole.dto.SubRole;
 import com.epm.gestepm.modelapi.deprecated.user.dto.User;
-import com.epm.gestepm.modelapi.userholiday.dto.UserHoliday;
-import com.epm.gestepm.modelapi.usermanualsigning.dto.UserManualSigning;
 import com.epm.gestepm.modelapi.deprecated.workshare.WorkShare;
+import com.epm.gestepm.modelapi.expensecorrective.dto.ExpenseCorrective;
+import com.epm.gestepm.modelapi.family.dto.Family;
+import com.epm.gestepm.modelapi.holiday.dto.Holiday;
+import com.epm.gestepm.modelapi.subrole.dto.SubRole;
+import com.epm.gestepm.modelapi.usermanualsigning.dto.UserManualSigning;
 import org.hibernate.query.criteria.internal.path.ListAttributeJoin;
 import org.hibernate.query.criteria.internal.path.RootImpl;
 import org.hibernate.query.criteria.internal.path.SingularAttributeJoin;
@@ -253,8 +252,6 @@ public class DataTableUtil {
 				return ActivityCenter.class;
 			case "sr":
 				return SubRole.class;
-			case "uh":
-				return UserHoliday.class;
 			case "ums":
 				return UserManualSigning.class;
 			case "us":

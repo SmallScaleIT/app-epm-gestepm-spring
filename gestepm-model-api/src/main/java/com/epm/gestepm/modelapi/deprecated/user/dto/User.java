@@ -6,12 +6,11 @@ import com.epm.gestepm.modelapi.deprecated.expensesheet.dto.ExpenseSheet;
 import com.epm.gestepm.modelapi.deprecated.interventionprshare.dto.InterventionPrShare;
 import com.epm.gestepm.modelapi.deprecated.interventionshare.dto.InterventionShare;
 import com.epm.gestepm.modelapi.deprecated.interventionsubshare.dto.InterventionSubShare;
-import com.epm.gestepm.modelapi.personalsigning.dto.PersonalSigning;
 import com.epm.gestepm.modelapi.deprecated.project.dto.Project;
+import com.epm.gestepm.modelapi.deprecated.workshare.WorkShare;
+import com.epm.gestepm.modelapi.personalsigning.dto.PersonalSigning;
 import com.epm.gestepm.modelapi.role.dto.Role;
 import com.epm.gestepm.modelapi.subrole.dto.SubRole;
-import com.epm.gestepm.modelapi.userholiday.dto.UserHoliday;
-import com.epm.gestepm.modelapi.deprecated.workshare.WorkShare;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -96,9 +95,6 @@ public class User {
 	@ManyToMany
 	@JoinTable(name = "project_leader", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "project_id"))
 	private Set<Project> bossProjects;
-
-	@OneToMany(mappedBy = "user")
-	private List<UserHoliday> userHolidays;
 	
 	@ManyToMany(mappedBy = "responsables")
 	private List<Project> responsableProjects;
