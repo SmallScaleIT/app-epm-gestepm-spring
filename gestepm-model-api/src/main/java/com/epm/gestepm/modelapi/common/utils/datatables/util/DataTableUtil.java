@@ -14,7 +14,6 @@ import com.epm.gestepm.modelapi.deprecated.user.dto.User;
 import com.epm.gestepm.modelapi.deprecated.workshare.WorkShare;
 import com.epm.gestepm.modelapi.expensecorrective.dto.ExpenseCorrective;
 import com.epm.gestepm.modelapi.family.dto.Family;
-import com.epm.gestepm.modelapi.holiday.dto.Holiday;
 import com.epm.gestepm.modelapi.subrole.dto.SubRole;
 import com.epm.gestepm.modelapi.usermanualsigning.dto.UserManualSigning;
 import org.hibernate.query.criteria.internal.path.ListAttributeJoin;
@@ -240,8 +239,6 @@ public class DataTableUtil {
 				return Expense.class;
 			case "fa":
 				return Family.class;
-			case "ho":
-				return Holiday.class;
 			case "is":
 				return InterventionShare.class;
 			case "iss":

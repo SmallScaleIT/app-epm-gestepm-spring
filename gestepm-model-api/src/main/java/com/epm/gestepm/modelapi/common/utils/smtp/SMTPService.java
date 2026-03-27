@@ -9,10 +9,7 @@ import com.epm.gestepm.modelapi.usermanualsigning.dto.UserManualSigning;
 import java.util.Locale;
 
 public interface SMTPService {
-	
-	void sendCreateHolidaysRRHHMail(String to, User user, String holidays, Locale locale);
-	void sendDeleteHolidaysRRHHMail(String to, User user, String holidays, Locale locale);
-	
+
 	void sendPersonalExpenseSheetSendMail(final OpenPersonalExpenseSheetMailTemplateDto dto);
 
 	void sendSigningManualMail(String to, UserManualSigning userManualSigning, Locale locale);

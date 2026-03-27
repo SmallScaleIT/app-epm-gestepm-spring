@@ -100,7 +100,6 @@
 						<li><i class="fas fa-map-marked-alt"></i><a href="/activity-centers"><spring:message code="sidebar.admin.activity.centers" /></a></li>
 						<li><i class="fa fa-people-carry"></i><a href="/admin/families"><spring:message code="sidebar.admin.families" /></a></li>
 						<li><i class="fas fa-flag"></i><a href="/countries"><spring:message code="sidebar.admin.countries" /></a></li>
-						<li><i class="fas fa-plane-departure"></i><a href="/admin/holidays"><spring:message code="sidebar.admin.holidays" /></a></li>
 						<li><i class="fas fa-file"></i><a href="/admin/summaries"><spring:message code="sidebar.admin.summaries" /></a></li>
 					</ul>
 				</li>

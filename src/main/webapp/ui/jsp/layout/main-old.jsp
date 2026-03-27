@@ -30,7 +30,7 @@
 	<!-- CSS Year Calendar -->
 	<link rel="stylesheet" href="/ui/static/css/plugins/js-year-calendar/js-year-calendar.min.css">
 
-	<c:if test="${fn:startsWith(pageName, '/signing') || fn:startsWith(pageName, '/shares') || fn:startsWith(pageName, '/expenses') || fn:startsWith(pageName, '/users') || fn:startsWith(pageName,'/projects') || fn:startsWith(pageName,'/holidays/admin')}">
+	<c:if test="${fn:startsWith(pageName, '/signing') || fn:startsWith(pageName, '/shares') || fn:startsWith(pageName, '/expenses') || fn:startsWith(pageName, '/users') || fn:startsWith(pageName,'/projects')}">
 		<!-- CSS Select 2 -->
 		<link rel="stylesheet" href="/webjars/select2/4.0.12/css/select2.min.css">
 	</c:if>
@@ -96,7 +96,7 @@
 		<script type="text/javascript" src="/ui/static/js/plugins/signature_pad/signature_pad.umd.js"></script>
 	</c:if>
 		
-	<c:if test="${fn:startsWith(pageName, '/signing') || fn:startsWith(pageName, '/shares') || fn:startsWith(pageName, '/expenses') || fn:startsWith(pageName, '/users') || fn:startsWith(pageName,'/projects') || fn:startsWith(pageName,'/holidays/admin')}">
+	<c:if test="${fn:startsWith(pageName, '/signing') || fn:startsWith(pageName, '/shares') || fn:startsWith(pageName, '/expenses') || fn:startsWith(pageName, '/users') || fn:startsWith(pageName,'/projects')}">
 		<!-- JS Select2 -->
 		<script type="text/javascript" src="/webjars/select2/4.0.12/js/select2.full.min.js"></script>
 	</c:if>

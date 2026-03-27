@@ -92,15 +92,6 @@
         <put-attribute name="body" value="/ui/jsp/view/expenses/correctives.jsp" />
     </definition>
     
-    <!-- Holidays -->
-    <definition name="holidays" extends="fullFrameLayout">
-        <put-attribute name="body" value="/ui/jsp/view/holidays/holidays.jsp" />
-    </definition>
-
-    <definition name="holidays-admin" extends="fullFrameLayout">
-        <put-attribute name="body" value="/ui/jsp/view/holidays/holidays-admin.jsp" />
-    </definition>
-    
     <!-- Shares -->
     <definition name="construction-share" extends="fullFrameLayout">
         <put-attribute name="body" value="/ui/jsp/view/shares/construction/view.jsp" />
@@ -181,11 +172,6 @@
     <!-- Activity Centers -->
     <definition name="admin-activity-centers" extends="fullFrameLayout">
         <put-attribute name="body" value="/ui/jsp/view/admin/activitycenters/view.jsp" />
-    </definition>
-    
-    <!-- Holidays -->
-    <definition name="admin-holidays" extends="fullFrameLayout">
-        <put-attribute name="body" value="/ui/jsp/view/admin/holidays/holidays.jsp" />
     </definition>
 
     <!-- Signing Summary -->

@@ -1,7 +1,6 @@
 package com.epm.gestepm.modelapi.deprecated.country.dto;
 
 import com.epm.gestepm.modelapi.deprecated.activitycenter.dto.ActivityCenter;
-import com.epm.gestepm.modelapi.holiday.dto.Holiday;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -25,8 +24,5 @@ public class Country {
 
 	@OneToMany(mappedBy = "country")
 	private List<ActivityCenter> activityCenters;
-	
-	@OneToMany(mappedBy = "country")
-	private List<Holiday> holidays;
 
 }

@@ -54,10 +54,6 @@ public class UserServiceImpl implements UserService {
 
     private static final Double DEFAULT_WORKING_HOURS = 8.0;
 
-    private static final Integer HOLIDAYS_COUNT_SPAIN = 22;
-
-    private static final Integer HOLIDAYS_COUNT_FRANCE = 30;
-
     private final ActivityCenterService activityCenterService;
 
     private final UserDao userDao;
@@ -170,7 +166,6 @@ public class UserServiceImpl implements UserService {
         create.setPassword(Utiles.textToMD5(createDto.getPassword()));
         create.setForumPassword(generateForumPassword(createDto.getPassword()));
         create.setWorkingHours(DEFAULT_WORKING_HOURS);
-        create.setCurrentYearHolidaysCount(activityCenter.getCountryId() == 1 ? HOLIDAYS_COUNT_SPAIN : HOLIDAYS_COUNT_FRANCE);
 
         final User result = this.userDao.create(create);
 

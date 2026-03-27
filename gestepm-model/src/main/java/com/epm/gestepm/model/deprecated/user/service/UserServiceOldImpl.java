@@ -32,10 +32,6 @@ public class UserServiceOldImpl implements UserServiceOld {
 		return userRepository.findBySigningIds(ids);
 	}
 
-	public List<UserDTO> getAllUserDTOs() {
-		return userRepository.findAllUserDTOs();
-	}
-
 	public List<UserDTO> getUserDTOsByProjectId(Long projectId) {
 		return userRepository.findUserDTOsByProjectId(projectId);
 	}
@@ -46,15 +42,5 @@ public class UserServiceOldImpl implements UserServiceOld {
 
 	public List<ExpenseUserValidateDTO> getExpensesToPay() {
 		return userRepository.findExpensesToPay().stream().filter(e -> e.getExpenseSheetsCount() > 0).sorted(Comparator.comparing(ExpenseUserValidateDTO::getName, String.CASE_INSENSITIVE_ORDER)).collect(Collectors.toList());
-	}
-
-	@Override
-	public void updateHolidaysInNewYear() {
-		this.userRepository.updateHolidaysInNewYear();
-	}
-
-	@Override
-	public void resetLastYearHolidays() {
-		this.userRepository.resetLastYearHolidays();
 	}
 }

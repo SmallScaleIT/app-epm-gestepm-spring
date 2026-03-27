@@ -1,13 +1,11 @@
 package com.epm.gestepm.model.deprecated.timecontrol.service;
 
-import com.epm.gestepm.model.deprecated.holiday.dao.HolidayRepository;
 import com.epm.gestepm.model.deprecated.user.dao.UserRepository;
 import com.epm.gestepm.modelapi.common.helpers.DatesModel;
 import com.epm.gestepm.modelapi.common.utils.Utiles;
 import com.epm.gestepm.modelapi.deprecated.timecontrol.dto.TimeControlTableDTO;
 import com.epm.gestepm.modelapi.deprecated.timecontrol.service.TimeControlOldService;
 import com.epm.gestepm.modelapi.deprecated.user.dto.User;
-import com.epm.gestepm.modelapi.holiday.dto.Holiday;
 import com.epm.gestepm.modelapi.timecontrol.dto.TimeControlDto;
 import com.epm.gestepm.modelapi.timecontrol.dto.TimeControlTypeEnumDto;
 import com.epm.gestepm.modelapi.timecontrol.dto.filter.TimeControlFilterDto;
@@ -24,9 +22,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class TimeControlOldServiceImpl implements TimeControlOldService {
-	
-	@Autowired
-	private HolidayRepository holidayRepository;
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -60,8 +55,6 @@ public class TimeControlOldServiceImpl implements TimeControlOldService {
 			return Collections.emptyList();
 		}
 
-		final List<Holiday> holidays = holidayRepository.findHolidaysByActivityCenter(activityCenter);
-		
 		for (int i = 1; i <= monthMaxDay; i++) {
 
 			final LocalDateTime timeControlDate = YearMonth.of(year, month).atDay(i).atStartOfDay();
@@ -87,8 +80,6 @@ public class TimeControlOldServiceImpl implements TimeControlOldService {
 
 			if (Utiles.isWeekend(timeControlDate.toLocalDate())) {
 				timeControl.setReason("1" + messageSource.getMessage("time.control.weekend", null, locale));
-			} else if (isHoliday(i, month, holidays)) {
-				timeControl.setReason("1" + messageSource.getMessage("time.control.holiday", null, locale));
 			} else if (userManualFullDay != null) {
 				timeControl.setReason("1" + userManualFullDay.getDescription());
 			} else {
@@ -325,10 +316,6 @@ public class TimeControlOldServiceImpl implements TimeControlOldService {
 		timeControl.setTotalHours(Utiles.formatDurationHHMM(((int) totalHours) / 1000));
 		
 		return timeControl;
-	}
-	
-	private boolean isHoliday(int day, int month, List<Holiday> holidays) {
-		return holidays.stream().anyMatch(h -> h.getDay() == day && h.getMonth() == month);
 	}
 
 	private TimeControlDto isUserManualFullDay(final List<TimeControlDto> userManualSignings, final Long journeyMillis) {

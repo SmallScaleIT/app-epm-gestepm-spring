@@ -41,36 +41,6 @@ public class SMTPServiceImpl implements SMTPService {
 
 	@Autowired
 	private MessageSource messageSource;
-	
-	@Async
-	public void sendCreateHolidaysRRHHMail(String to, User user, String holidays, Locale locale) {
-		
-		log.info("Preparando la plantilla de correo: holidays_create_mail_template_" + locale.getLanguage() + ".html");
-		
-		String subject = messageSource.getMessage("smtp.mail.holidays.subject", new Object[] { user.getName() + " " + user.getSurnames() }, locale);
-		
-		Map<String, String> params = new HashMap<>();
-		params.put("username", user.getName() + " " + user.getSurnames());
-		params.put("userId", user.getId().toString());
-		params.put("holidays", holidays);
-		
-		loadTemplateAndSendMail(smtpMailFrom, to, subject, "holidays_create_mail_template_" + locale.getLanguage() + ".html", params);
-	}
-
-	@Async
-	public void sendDeleteHolidaysRRHHMail(String to, User user, String holidays, Locale locale) {
-
-		log.info("Preparando la plantilla de correo: holidays_delete_mail_template_" + locale.getLanguage() + ".html");
-
-		String subject = messageSource.getMessage("smtp.mail.holidays.subject", new Object[] { user.getName() + " " + user.getSurnames() }, locale);
-
-		Map<String, String> params = new HashMap<>();
-		params.put("username", user.getName() + " " + user.getSurnames());
-		params.put("userId", user.getId().toString());
-		params.put("holidays", holidays);
-
-		loadTemplateAndSendMail(smtpMailFrom, to, subject, "holidays_delete_mail_template_" + locale.getLanguage() + ".html", params);
-	}
 
 	@Async
 	public void sendPersonalExpenseSheetSendMail(final OpenPersonalExpenseSheetMailTemplateDto dto) {

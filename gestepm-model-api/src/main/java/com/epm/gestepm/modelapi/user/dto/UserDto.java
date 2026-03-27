@@ -49,12 +49,6 @@ public class UserDto implements Serializable {
     @NotNull
     private Double workingHours;
 
-    @NotNull
-    private Integer currentYearHolidaysCount;
-
-    @NotNull
-    private Integer lastYearHolidaysCount;
-
     public String getFullName() {
         final StringBuilder builder = new StringBuilder();
 

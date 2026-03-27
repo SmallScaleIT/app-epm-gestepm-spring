@@ -47,8 +47,4 @@ public class User implements Serializable {
     @NotNull
     private Double workingHours;
 
-    private Integer currentYearHolidaysCount;
-
-    private Integer lastYearHolidaysCount;
-
 }

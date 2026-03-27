@@ -67,12 +67,6 @@ public class User {
 	@Column(name = "working_hours", nullable = false, length = 2)
 	private Double workingHours;
 
-	@Column(name = "current_year_holidays_count", nullable = false, length = 2)
-	private Integer currentYearHolidaysCount;
-
-	@Column(name = "last_year_holidays_count", nullable = false, length = 2)
-	private Integer lastYearHolidaysCount;
-
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<InterventionShare> interventionShares;
 	

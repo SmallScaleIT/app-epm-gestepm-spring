@@ -19,7 +19,7 @@
                         <div class="col">
                             <select id="monthDropdown" name="month" class="form-control form-control-sm">
                                 <option disabled value="" selected="selected">
-                                    <spring:message code="holidays.admin.month.placeholder"/>
+                                    <spring:message code="time.control.month.placeholder"/>
                                 </option>
                                 <c:forEach items="${months}" var="month">
                                     <option value="${month.key}">
