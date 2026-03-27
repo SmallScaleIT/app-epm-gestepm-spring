@@ -37,8 +37,4 @@ public class UserUpdateDto {
 
     private Double workingHours;
 
-    private Integer currentYearHolidaysCount;
-
-    private Integer lastYearHolidaysCount;
-
 }

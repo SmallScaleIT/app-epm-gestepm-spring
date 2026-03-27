@@ -6,7 +6,8 @@ import lombok.Data;
 
 import java.util.List;
 
-import static com.epm.gestepm.model.personalexpense.dao.constants.PersonalExpenseFileAttributes.*;
+import static com.epm.gestepm.model.personalexpense.dao.constants.PersonalExpenseFileAttributes.ATTR_PEF_IDS;
+import static com.epm.gestepm.model.personalexpense.dao.constants.PersonalExpenseFileAttributes.ATTR_PEF_PE_ID;
 
 @Data
 public class PersonalExpenseFileFilter implements CollectableAttributes {
@@ -24,7 +25,6 @@ public class PersonalExpenseFileFilter implements CollectableAttributes {
 
         map.putList(ATTR_PEF_IDS, this.ids);
         map.put(ATTR_PEF_PE_ID, this.personalExpenseId);
-        map.putBooleanAsInt(ATTR_PEF_NEED_MIGRATION, this.needMigration);
 
         return map;
     }

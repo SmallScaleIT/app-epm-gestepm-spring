@@ -12,8 +12,4 @@ public abstract class WorkShareFileAttributes {
 
     public static final String ATTR_WSF_STORAGE_PATH = "attr_wsf_storage_path";
 
-    public static final String ATTR_WSF_CONTENT = "attr_wsf_content";
-
-    public static final String ATTR_WSF_NEED_MIGRATION = "attr_wsf_need_migration";
-
 }

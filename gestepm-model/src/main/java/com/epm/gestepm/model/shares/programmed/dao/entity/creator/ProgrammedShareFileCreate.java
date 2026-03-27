@@ -29,7 +29,6 @@ public class ProgrammedShareFileCreate implements CollectableAttributes {
         map.put(ATTR_PSF_SHARE_ID, this.shareId);
         map.put(ATTR_PSF_NAME, this.name);
         map.put(ATTR_PSF_STORAGE_PATH, this.storagePath);
-        map.put(ATTR_PSF_CONTENT, FileUtils.compressBytes("to-remove".getBytes())); // FIXME: remove
 
         return map;
     }

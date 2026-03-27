@@ -17,13 +17,10 @@ public class PersonalExpenseFile implements Serializable {
     @NotNull
     private String name;
 
-    // FIXME: @NotNull
+    @NotNull
     private String storagePath;
 
     @NotNull
-    private byte[] content;
-
-    // FIXME: @NotNull
     private String url;
 
 }

@@ -12,6 +12,4 @@ public abstract class ConstructionShareFileAttributes {
 
     public static final String ATTR_CSF_STORAGE_PATH = "attr_csf_storage_path";
 
-    public static final String ATTR_CSF_CONTENT = "attr_csf_content";
-
 }

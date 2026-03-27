@@ -26,8 +26,6 @@ public abstract class InspectionAttributes {
 
     public static final String ATTR_I_CLIENT_NAME = "attr_i_client_name";
 
-    public static final String ATTR_I_MATERIALS = "attr_i_materials";
-
     public static final String ATTR_I_MATERIALS_FILE = "attr_i_materials_file";
 
     public static final String ATTR_I_MATERIALS_FILE_NAME = "attr_i_materials_file_name";
@@ -45,7 +43,5 @@ public abstract class InspectionAttributes {
     public static final String ATTR_I_MODIFIED_AT = "attr_i_modified_at";
 
     public static final String ATTR_I_MODIFIED_BY = "attr_i_modified_by";
-
-    public static final String ATTR_I_NEED_MIGRATION = "attr_i_need_migration";
 
 }

@@ -2,7 +2,6 @@ package com.epm.gestepm.model.personalexpensesheet.service;
 
 import com.epm.gestepm.lib.locale.LocaleProvider;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
-import com.epm.gestepm.model.common.pdf.ImageUtils;
 import com.epm.gestepm.modelapi.common.utils.Utiles;
 import com.epm.gestepm.modelapi.personalexpense.dto.PersonalExpenseDto;
 import com.epm.gestepm.modelapi.personalexpense.dto.PersonalExpenseFileDto;
@@ -33,10 +32,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
-import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.SERVICE;
 
@@ -134,9 +131,7 @@ public class PersonalExpenseSheetExportServiceImpl implements PersonalExpenseShe
         final PersonalExpenseFileFilterDto filterDto = new PersonalExpenseFileFilterDto();
         filterDto.setIds(fileIds);
 
-        final List<PersonalExpenseFileDto> files = this.personalExpenseFileService.list(filterDto).stream()
-                .filter(file -> file.getContent() != null)
-                .collect(Collectors.toList());
+        final List<PersonalExpenseFileDto> files = this.personalExpenseFileService.list(filterDto);
 
         for (final PersonalExpenseFileDto file : files) {
             if (isPDF(file)) {

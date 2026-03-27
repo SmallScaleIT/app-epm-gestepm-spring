@@ -3836,14 +3836,6 @@ components:
           type: number
           x-stoplight:
             id: zmfk0xio0smfd
-        currentYearHolidaysCount:
-          type: integer
-          x-stoplight:
-            id: cgd6s04xrx4po
-        lastYearHolidaysCount:
-          type: integer
-          x-stoplight:
-            id: okhm5os3bs84d
       required:
         - id
         - name
@@ -3853,8 +3845,6 @@ components:
         - state
         - role
         - workingHours
-        - currentYearHolidaysCount
-        - lastYearHolidaysCount
     WorkShare:
       title: WorkShare
       x-stoplight:
@@ -5355,14 +5345,6 @@ components:
                 type: number
                 x-stoplight:
                   id: ogce45swgjeqm
-              currentYearHolidaysCount:
-                type: integer
-                x-stoplight:
-                  id: 79qzla01vb66u
-              lastYearHolidaysCount:
-                type: integer
-                x-stoplight:
-                  id: 62h2alswvyo76
               state:
                 type: integer
                 x-stoplight:
