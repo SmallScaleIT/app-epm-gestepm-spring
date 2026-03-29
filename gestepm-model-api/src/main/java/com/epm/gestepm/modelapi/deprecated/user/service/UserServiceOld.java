@@ -12,11 +12,7 @@ public interface UserServiceOld {
 	User getUserById(Long id);
 	List<User> findBySigningIds(List<Long> ids);
 	User getUsuarioByEmailAndPassword(String email, String password);
-	List<UserDTO> getAllUserDTOs();
 	List<UserDTO> getUserDTOsByProjectId(Long projectId);
 		List<ExpenseValidateDTO> getExpensesToValidateByUserId(Long userId);
 	List<ExpenseUserValidateDTO> getExpensesToPay();
-
-	void updateHolidaysInNewYear();
-	void resetLastYearHolidays();
 }

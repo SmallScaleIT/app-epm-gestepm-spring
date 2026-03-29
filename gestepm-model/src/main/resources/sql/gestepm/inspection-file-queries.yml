@@ -7,8 +7,7 @@ sql:
       ifi.inspection_file_id,
       ifi.inspection_id,
       ifi.name,
-      ifi.storage_path,
-      ifi.content
+      ifi.storage_path
     FROM ${sch-gestepm}.inspection_file ifi
     
     #whereToken #filter
@@ -32,14 +31,12 @@ sql:
     INSERT INTO ${sch-gestepm}.inspection_file (
       inspection_id,
       name,
-      storage_path,
-      content
+      storage_path
     )
     VALUES (
       :attr_if_inspection_id,
       :attr_if_name,
-      :attr_if_storage_path,
-      :attr_if_content
+      :attr_if_storage_path
     )
 
   qry-update-if: |
@@ -61,7 +58,6 @@ sql:
     -- [AND
       -- ${sql.predicate-for-if-ids}
       -- ${sql.predicate-for-if-inspection-id}
-      -- ${sql.predicate-for-if-need-migration}
     -- AND]
 
   filter-if-by-id: |
@@ -81,7 +77,3 @@ sql:
   predicate-for-if-inspection-id: |
 
     ifi.inspection_id = :attr_if_inspection_id
-
-  predicate-for-if-need-migration: |
-    
-    :attr_if_need_migration = 1 AND ifi.storage_path IS NULL

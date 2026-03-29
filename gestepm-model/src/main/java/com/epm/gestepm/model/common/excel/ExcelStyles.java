@@ -27,8 +27,6 @@ public class ExcelStyles {
         public final CellStyle dataTurquoiseTimeStyle;
         public final CellStyle totalMonthStyle;
         public final CellStyle totalMonthTimeStyle;
-        public final CellStyle woffuHeaderStyle;
-        public final CellStyle woffuDifferenceSumStyle;
         public final CellStyle userTitleStyle;
         public final CellStyle workshopExportCellStyle;
         public final CellStyle dataOrgangeCellStyle;
@@ -51,12 +49,10 @@ public class ExcelStyles {
             this.dataTurquoiseTimeStyle = styles[13];
             this.totalMonthStyle = styles[14];
             this.totalMonthTimeStyle = styles[15];
-            this.woffuHeaderStyle = styles[16];
-            this.woffuDifferenceSumStyle = styles[17];
-            this.userTitleStyle = styles[18];
-            this.workshopExportCellStyle = styles[19];
-            this.dataOrgangeCellStyle = styles[20];
-            this.whiteBorderCenterStyle = styles[21];
+            this.userTitleStyle = styles[16];
+            this.workshopExportCellStyle = styles[17];
+            this.dataOrgangeCellStyle = styles[18];
+            this.whiteBorderCenterStyle = styles[19];
         }
     }
 
@@ -84,8 +80,6 @@ public class ExcelStyles {
         final CellStyle dataTurquoiseTimeStyle = ExcelUtils.getStyle(workbook, HorizontalAlignment.CENTER, null, true, true, true, true, BorderStyle.THIN, IndexedColors.WHITE.getIndex(), IndexedColors.LIGHT_TURQUOISE.getIndex(), null, 10, false, false);
         final CellStyle totalMonthStyle = ExcelUtils.getStyle(workbook, HorizontalAlignment.RIGHT, null, true, true, false, false, BorderStyle.THIN, IndexedColors.WHITE.getIndex(), IndexedColors.GREEN.getIndex(), IndexedColors.WHITE.getIndex(), 10, true, false);
         final CellStyle totalMonthTimeStyle = ExcelUtils.getStyle(workbook, HorizontalAlignment.CENTER, null, true, true, false, false, BorderStyle.THIN, IndexedColors.WHITE.getIndex(), IndexedColors.GREEN.getIndex(), IndexedColors.WHITE.getIndex(), 10, true, false);
-        final CellStyle woffuHeaderStyle = ExcelUtils.getStyle(workbook, HorizontalAlignment.CENTER, null, false, false, false, false, null, null, IndexedColors.ROYAL_BLUE.index, IndexedColors.WHITE.index, 11, true, false);
-        final CellStyle woffuDifferenceSumStyle = ExcelUtils.getStyle(workbook, null, null, false, false, false, false, null, null, IndexedColors.YELLOW.index, IndexedColors.RED.index, 11, false, false);
 
         dataTurquoiseDateTimeStyle.setDataFormat(dataFormat.getFormat(DATE_TIME_FORMAT));
         dataGreenDateTimeStyle.setDataFormat(dataFormat.getFormat(DATE_TIME_FORMAT));
@@ -114,8 +108,6 @@ public class ExcelStyles {
                 dataTurquoiseTimeStyle,
                 totalMonthStyle,
                 totalMonthTimeStyle,
-                woffuHeaderStyle,
-                woffuDifferenceSumStyle,
                 userCellStyle,
                 workshopExportCellStyle,
                 dataOrgangeCellStyle,

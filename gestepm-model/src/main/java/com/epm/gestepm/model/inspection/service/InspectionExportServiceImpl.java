@@ -20,6 +20,7 @@ import com.epm.gestepm.modelapi.project.dto.finder.ProjectByIdFinderDto;
 import com.epm.gestepm.modelapi.project.service.ProjectService;
 import com.epm.gestepm.modelapi.projectmaterial.dto.ProjectMaterialDto;
 import com.epm.gestepm.modelapi.projectmaterial.dto.filter.ProjectMaterialFilterDto;
+import com.epm.gestepm.modelapi.projectmaterial.service.ProjectMaterialOptionalService;
 import com.epm.gestepm.modelapi.projectmaterial.service.ProjectMaterialService;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.NoProgrammedShareDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.finder.NoProgrammedShareByIdFinderDto;
@@ -171,10 +172,13 @@ public class InspectionExportServiceImpl implements InspectionExportService {
             final ProjectMaterialFilterDto projectMaterialFilterDto = new ProjectMaterialFilterDto();
             projectMaterialFilterDto.setProjectIds(List.of(noProgrammedShare.getProjectId()));
 
-            final List<ProjectMaterialDto> materials = this.projectMaterialService.list(projectMaterialFilterDto)
-                    .stream().limit(30).collect(Collectors.toList());
+            final List<ProjectMaterialDto> materials = this.projectMaterialService.list(projectMaterialFilterDto);
+
+            final List<ProjectMaterialDto> requiredMaterials = materials.stream().filter(ProjectMaterialDto::getRequired).collect(Collectors.toList());
+            final List<ProjectMaterialDto> optionalMaterials = materials.stream().filter(m -> !m.getRequired()).collect(Collectors.toList());
 
             final String language = localeProvider.getLocale().orElse("es");
+            final Locale locale = new Locale(language);
             final PdfReader pdfTemplate = new PdfReader(String.format(MATERIALS_TEMPLATE_PATH, language));
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             final PdfStamper stamper = new PdfStamper(pdfTemplate, baos);
@@ -184,12 +188,19 @@ public class InspectionExportServiceImpl implements InspectionExportService {
             acroFields.setField("inspectionId", inspection.getId().toString());
             acroFields.setField("excelNum", "EXCEL: " + (inspection.getMaterialsFile() != null ? noProgrammedShare.getId() : "S/N"));
 
-            for (int i = 0; i < materials.size(); i++) {
-                acroFields.setField("reqMaterialDesc" + i, "es".equals(language) ? materials.get(i).getNameEs() : materials.get(i).getNameFr());
-                acroFields.setField("reqMaterialRef" + i, "x");
+            for (int i = 0; i < requiredMaterials.size(); i++) {
+                acroFields.setField("reqMaterialDesc" + (i + 1), "es".equals(language) ? requiredMaterials.get(i).getNameEs() : requiredMaterials.get(i).getNameFr());
+                acroFields.setField("reqMaterialRef" + (i + 1), "x");
             }
 
-            stamper.getAcroFields().setGenerateAppearances(true);
+            for (int i = 0; i < optionalMaterials.size(); i++) {
+                acroFields.setField("optMaterialDesc" + (i + 1), "es".equals(language) ? optionalMaterials.get(i).getNameEs() : optionalMaterials.get(i).getNameFr());
+                acroFields.setField("optMaterialRef" + (i + 1), inspection.getOptionalMaterialIds().contains(optionalMaterials.get(i).getId())
+                        ? messageSource.getMessage("yes", null, locale)
+                        : messageSource.getMessage("no", null, locale));
+            }
+
+            acroFields.setGenerateAppearances(true);
             stamper.setFormFlattening(true);
 
             stamper.close();

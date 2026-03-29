@@ -3230,6 +3230,14 @@ components:
           format: date-time
         updatedBy:
           $ref: '#/components/schemas/User'
+        optionalMaterialIds:
+          type: array
+          x-stoplight:
+            id: skz8i8nl1xvka
+          items:
+            x-stoplight:
+              id: hdyn82mcaywsy
+            type: integer
       required:
         - id
         - share
@@ -3836,14 +3844,6 @@ components:
           type: number
           x-stoplight:
             id: zmfk0xio0smfd
-        currentYearHolidaysCount:
-          type: integer
-          x-stoplight:
-            id: cgd6s04xrx4po
-        lastYearHolidaysCount:
-          type: integer
-          x-stoplight:
-            id: okhm5os3bs84d
       required:
         - id
         - name
@@ -3853,8 +3853,6 @@ components:
         - state
         - role
         - workingHours
-        - currentYearHolidaysCount
-        - lastYearHolidaysCount
     WorkShare:
       title: WorkShare
       x-stoplight:
@@ -4761,6 +4759,14 @@ components:
                     x-stoplight:
                       id: x8iadh3wymskh
                     format: date-time
+                  optionalMaterialIds:
+                    type: array
+                    x-stoplight:
+                      id: nbush1vypl3y9
+                    items:
+                      x-stoplight:
+                        id: af63jze7nm8gi
+                      type: integer
               files:
                 type: array
                 x-stoplight:
@@ -5355,14 +5361,6 @@ components:
                 type: number
                 x-stoplight:
                   id: ogce45swgjeqm
-              currentYearHolidaysCount:
-                type: integer
-                x-stoplight:
-                  id: 79qzla01vb66u
-              lastYearHolidaysCount:
-                type: integer
-                x-stoplight:
-                  id: 62h2alswvyo76
               state:
                 type: integer
                 x-stoplight:

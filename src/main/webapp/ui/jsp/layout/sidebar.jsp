@@ -30,24 +30,6 @@
 				</li>
 			</sec:authorize>
 
-			<!-- TODO: To remove:
-			<sec:authorize access="hasAuthority('ROLE_JEFE_PROYECTO')">
-				<li class="menu-item-has-children dropdown <c:if test="${fn:startsWith(pageName, '/holidays')}">active</c:if>">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-clipboard"></i><spring:message code="sidebar.holidays" /></a>
-					<ul class="sub-menu children dropdown-menu">
-						<li><i class="menu-icon fa fa-suitcase-rolling"></i><a href="/holidays"><spring:message code="sidebar.holidays" /></a></li>
-						<li><i class="menu-icon fa fa-suitcase-rolling"></i><a href="/holidays/admin"><spring:message code="sidebar.holidays.admin" /></a></li>
-					</ul>
-				</li>
-			</sec:authorize>
-			-->
-
-			<sec:authorize access="!hasAuthority('ROLE_JEFE_PROYECTO') && hasAuthority('ROLE_OFICINA')">
-				<li <c:if test="${fn:startsWith(pageName, '/holidays')}">class="active"</c:if>>
-					<a href="/holidays"> <i class="menu-icon fa fa-suitcase-rolling"></i><spring:message code="sidebar.holidays" /></a>
-				</li>
-			</sec:authorize>
-
 			<sec:authorize access="hasAuthority('ROLE_OFICINA')">
 				<li class="menu-item-has-children dropdown <c:if test="${(fn:startsWith(pageName, '/signing') || fn:startsWith(pageName, '/signing/manual'))  && !fn:startsWith(pageName, '/signing/personal')}">active</c:if>">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon far fa-clock"></i><spring:message code="sidebar.signing.page" /></a>
@@ -118,7 +100,6 @@
 						<li><i class="fas fa-map-marked-alt"></i><a href="/activity-centers"><spring:message code="sidebar.admin.activity.centers" /></a></li>
 						<li><i class="fa fa-people-carry"></i><a href="/admin/families"><spring:message code="sidebar.admin.families" /></a></li>
 						<li><i class="fas fa-flag"></i><a href="/countries"><spring:message code="sidebar.admin.countries" /></a></li>
-						<!--<li><i class="fas fa-plane-departure"></i><a href="/admin/holidays"><spring:message code="sidebar.admin.holidays" /></a></li>-->
 						<li><i class="fas fa-file"></i><a href="/admin/summaries"><spring:message code="sidebar.admin.summaries" /></a></li>
 					</ul>
 				</li>

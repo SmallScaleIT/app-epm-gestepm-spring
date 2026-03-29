@@ -19,9 +19,7 @@ sql:
       ro.role AS role_name,
       u.level_id,
       le.rol AS level_name,
-      u.working_hours,
-      u.current_year_holidays_count,
-      u.last_year_holidays_count
+      u.working_hours
     FROM ${sch-gestepm}.user u
     LEFT JOIN ${sch-gestepm}.activity_center ac ON ac.activity_center_id = u.activity_center_id
     LEFT JOIN ${sch-gestepm}.roles ro ON ro.id = u.role_id
@@ -65,9 +63,7 @@ sql:
       signing_id,
       role_id,
       level_id,
-      working_hours,
-      current_year_holidays_count,
-      last_year_holidays_count
+      working_hours
     )
     VALUES (
       :attr_u_name,
@@ -80,9 +76,7 @@ sql:
       :attr_u_signing_id,
       :attr_u_role_id,
       :attr_u_level_id,
-      :attr_u_working_hours,
-      :attr_u_current_year_holidays_count,
-      0
+      :attr_u_working_hours
     )
 
   qry-update-u: |
@@ -101,9 +95,7 @@ sql:
       forum_password = :attr_u_forum_password,
       role_id = :attr_u_role_id,
       level_id = :attr_u_level_id,
-      working_hours = :attr_u_working_hours,
-      current_year_holidays_count = :attr_u_current_year_holidays_count,
-      last_year_holidays_count = :attr_u_last_year_holidays_count
+      working_hours = :attr_u_working_hours
     WHERE
       user_id = :attr_u_id
 

@@ -1,9 +1,5 @@
 package com.epm.gestepm.controller;
 
-import com.epm.gestepm.model.deprecated.activitycenter.service.ActivityCenterServiceImpl;
-import com.epm.gestepm.model.deprecated.country.service.CountryServiceOldImpl;
-import com.epm.gestepm.model.deprecated.holiday.service.HolidayServiceImpl;
-import com.epm.gestepm.model.deprecated.holiday.service.mapper.HolidayMapper;
 import com.epm.gestepm.model.family.service.FamilyServiceImpl;
 import com.epm.gestepm.model.subfamily.service.SubFamilyServiceImpl;
 import com.epm.gestepm.model.subfamily.service.mapper.MapSFToSubFamilyDto;
@@ -13,17 +9,12 @@ import com.epm.gestepm.modelapi.common.utils.Utiles;
 import com.epm.gestepm.modelapi.common.utils.datatables.DataTableRequest;
 import com.epm.gestepm.modelapi.common.utils.datatables.DataTableResults;
 import com.epm.gestepm.modelapi.common.utils.datatables.PaginationCriteria;
-import com.epm.gestepm.modelapi.deprecated.activitycenter.dto.ActivityCenter;
-import com.epm.gestepm.modelapi.deprecated.country.dto.Country;
 import com.epm.gestepm.modelapi.deprecated.user.dto.User;
 import com.epm.gestepm.modelapi.deprecated.user.exception.InvalidUserSessionException;
 import com.epm.gestepm.modelapi.family.FamilyMapper;
 import com.epm.gestepm.modelapi.family.dto.Family;
 import com.epm.gestepm.modelapi.family.dto.FamilyDTO;
 import com.epm.gestepm.modelapi.family.dto.FamilyTableDTO;
-import com.epm.gestepm.modelapi.holiday.dto.Holiday;
-import com.epm.gestepm.modelapi.holiday.dto.HolidayDTO;
-import com.epm.gestepm.modelapi.holiday.dto.HolidayTableDTO;
 import com.epm.gestepm.modelapi.subfamily.dto.SubFamily;
 import com.epm.gestepm.modelapi.subfamily.dto.SubFamilyDto;
 import com.epm.gestepm.modelapi.subfamily.dto.SubFamilyOldDTO;
@@ -52,16 +43,7 @@ public class AdminController {
 	private static final Log log = LogFactory.getLog(AdminController.class);
 	
 	@Autowired
-	private ActivityCenterServiceImpl activityCenterServiceOld;
-	
-	@Autowired
-	private CountryServiceOldImpl countryService;
-	
-	@Autowired
 	private FamilyServiceImpl familyService;
-	
-	@Autowired
-	private HolidayServiceImpl holidayService;
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -74,140 +56,6 @@ public class AdminController {
 
 	@Autowired
 	private ObjectMapper objectMapper;
-
-	@GetMapping("/holidays")
-	public String holidays(Locale locale, Model model, HttpServletRequest request) {
-
-		try {
-
-			// Loading constants
-			ModelUtil.loadConstants(locale, model, request);
-
-			// Recover user
-			User user = Utiles.getUsuario();
-
-			// Log info
-			log.info("El usuario " + user.getId() + " ha accedido a la vista de Admin Holidays");
-
-			// Load all countries
-			List<Country> countries = countryService.findAll();
-			
-			// Load all activity centers
-			List<ActivityCenter> activityCenters = activityCenterServiceOld.findAll();
-			
-			// Order by name
-			activityCenters.sort(Comparator.comparing(ActivityCenter::getName));
-						
-			// Load months
-			Map<Integer, String> months = ModelUtil.loadMonths(messageSource, locale);
-
-			// Carga del modelo
-			model.addAttribute("tableActionButtons", ModelUtil.getTableModifyActionButtons());
-			model.addAttribute("countries", countries);
-			model.addAttribute("activityCenters", activityCenters);
-			model.addAttribute("months", months);
-						
-			// Loading view
-			return "admin-holidays";
-
-		} catch (InvalidUserSessionException e) {
-			log.error(e);
-			return "redirect:/login";
-		}
-	}
-	
-	@ResponseBody
-	@GetMapping("/holidays/dt")
-	public DataTableResults<HolidayTableDTO> holidaysDatatable(HttpServletRequest request, Locale locale) {
-
-		DataTableRequest<Holiday> dataTableInRQ = new DataTableRequest<>(request);
-		PaginationCriteria pagination = dataTableInRQ.getPaginationRequest();
-
-		List<HolidayTableDTO> holidays = holidayService.getHolidaysDataTables(pagination);
-
-		Long totalRecords = holidayService.getHolidaysCount();
-
-		DataTableResults<HolidayTableDTO> dataTableResult = new DataTableResults<>();
-		dataTableResult.setDraw(dataTableInRQ.getDraw());
-		dataTableResult.setData(holidays);
-		dataTableResult.setRecordsTotal(String.valueOf(totalRecords));
-		dataTableResult.setRecordsFiltered(Long.toString(totalRecords));
-
-		if (!holidays.isEmpty() && !dataTableInRQ.getPaginationRequest().isFilterByEmpty()) {
-			dataTableResult.setRecordsFiltered(Integer.toString(holidays.size()));
-		}
-
-		return dataTableResult;
-	}
-	
-	@ResponseBody
-	@PostMapping("/holidays/create")
-	public ResponseEntity<String> createHolidays(@ModelAttribute HolidayDTO holidayDTO, Locale locale) {
-		
-		try {			
-			
-			// Recover user
-			User user = Utiles.getUsuario();
-						
-			Holiday holiday = HolidayMapper.mapDTOToHoliday(holidayDTO, countryService, activityCenterServiceOld);
-			
-			holidayService.save(holiday);
-			
-			log.info("Vacación " + holiday.getId() + " creado con éxito por parte del usuario " + user.getId());
-			
-			// Return data
-			return new ResponseEntity<>(messageSource.getMessage("holidays.admin.create.success", new Object[] { }, locale), HttpStatus.OK);
-		
-		} catch (Exception e) {
-			return new ResponseEntity<>(messageSource.getMessage("holidays.admin.create.error", new Object[] { }, locale), HttpStatus.NOT_FOUND);
-		}
-	}
-	
-	@ResponseBody
-	@PostMapping("/holidays/update/{id}")
-	public ResponseEntity<String> updateHoliday(@PathVariable Long id, @ModelAttribute HolidayDTO holidayDTO, Locale locale) {
-
-		try {
-			
-			// Recover user
-			User user = Utiles.getUsuario();
-						
-			Holiday holiday = HolidayMapper.mapDTOToHoliday(holidayDTO, countryService, activityCenterServiceOld);
-			holiday.setId(id);
-			
-			holidayService.save(holiday);
-			
-			log.info("Vacación " + id + " actualizado con éxito por parte del usuario " + user.getId());
-			
-			// Return data
-			return new ResponseEntity<>(messageSource.getMessage("holidays.admin.update.success", new Object[] { }, locale), HttpStatus.OK);
-		
-		} catch (Exception e) {
-			log.error(e);
-			return new ResponseEntity<>(messageSource.getMessage("holidays.admin.update.error", new Object[] { }, locale), HttpStatus.NOT_FOUND);
-		}
-	}
-	
-	@ResponseBody
-	@DeleteMapping("/holidays/delete/{id}")
-	public ResponseEntity<String> deleteHoliday(@PathVariable Long id, Locale locale) {
-
-		try {
-			
-			// Recover user
-			User user = Utiles.getUsuario();
-						
-			holidayService.delete(id);
-			
-			log.info("Vacación " + id + " eliminado con éxito por parte del usuario " + user.getId());
-			
-			// Return data
-			return new ResponseEntity<>(messageSource.getMessage("holidays.admin.delete.success", new Object[] { }, locale), HttpStatus.OK);
-		
-		} catch (Exception e) {
-			return new ResponseEntity<>(messageSource.getMessage("holidays.admin.delete.error", new Object[] { }, locale), HttpStatus.NOT_FOUND);
-		}
-	}
 
 	@GetMapping("/families")
 	public String families(Locale locale, Model model, HttpServletRequest request) {

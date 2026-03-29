@@ -14,62 +14,65 @@ import java.util.Set;
 @Data
 public class Inspection implements AuditUpdate, Serializable {
 
-  @NotNull
-  private Integer id;
+    @NotNull
+    private Integer id;
 
-  @NotNull
-  private Integer projectId;
+    @NotNull
+    private Integer projectId;
 
-  @NotNull
-  private String projectName;
+    @NotNull
+    private String projectName;
 
-  private Integer userSigningId;
+    private Integer userSigningId;
 
-  @NotNull
-  private Integer shareId;
+    @NotNull
+    private Integer shareId;
 
-  @NotNull
-  private ActionEnum action;
+    @NotNull
+    private ActionEnum action;
 
-  @NotNull
-  private LocalDateTime startDate;
+    @NotNull
+    private LocalDateTime startDate;
 
-  private LocalDateTime endDate;
+    private LocalDateTime endDate;
 
-  private String description;
+    private String description;
 
-  @NotNull
-  private Integer firstTechnicalId;
+    @NotNull
+    private Integer firstTechnicalId;
 
-  @NotNull
-  private String firstTechnicalName;
+    @NotNull
+    private String firstTechnicalName;
 
-  private Integer secondTechnicalId;
+    private Integer secondTechnicalId;
 
-  private String signature;
+    private String signature;
 
-  private String operatorSignature;
+    private String operatorSignature;
 
-  private String clientName;
+    private String clientName;
 
-  private Set<Material> materials = new HashSet<>();
+    private Set<Material> materials = new HashSet<>();
 
-  private byte[] materialsFile;
+    private byte[] materialsFile;
 
-  private String materialsFileName;
+    private String materialsFileName;
 
-  private String materialsStoragePath;
+    private String materialsStoragePath;
 
-  private String materialsFileUrl;
+    private String materialsFileUrl;
 
-  private Integer equipmentHours;
+    private Integer equipmentHours;
 
-  private Integer topicId;
+    private Integer topicId;
 
-  @Singular
-  private List<Integer> fileIds;
+    @Singular
+    private List<Integer> fileIds;
 
-  private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 
-  private Integer updatedBy;
+    private Integer updatedBy;
+
+    private List<Integer> optionalMaterialIds;
+
 }

@@ -45,10 +45,6 @@ public class UserRowMapper extends CommonRowMapper implements RowMapper<User> {
 
     public static final String COL_U_WORKING_HOURS = "working_hours";
 
-    public static final String COL_U_CURRENT_YEAR_HOLIDAYS_COUNT = "current_year_holidays_count";
-
-    public static final String COL_U_LAST_YEAR_HOLIDAYS_COUNT = "last_year_holidays_count";
-
     @Override
     public User mapRow(ResultSet rs, int rowNum) throws SQLException {
 
@@ -67,8 +63,6 @@ public class UserRowMapper extends CommonRowMapper implements RowMapper<User> {
         user.setRoleId(rs.getInt(COL_U_ROLE_ID));
         user.setLevelId(nullableInt(rs, COL_U_LEVEL_ID));
         user.setWorkingHours(nullableDouble(rs, COL_U_WORKING_HOURS));
-        user.setCurrentYearHolidaysCount(nullableInt(rs, COL_U_CURRENT_YEAR_HOLIDAYS_COUNT));
-        user.setLastYearHolidaysCount(nullableInt(rs, COL_U_LAST_YEAR_HOLIDAYS_COUNT));
 
         return user;
     }

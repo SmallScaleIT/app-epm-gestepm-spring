@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.epm.gestepm.lib.jdbc.utils.ResultSetMappingUtils.*;
 
@@ -57,6 +56,8 @@ public class InspectionRowMapper extends CommonRowMapper implements RowMapper<In
     public static final String COL_I_TOPIC_ID = "topic_id";
 
     public static final String COL_I_FILE_IDS = "inspection_file_ids";
+
+    public static final String COL_I_OPTIONAL_MATERIAL_IDS = "optional_material_ids";
 
     @Override
     public Inspection mapRow(ResultSet rs, int i) throws SQLException {
@@ -112,6 +113,16 @@ public class InspectionRowMapper extends CommonRowMapper implements RowMapper<In
         }
 
         inspection.setFileIds(fileIds);
+
+        final List<Integer> optionalMaterialIds = new ArrayList<>();
+
+        if (hasValue(rs, COL_I_OPTIONAL_MATERIAL_IDS)) {
+            Arrays.stream(rs.getString(COL_I_OPTIONAL_MATERIAL_IDS).split(","))
+                    .map(Integer::parseInt)
+                    .forEach(optionalMaterialIds::add);
+        }
+
+        inspection.setOptionalMaterialIds(optionalMaterialIds);
 
         this.setCommonAudit(inspection, rs);
 

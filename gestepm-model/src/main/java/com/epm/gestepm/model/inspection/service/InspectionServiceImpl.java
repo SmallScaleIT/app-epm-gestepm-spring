@@ -38,6 +38,11 @@ import com.epm.gestepm.modelapi.inspection.service.InspectionService;
 import com.epm.gestepm.modelapi.project.dto.ProjectDto;
 import com.epm.gestepm.modelapi.project.dto.finder.ProjectByIdFinderDto;
 import com.epm.gestepm.modelapi.project.service.ProjectService;
+import com.epm.gestepm.modelapi.projectmaterial.dto.creator.ProjectMaterialOptionalCreateDto;
+import com.epm.gestepm.modelapi.projectmaterial.dto.deleter.ProjectMaterialDeleteDto;
+import com.epm.gestepm.modelapi.projectmaterial.dto.deleter.ProjectMaterialOptionalDeleteDto;
+import com.epm.gestepm.modelapi.projectmaterial.service.ProjectMaterialOptionalService;
+import com.epm.gestepm.modelapi.projectmaterial.service.ProjectMaterialService;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.NoProgrammedShareDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.NoProgrammedShareStateEnumDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.finder.NoProgrammedShareByIdFinderDto;
@@ -101,6 +106,8 @@ public class InspectionServiceImpl implements InspectionService {
     private final InspectionExportService inspectionExportService;
 
     private final NoProgrammedShareService noProgrammedShareService;
+
+    private final ProjectMaterialOptionalService projectMaterialOptionalService;
 
     private final ProjectService projectService;
 
@@ -227,6 +234,14 @@ public class InspectionServiceImpl implements InspectionService {
 
             update.setMaterialsFileName(updateDto.getMaterialsFile().getOriginalFilename());
             update.setMaterialsStoragePath(fileResponse.getFileName());
+        }
+
+        if (!CollectionUtils.isEmpty(updateDto.getOptionalMaterialIds())) {
+            this.projectMaterialOptionalService.delete(new ProjectMaterialOptionalDeleteDto(updateDto.getId()));
+
+            updateDto.getOptionalMaterialIds().forEach(ids -> {
+                this.projectMaterialOptionalService.create(new ProjectMaterialOptionalCreateDto(ids, updateDto.getId()));
+            });
         }
 
         this.auditProvider.auditUpdate(update);

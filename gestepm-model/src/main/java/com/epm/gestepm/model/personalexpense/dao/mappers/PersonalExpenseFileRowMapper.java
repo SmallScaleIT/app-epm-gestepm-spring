@@ -20,19 +20,15 @@ public class PersonalExpenseFileRowMapper implements RowMapper<PersonalExpenseFi
 
     public static final String COL_PEF_STORAGE_PATH = "storage_path";
 
-    public static final String COL_PEF_CONTENT = "content";
-
     @Override
     public PersonalExpenseFile mapRow(ResultSet rs, int i) throws SQLException {
 
         final PersonalExpenseFile personalExpenseFile = new PersonalExpenseFile();
-        final byte[] bytes = FileUtils.decompressBytes(rs.getBytes(COL_PEF_CONTENT));
 
         personalExpenseFile.setId(rs.getInt(COL_PEF_ID));
         personalExpenseFile.setPersonalExpenseId(rs.getInt(COL_PEF_SHARE_ID));
         personalExpenseFile.setName(rs.getString(COL_PEF_NAME));
-        personalExpenseFile.setContent(bytes != null ? bytes : rs.getBytes(COL_PEF_CONTENT));
-        personalExpenseFile.setStoragePath(nullableString(rs, COL_PEF_STORAGE_PATH)); // FIXME: to remove
+        personalExpenseFile.setStoragePath(nullableString(rs, COL_PEF_STORAGE_PATH));
 
         return personalExpenseFile;
     }

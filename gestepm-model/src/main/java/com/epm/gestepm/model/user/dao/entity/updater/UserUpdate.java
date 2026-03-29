@@ -39,10 +39,6 @@ public class UserUpdate implements CollectableAttributes {
 
     private Double workingHours;
 
-    private Integer currentYearHolidaysCount;
-
-    private Integer lastYearHolidaysCount;
-
     @Override
     public AttributeMap collectAttributes() {
 
@@ -61,8 +57,6 @@ public class UserUpdate implements CollectableAttributes {
         map.put(ATTR_U_ROLE_ID, this.roleId);
         map.put(ATTR_U_LEVEL_ID, this.levelId);
         map.put(ATTR_U_WORKING_HOURS, this.workingHours);
-        map.put(ATTR_U_CURRENT_YEAR_HOLIDAYS_COUNT, this.currentYearHolidaysCount);
-        map.put(ATTR_U_LAST_YEAR_HOLIDAYS_COUNT, this.lastYearHolidaysCount);
 
         return map;
     }

@@ -57,4 +57,6 @@ public class InspectionUpdateDto {
 
     private Boolean notify;
 
+    private List<Integer> optionalMaterialIds;
+
 }

@@ -46,4 +46,4 @@ spring:
   second-datasource:
     jdbcUrl: jdbc:mysql://92.54.16.198:3306/bbdd_gestepm_forum?useSSL=false
     username: bbdd_forum
-    password: ENC(b4iLfyklo32MlmjXDOIIMHVYfvMAMkB4)
+    password: AxPGWjwL4!

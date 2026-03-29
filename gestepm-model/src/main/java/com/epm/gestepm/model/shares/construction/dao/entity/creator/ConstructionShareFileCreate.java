@@ -29,7 +29,6 @@ public class ConstructionShareFileCreate implements CollectableAttributes {
         map.put(ATTR_CSF_SHARE_ID, this.shareId);
         map.put(ATTR_CSF_NAME, this.name);
         map.put(ATTR_CSF_STORAGE_PATH, this.storagePath);
-        map.put(ATTR_CSF_CONTENT, FileUtils.compressBytes("to-remove".getBytes())); // FIXME: remove
 
         return map;
     }

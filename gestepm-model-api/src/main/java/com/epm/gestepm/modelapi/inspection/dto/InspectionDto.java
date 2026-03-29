@@ -65,4 +65,7 @@ public class InspectionDto implements Serializable {
     private LocalDateTime updatedAt;
 
     private Integer updatedBy;
+
+    private List<Integer> optionalMaterialIds;
+
 }
