@@ -71,6 +71,8 @@ public class InspectionUpdate implements AuditUpdate, CollectableAttributes {
 
     private Integer updatedBy;
 
+    private List<Integer> optionalMaterialIds;
+
     @Override
     public AttributeMap collectAttributes() {
 

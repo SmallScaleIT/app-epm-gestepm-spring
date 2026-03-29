@@ -44,4 +44,6 @@ public abstract class InspectionAttributes {
 
     public static final String ATTR_I_MODIFIED_BY = "attr_i_modified_by";
 
+    public static final String ATTR_I_OPTIONAL_MATERIAL_IDS = "attr_i_optional_material_ids";
+
 }

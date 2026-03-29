@@ -25,13 +25,15 @@ sql:
       i.modified_at,
       i.modified_by,
       GROUP_CONCAT(DISTINCT ifi.inspection_file_id) AS inspection_file_ids,
-      GROUP_CONCAT(CONCAT_WS('|', im.inspection_material_id, im.units, im.description, im.reference)) AS inspection_materials
+      GROUP_CONCAT(CONCAT_WS('|', im.inspection_material_id, im.units, im.description, im.reference)) AS inspection_materials,
+      GROUP_CONCAT(DISTINCT pmo.project_material_id) AS optional_material_ids
     FROM ${sch-gestepm}.inspection i
     LEFT JOIN ${sch-gestepm}.no_programmed_share nps ON i.no_programmed_share_id = nps.no_programmed_share_id
     LEFT JOIN ${sch-gestepm}.inspection_file ifi ON i.inspection_id = ifi.inspection_id
     LEFT JOIN ${sch-gestepm}.inspection_material im ON i.inspection_id = im.inspection_id
     LEFT JOIN ${sch-gestepm}.project pr ON nps.project_id = pr.project_id
     LEFT JOIN ${sch-gestepm}.user ft ON i.first_technical = ft.user_id
+    LEFT JOIN ${sch-gestepm}.project_material_optional pmo ON i.inspection_id = pmo.inspection_id
 
     #whereToken #filter
     GROUP BY i.inspection_id

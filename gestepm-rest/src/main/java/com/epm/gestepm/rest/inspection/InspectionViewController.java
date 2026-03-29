@@ -11,6 +11,9 @@ import com.epm.gestepm.modelapi.inspection.dto.filter.InspectionFileFilterDto;
 import com.epm.gestepm.modelapi.inspection.dto.finder.InspectionByIdFinderDto;
 import com.epm.gestepm.modelapi.inspection.service.InspectionFileService;
 import com.epm.gestepm.modelapi.inspection.service.InspectionService;
+import com.epm.gestepm.modelapi.projectmaterial.dto.ProjectMaterialDto;
+import com.epm.gestepm.modelapi.projectmaterial.dto.filter.ProjectMaterialFilterDto;
+import com.epm.gestepm.modelapi.projectmaterial.service.ProjectMaterialService;
 import com.epm.gestepm.modelapi.role.dto.RoleDTO;
 import com.epm.gestepm.modelapi.shares.breaks.dto.ShareBreakDto;
 import com.epm.gestepm.modelapi.shares.breaks.dto.filter.ShareBreakFilterDto;
@@ -34,9 +37,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
+import javax.validation.Valid;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.epm.gestepm.lib.logging.constants.LogLayerMarkers.VIEW;
@@ -48,10 +50,10 @@ import static com.epm.gestepm.lib.logging.constants.LogOperations.OP_VIEW;
 public class InspectionViewController {
 
     private final InspectionService inspectionService;
-    
-    private final InspectionFileService inspectionFileService;
 
     private final NoProgrammedShareService noProgrammedShareService;
+
+    private final ProjectMaterialService projectMaterialService;
 
     private final ShareBreakService shareBreakService;
 
@@ -82,6 +84,9 @@ public class InspectionViewController {
         final InspectionDto inspection = this.inspectionService.findOrNotFound(new InspectionByIdFinderDto(id));
         model.addAttribute("inspection", inspection);
 
+        final List<Integer> selectedOptional = inspection.getOptionalMaterialIds();
+        model.addAttribute("selectedOptional", selectedOptional);
+
         final InspectionFileFilterDto filterDto = new InspectionFileFilterDto();
         filterDto.setInspectionId(id);
         
@@ -92,6 +97,23 @@ public class InspectionViewController {
         final Page<ShareBreakDto> list = this.shareBreakService.list(shareBreakFilterDto, 0L, 1L);
         if (!list.isEmpty() && list.get(0).isPresent()) {
             model.addAttribute("currentShareBreak", list.get(0).get());
+        }
+
+        final ProjectMaterialFilterDto projectMaterialFilterDto = new ProjectMaterialFilterDto();
+        projectMaterialFilterDto.setProjectIds(List.of(noProgrammedShare.getProjectId()));
+
+        final List<ProjectMaterialDto> projectMaterials = this.projectMaterialService.list(projectMaterialFilterDto);
+
+        if (!projectMaterials.isEmpty()) {
+            model.addAttribute("requiredProjectMaterials", projectMaterials.stream()
+                    .filter(ProjectMaterialDto::getRequired)
+                    .collect(Collectors.toList())
+            );
+
+            model.addAttribute("optionalProjectMaterials", projectMaterials.stream()
+                    .filter(pm -> !pm.getRequired())
+                    .collect(Collectors.toList())
+            );
         }
 
         loadPermissions(user, inspection.getProjectId(), model, inspection);

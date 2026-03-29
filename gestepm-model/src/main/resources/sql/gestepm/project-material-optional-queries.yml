@@ -1,0 +1,16 @@
+sql:
+
+  qry-create-pmo: |
+
+    INSERT INTO ${sch-gestepm}.project_material_optional (
+      project_material_id,
+      inspection_id
+    )
+    VALUES (
+      :attr_pmo_project_material_id,
+      :attr_pmo_inspection_id
+    )
+
+  qry-delete-pmo: |
+
+    DELETE FROM ${sch-gestepm}.project_material_optional WHERE inspection_id = :attr_pmo_inspection_id
