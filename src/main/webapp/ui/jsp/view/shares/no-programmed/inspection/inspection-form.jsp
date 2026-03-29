@@ -2,6 +2,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <style>
+    .content {
+        height: auto;
+    }
+
     .clearSignatureButton {
         color: #333;
         font-weight: bold;
@@ -88,6 +92,45 @@
         justify-content: space-between;
         margin-top: -20px;
     }
+
+    .material-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        margin-bottom: 6px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+    }
+
+    .material-item:hover {
+        background-color: #f8f9fa;
+        border-color: #e0e0e0;
+    }
+
+    .material-item input {
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+
+    .material-item span {
+        flex: 1;
+        font-size: 14px;
+    }
+
+    /* estado seleccionado */
+    .material-item input:checked + span {
+        font-weight: 600;
+        color: #0d6efd;
+    }
+
+    /* highlight completo (moderno) */
+    .material-item:has(input:checked) {
+        background-color: #e7f1ff;
+        border-color: #0d6efd;
+    }
 </style>
 
 <div class="row">
@@ -166,6 +209,86 @@
             </div>
         </div>
     </div>
+
+    <c:if test="${not empty requiredProjectMaterials or not empty optionalProjectMaterials}">
+        <div class="visibility-id">
+            <div class="row mt-3">
+
+                <!-- OBLIGATORIOS -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-light fw-bold text-danger">
+                            <spring:message code="materials.epis" />
+                        </div>
+
+                        <div class="card-body p-2">
+
+                            <c:forEach var="material" items="${requiredProjectMaterials}">
+                                <label class="material-item">
+                                    <input class="material-checkbox required-material"
+                                            type="checkbox"
+                                            id="material_${material.id}"
+                                            value="${material.id}"
+                                            checked="checked"
+                                            disabled>
+
+                                    <span>
+                                    <c:choose>
+                                        <c:when test="${locale == 'es'}">
+                                            ${material.nameEs}
+                                        </c:when>
+                                        <c:otherwise>
+                                            ${material.nameFr}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </span>
+                                </label>
+                            </c:forEach>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OPCIONALES -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-light fw-bold text-primary">
+                            <spring:message code="materials.optionals" />
+                        </div>
+
+                        <div class="card-body p-2">
+
+                            <c:forEach var="material" items="${optionalProjectMaterials}">
+                                <label class="material-item">
+                                    <input class="material-checkbox optional-material"
+                                            type="checkbox"
+                                            id="material_${material.id}"
+                                            value="${material.id}"
+                                            <c:if test="${selectedOptional.contains(material.id)}">
+                                                   checked
+                                            </c:if>
+                                    >
+
+                                    <span>
+                                    <c:choose>
+                                        <c:when test="${locale == 'es'}">
+                                            ${material.nameEs}
+                                        </c:when>
+                                        <c:otherwise>
+                                            ${material.nameFr}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </span>
+                                </label>
+                            </c:forEach>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </c:if>
 
     <div class="visibility-id">
         <div class="row mt-2">
@@ -276,6 +399,8 @@
             const materials = materialsDataTable.rows().data().toArray().map(row => ({ ...row, id: row.id < 0 ? null : row.id}));
             const materialsSelector = editForm.querySelector('[name="materialsFile"]');
             const selector = editForm.querySelector('[name="files"]');
+            const optionalMaterialIds = Array.from(document.querySelectorAll('.optional-material:checked'))
+                .map(cb => Number(cb.value));
 
             let data = {
                 userId: ${user.id},
@@ -287,7 +412,8 @@
                 equipmentHours: equipmentHours ? equipmentHours.value : null,
                 notify: notify.checked,
                 startDate: startDate.value,
-                endDate: endDate ? endDate.value : null
+                endDate: endDate ? endDate.value : null,
+                optionalMaterialIds: optionalMaterialIds
             }
 
             const formData = new FormData();
@@ -350,6 +476,10 @@
             endDatePicker.parentElement.remove();
         }
 
+        if (inspection.optionalMaterials) {
+
+        }
+
         if (inspection.action === 'FOLLOWING') {
             $('.visibility-id').hide();
         }
@@ -362,10 +492,13 @@
             updateEditButton(editBtn);
         }
 
-        const materialsFile = {
-            name: inspection.materialsFileName,
-            url: inspection.materialsFileUrl
-        }
+        const materialsFile =
+            inspection.materialsFileName && inspection.materialsFileUrl
+                ? {
+                    name: inspection.materialsFileName,
+                    url: inspection.materialsFileUrl
+                }
+                : undefined;
 
         loadFiles(inspection.files, materialsFile);
         loadMaterialsDataTable();
