@@ -1,6 +1,5 @@
 package com.epm.gestepm.model.inspection.service;
 
-import com.epm.gestepm.emailapi.dto.Attachment;
 import com.epm.gestepm.emailapi.dto.emailgroup.CloseInspectionGroup;
 import com.epm.gestepm.emailapi.service.EmailService;
 import com.epm.gestepm.forum.model.api.service.TopicService;
@@ -35,14 +34,12 @@ import com.epm.gestepm.modelapi.inspection.exception.InspectionActiveException;
 import com.epm.gestepm.modelapi.inspection.exception.InspectionNotFoundException;
 import com.epm.gestepm.modelapi.inspection.service.InspectionExportService;
 import com.epm.gestepm.modelapi.inspection.service.InspectionService;
+import com.epm.gestepm.modelapi.material.dto.deleter.MaterialInspectionDeleteDto;
 import com.epm.gestepm.modelapi.project.dto.ProjectDto;
 import com.epm.gestepm.modelapi.project.dto.finder.ProjectByIdFinderDto;
 import com.epm.gestepm.modelapi.project.service.ProjectService;
-import com.epm.gestepm.modelapi.projectmaterial.dto.creator.ProjectMaterialOptionalCreateDto;
-import com.epm.gestepm.modelapi.projectmaterial.dto.deleter.ProjectMaterialDeleteDto;
-import com.epm.gestepm.modelapi.projectmaterial.dto.deleter.ProjectMaterialOptionalDeleteDto;
-import com.epm.gestepm.modelapi.projectmaterial.service.ProjectMaterialOptionalService;
-import com.epm.gestepm.modelapi.projectmaterial.service.ProjectMaterialService;
+import com.epm.gestepm.modelapi.material.dto.creator.MaterialInspectionCreateDto;
+import com.epm.gestepm.modelapi.material.service.MaterialInspectionService;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.NoProgrammedShareDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.NoProgrammedShareStateEnumDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.finder.NoProgrammedShareByIdFinderDto;
@@ -107,7 +104,7 @@ public class InspectionServiceImpl implements InspectionService {
 
     private final NoProgrammedShareService noProgrammedShareService;
 
-    private final ProjectMaterialOptionalService projectMaterialOptionalService;
+    private final MaterialInspectionService materialInspectionService;
 
     private final ProjectService projectService;
 
@@ -236,11 +233,11 @@ public class InspectionServiceImpl implements InspectionService {
             update.setMaterialsStoragePath(fileResponse.getFileName());
         }
 
-        if (!CollectionUtils.isEmpty(updateDto.getOptionalMaterialIds())) {
-            this.projectMaterialOptionalService.delete(new ProjectMaterialOptionalDeleteDto(updateDto.getId()));
+        this.materialInspectionService.delete(new MaterialInspectionDeleteDto(updateDto.getId()));
 
+        if (!CollectionUtils.isEmpty(updateDto.getOptionalMaterialIds())) {
             updateDto.getOptionalMaterialIds().forEach(ids -> {
-                this.projectMaterialOptionalService.create(new ProjectMaterialOptionalCreateDto(ids, updateDto.getId()));
+                this.materialInspectionService.create(new MaterialInspectionCreateDto(ids, updateDto.getId()));
             });
         }
 

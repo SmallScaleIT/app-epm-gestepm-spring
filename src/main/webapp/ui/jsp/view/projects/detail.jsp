@@ -14,7 +14,7 @@
     final String currentProject = mapper.writeValueAsString(request.getAttribute("currentProject"));
 %>
 
-<c:set var="projectTabs" value="${fn:split('expenses,signings,leaders,members,materials,families', ',')}" />
+<c:set var="projectTabs" value="${fn:split('expenses,signings,leaders,members,families', ',')}" />
 
 <div class="breadcrumbs">
     <div class="breadcrumbs-inner">

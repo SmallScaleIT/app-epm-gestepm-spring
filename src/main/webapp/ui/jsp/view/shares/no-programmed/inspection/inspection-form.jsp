@@ -210,7 +210,7 @@
         </div>
     </div>
 
-    <c:if test="${not empty requiredProjectMaterials or not empty optionalProjectMaterials}">
+    <c:if test="${not empty requiredMaterials or not empty optionalMaterials}">
         <div class="visibility-id">
             <div class="row mt-3">
 
@@ -223,7 +223,7 @@
 
                         <div class="card-body p-2">
 
-                            <c:forEach var="material" items="${requiredProjectMaterials}">
+                            <c:forEach var="material" items="${requiredMaterials}">
                                 <label class="material-item">
                                     <input class="material-checkbox required-material"
                                             type="checkbox"
@@ -258,7 +258,7 @@
 
                         <div class="card-body p-2">
 
-                            <c:forEach var="material" items="${optionalProjectMaterials}">
+                            <c:forEach var="material" items="${optionalMaterials}">
                                 <label class="material-item">
                                     <input class="material-checkbox optional-material"
                                             type="checkbox"

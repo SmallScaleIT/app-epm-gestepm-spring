@@ -59,7 +59,7 @@ public class CountryController extends BaseController implements CountriesV1Api,
     @Override
     @RequirePermits(value = PRMT_READ_C, action = "Get Countries List")
     @LogExecution(operation = OP_READ)
-    public ResponseEntity<ResCountryList> listCountriesV1(final List<String> meta, final Boolean links, final Long offset, final Long limit, final String order, final String orderBy, final List<Integer> ids, final String name, final List<String> tags) {
+    public ResponseEntity<ListCountriesV1200Response> listCountriesV1(final List<String> meta, final Boolean links, final Long offset, final Long limit, final String order, final String orderBy, final List<Integer> ids, final String name, final List<String> tags) {
 
         final CountryListRestRequest req = new CountryListRestRequest(ids, name, tags);
 
@@ -74,13 +74,13 @@ public class CountryController extends BaseController implements CountriesV1Api,
         final APIMetadata metadata = this.getMetadata(req, page, new ListCountryV1Operation());
         final List<Country> data = getMapper(MapCToCountryResponse.class).from(page);
 
-        return toResCountryListResponse(metadata, data, page.hashCode());
+        return toCountryListResponse(metadata, data, page.hashCode());
     }
 
     @Override
     @RequirePermits(value = PRMT_READ_C, action = "Find country")
     @LogExecution(operation = OP_READ)
-    public ResponseEntity<ResCountry> findCountryByIdV1(final Integer id, final List<String> meta, final Boolean links) {
+    public ResponseEntity<CreateCountryV1200Response> findCountryByIdV1(final Integer id, final List<String> meta, final Boolean links) {
 
         final CountryFindRestRequest req = new CountryFindRestRequest(id);
 
@@ -92,22 +92,22 @@ public class CountryController extends BaseController implements CountriesV1Api,
         final APIMetadata metadata = this.getMetadata(req, new FindCountryV1Operation());
         final Country data = getMapper(MapCToCountryResponse.class).from(dto);
 
-        return toResCountryResponse(metadata, data, dto.hashCode());
+        return toCountryResponse(metadata, data, dto.hashCode());
     }
 
     @Override
     @RequirePermits(value = PRMT_EDIT_C, action = "Create country")
     @LogExecution(operation = OP_CREATE)
-    public ResponseEntity<ResCountry> createCountryV1(final ReqCreateCountry reqCreateCountry) {
+    public ResponseEntity<CreateCountryV1200Response> createCountryV1(final CreateCountryV1Request request) {
 
-        final CountryCreateDto createDto = getMapper(MapCToCountryCreateDto.class).from(reqCreateCountry);
+        final CountryCreateDto createDto = getMapper(MapCToCountryCreateDto.class).from(request);
 
         final CountryDto countryDto = this.countryService.create(createDto);
 
         final APIMetadata metadata = this.getDefaultMetadata();
         final Country data = getMapper(MapCToCountryResponse.class).from(countryDto);
 
-        final ResCountry response = new ResCountry();
+        final CreateCountryV1200Response response = new CreateCountryV1200Response();
         response.setMetadata(getMapper(MetadataMapper.class).from(metadata));
         response.setData(data);
 
@@ -117,9 +117,9 @@ public class CountryController extends BaseController implements CountriesV1Api,
     @Override
     @RequirePermits(value = PRMT_EDIT_C, action = "Update country")
     @LogExecution(operation = OP_UPDATE)
-    public ResponseEntity<ResCountry> updateCountryV1(final Integer id, final ReqUpdateCountry reqUpdateCountry) {
+    public ResponseEntity<CreateCountryV1200Response> updateCountryV1(final Integer id, final CreateCountryV1Request request) {
 
-        final CountryUpdateDto updateDto = getMapper(MapCToCountryUpdateDto.class).from(reqUpdateCountry);
+        final CountryUpdateDto updateDto = getMapper(MapCToCountryUpdateDto.class).from(request);
         updateDto.setId(id);
 
         final CountryDto countryDto = this.countryService.update(updateDto);
@@ -127,7 +127,7 @@ public class CountryController extends BaseController implements CountriesV1Api,
         final APIMetadata metadata = this.getDefaultMetadata();
         final Country data = getMapper(MapCToCountryResponse.class).from(countryDto);
 
-        final ResCountry response = new ResCountry();
+        final CreateCountryV1200Response response = new CreateCountryV1200Response();
         response.setMetadata(getMapper(MetadataMapper.class).from(metadata));
         response.setData(data);
 

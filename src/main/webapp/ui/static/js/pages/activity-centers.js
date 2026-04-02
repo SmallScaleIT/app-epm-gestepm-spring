@@ -8,9 +8,9 @@ function filter(isReset) {
 		let name = document.querySelector('#filterNameInput');
 		let countryId = document.querySelector('#filterCountryInput');
 
-		filters.push({'ids': id.value});
-		filters.push({'name': name.value});
-		filters.push({'countryIds': countryId.value});
+		id.value && filters.push({'ids': id.value});
+		name.value && filters.push({'name': name.value});
+		countryId.value && filters.push({'countryIds': countryId.value});
 	} else {
 		resetForm('#filterForm');
 	}
@@ -61,7 +61,7 @@ function edit(id) {
 		editModal.modal('show');
 	});
 
-	saveBtn.click(function() {
+	saveBtn.off('click').on('click', function() {
 
 		showLoading();
 

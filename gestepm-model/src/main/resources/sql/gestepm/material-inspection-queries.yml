@@ -1,0 +1,16 @@
+sql:
+
+  qry-create-mati: |
+
+    INSERT INTO ${sch-gestepm}.material_inspection (
+      material_id,
+      inspection_id
+    )
+    VALUES (
+      :attr_mati_material_id,
+      :attr_mati_inspection_id
+    )
+
+  qry-delete-mati: |
+
+    DELETE FROM ${sch-gestepm}.material_inspection WHERE inspection_id = :attr_mati_inspection_id

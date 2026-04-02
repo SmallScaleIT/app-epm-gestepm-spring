@@ -114,10 +114,16 @@
             "success": "Proyecto {0} eliminado con éxito."
         }
     },
-    "projectMaterials": {
+    "materials": {
+        "create": {
+            "success": "Se ha creado el material {0} con éxito."
+        },
         "delete" : {
-            "alert": "¿Está seguro que quiere borrar del proyecto el material {0}?",
-            "success": "Material {0} eliminado con éxito del proyecto."
+            "alert": "¿Está seguro que quiere borrar el material seleccionado?",
+            "success": "Material seleccionado eliminado con éxito."
+        },
+        "update": {
+            "success": "Se ha actualizado el material {0} con éxito."
         }
     },
     "projectMembers": {
