@@ -180,23 +180,6 @@ public class ProjectViewController {
         return "project-detail";
     }
 
-    @GetMapping("/projects/{id}/materials")
-    @LogExecution(operation = OP_VIEW)
-    public String viewProjectMaterialsPage(@PathVariable final Integer id, final Locale locale, final Model model) {
-
-        this.loadCommonModelView(locale, model);
-
-        final ProjectDto currentProject = this.projectService.findOrNotFound(new ProjectByIdFinderDto(id));
-        model.addAttribute("currentProject", currentProject);
-
-        model.addAttribute("importPath", "project-materials");
-        model.addAttribute("loadingPath", "projects");
-        model.addAttribute("type", "materials");
-        model.addAttribute("tab", "materials");
-
-        return "project-detail";
-    }
-
     @GetMapping("/projects/{id}/families")
     @LogExecution(operation = OP_VIEW)
     public String viewProjectFamiliesPage(@PathVariable final Integer id, final Locale locale, final Model model) {
