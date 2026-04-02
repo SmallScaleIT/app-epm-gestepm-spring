@@ -6,25 +6,20 @@ import com.epm.gestepm.lib.types.Page;
 import com.epm.gestepm.modelapi.common.utils.ModelUtil;
 import com.epm.gestepm.modelapi.common.utils.classes.Constants;
 import com.epm.gestepm.modelapi.inspection.dto.InspectionDto;
-import com.epm.gestepm.modelapi.inspection.dto.InspectionFileDto;
 import com.epm.gestepm.modelapi.inspection.dto.filter.InspectionFileFilterDto;
 import com.epm.gestepm.modelapi.inspection.dto.finder.InspectionByIdFinderDto;
-import com.epm.gestepm.modelapi.inspection.service.InspectionFileService;
 import com.epm.gestepm.modelapi.inspection.service.InspectionService;
-import com.epm.gestepm.modelapi.projectmaterial.dto.ProjectMaterialDto;
-import com.epm.gestepm.modelapi.projectmaterial.dto.filter.ProjectMaterialFilterDto;
-import com.epm.gestepm.modelapi.projectmaterial.service.ProjectMaterialService;
+import com.epm.gestepm.modelapi.material.dto.MaterialDto;
+import com.epm.gestepm.modelapi.material.dto.filter.MaterialFilterDto;
+import com.epm.gestepm.modelapi.material.service.MaterialService;
 import com.epm.gestepm.modelapi.role.dto.RoleDTO;
 import com.epm.gestepm.modelapi.shares.breaks.dto.ShareBreakDto;
 import com.epm.gestepm.modelapi.shares.breaks.dto.filter.ShareBreakFilterDto;
 import com.epm.gestepm.modelapi.shares.breaks.service.ShareBreakService;
 import com.epm.gestepm.modelapi.shares.common.dto.ShareStatusDto;
-import com.epm.gestepm.modelapi.shares.construction.dto.ConstructionShareFileDto;
-import com.epm.gestepm.modelapi.shares.construction.dto.filter.ConstructionShareFileFilterDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.NoProgrammedShareDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.finder.NoProgrammedShareByIdFinderDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.service.NoProgrammedShareService;
-import com.epm.gestepm.modelapi.signings.warehouse.dto.WarehouseSigningDto;
 import com.epm.gestepm.modelapi.subfamily.service.SubFamilyService;
 import com.epm.gestepm.modelapi.deprecated.user.dto.User;
 import lombok.AllArgsConstructor;
@@ -37,7 +32,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,7 +47,7 @@ public class InspectionViewController {
 
     private final NoProgrammedShareService noProgrammedShareService;
 
-    private final ProjectMaterialService projectMaterialService;
+    private final MaterialService materialService;
 
     private final ShareBreakService shareBreakService;
 
@@ -99,18 +93,18 @@ public class InspectionViewController {
             model.addAttribute("currentShareBreak", list.get(0).get());
         }
 
-        final ProjectMaterialFilterDto projectMaterialFilterDto = new ProjectMaterialFilterDto();
-        projectMaterialFilterDto.setProjectIds(List.of(noProgrammedShare.getProjectId()));
+        final MaterialFilterDto materialFilterDto = new MaterialFilterDto();
+        materialFilterDto.setProjectIds(List.of(noProgrammedShare.getProjectId()));
 
-        final List<ProjectMaterialDto> projectMaterials = this.projectMaterialService.list(projectMaterialFilterDto);
+        final List<MaterialDto> materials = this.materialService.list(materialFilterDto);
 
-        if (!projectMaterials.isEmpty()) {
-            model.addAttribute("requiredProjectMaterials", projectMaterials.stream()
-                    .filter(ProjectMaterialDto::getRequired)
+        if (!materials.isEmpty()) {
+            model.addAttribute("requiredMaterials", materials.stream()
+                    .filter(MaterialDto::getRequired)
                     .collect(Collectors.toList())
             );
 
-            model.addAttribute("optionalProjectMaterials", projectMaterials.stream()
+            model.addAttribute("optionalMaterials", materials.stream()
                     .filter(pm -> !pm.getRequired())
                     .collect(Collectors.toList())
             );

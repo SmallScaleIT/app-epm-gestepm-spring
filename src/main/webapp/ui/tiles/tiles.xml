@@ -191,6 +191,11 @@
     <definition name="admin-families-edit" extends="fullFrameLayout">
         <put-attribute name="body" value="/ui/jsp/view/admin/families/crud/edit.jsp" />
     </definition>
+
+    <!-- Materials -->
+    <definition name="materials" extends="mainFrameLayout">
+        <put-attribute name="body" value="/ui/jsp/view/admin/materials/view.jsp" />
+    </definition>
     
     <!-- Scripts -->
     <definition name="script-login-forum" template="/ui/jsp/layout/script/forum/login.jsp"></definition>

@@ -39,7 +39,7 @@ function edit(id) {
         editModal.modal('show');
     });
 
-    saveBtn.click(function() {
+    saveBtn.off('click').on('click', function() {
 
         showLoading();
 
