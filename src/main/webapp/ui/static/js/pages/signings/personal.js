@@ -57,7 +57,7 @@ function edit(id) {
 
     saveBtn.off('click');
 
-    saveBtn.click(function() {
+    saveBtn.off('click').on('click', function() {
 
         showLoading();
 

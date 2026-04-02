@@ -1,0 +1,86 @@
+sql:
+
+  qry-list-of-mat: |
+
+    SELECT
+      mat.material_id,
+      mat.name_es,
+      mat.name_fr,
+      mat.required
+    FROM ${sch-gestepm}.material mat
+
+    #whereToken #filter
+    #orderByToken
+
+  qry-page-of-mat: |
+
+    ${sql.qry-list-of-mat}
+    ${sql.paginated-query}
+
+  qry-count-of-mat: |
+
+    SELECT COUNT(DISTINCT material_id) AS "count"
+    FROM (
+      SELECT mat.material_id
+      FROM ${sch-gestepm}.material mat      
+      #whereToken #filter
+    ) final
+
+  qry-create-mat: |
+
+    INSERT INTO ${sch-gestepm}.material (
+      name_es,
+      name_fr,
+      required
+    )
+    VALUES (
+      :attr_mat_name_es,
+      :attr_mat_name_fr,
+      :attr_mat_required
+    )
+
+  qry-update-mat: |
+
+    UPDATE
+      ${sch-gestepm}.material
+    SET
+      name_es = :attr_mat_name_es,
+      name_fr = :attr_mat_name_fr,
+      required = :attr_mat_required
+    WHERE
+      material_id = :attr_mat_id
+
+  qry-delete-mat: |
+
+    DELETE FROM ${sch-gestepm}.material WHERE material_id = :attr_mat_id
+
+  filter-mat-by-params: |
+
+    -- [AND
+      -- ${sql.predicate-for-mat-ids}
+      -- ${sql.predicate-for-mat-name-contains}
+      -- ${sql.predicate-for-mat-required}
+    -- AND]
+
+  filter-mat-by-id: |
+
+    -- [AND
+      -- ${sql.predicate-for-mat-id}
+    -- AND]
+
+  predicate-for-mat-id: |
+
+    mat.material_id = :attr_mat_id
+
+  predicate-for-mat-ids: |
+
+    mat.material_id IN (:attr_mat_ids)
+
+  predicate-for-mat-name-contains: |
+    
+    (LOWER(mat.name_es) LIKE LOWER(:attr_mat_name_contains)) OR (LOWER(mat.name_fr) LIKE LOWER(:attr_mat_name_contains))
+
+  predicate-for-mat-required: |
+    
+    mat.required = :attr_mat_required
+

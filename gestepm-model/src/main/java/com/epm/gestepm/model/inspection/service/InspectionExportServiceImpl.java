@@ -2,26 +2,23 @@ package com.epm.gestepm.model.inspection.service;
 
 import com.epm.gestepm.lib.locale.LocaleProvider;
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
-import com.epm.gestepm.model.common.pdf.ImageUtils;
 import com.epm.gestepm.modelapi.common.utils.Utiles;
 import com.epm.gestepm.modelapi.family.dto.Family;
 import com.epm.gestepm.modelapi.family.service.FamilyService;
 import com.epm.gestepm.modelapi.inspection.dto.InspectionDto;
 import com.epm.gestepm.modelapi.inspection.dto.InspectionFileDto;
-import com.epm.gestepm.modelapi.inspection.dto.MaterialDto;
 import com.epm.gestepm.modelapi.inspection.dto.finder.InspectionFileByIdFinderDto;
 import com.epm.gestepm.modelapi.inspection.exception.InspectionExportException;
 import com.epm.gestepm.modelapi.inspection.exception.InspectionNotEndedException;
 import com.epm.gestepm.modelapi.inspection.service.InspectionExportService;
 import com.epm.gestepm.modelapi.inspection.service.InspectionFileService;
 import com.epm.gestepm.modelapi.inspection.service.InspectionMaterialsExportException;
+import com.epm.gestepm.modelapi.material.dto.MaterialDto;
 import com.epm.gestepm.modelapi.project.dto.ProjectDto;
 import com.epm.gestepm.modelapi.project.dto.finder.ProjectByIdFinderDto;
 import com.epm.gestepm.modelapi.project.service.ProjectService;
-import com.epm.gestepm.modelapi.projectmaterial.dto.ProjectMaterialDto;
-import com.epm.gestepm.modelapi.projectmaterial.dto.filter.ProjectMaterialFilterDto;
-import com.epm.gestepm.modelapi.projectmaterial.service.ProjectMaterialOptionalService;
-import com.epm.gestepm.modelapi.projectmaterial.service.ProjectMaterialService;
+import com.epm.gestepm.modelapi.material.dto.filter.MaterialFilterDto;
+import com.epm.gestepm.modelapi.material.service.MaterialService;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.NoProgrammedShareDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.dto.finder.NoProgrammedShareByIdFinderDto;
 import com.epm.gestepm.modelapi.shares.noprogrammed.service.NoProgrammedShareService;
@@ -43,7 +40,6 @@ import org.springframework.validation.annotation.Validated;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -74,7 +70,7 @@ public class InspectionExportServiceImpl implements InspectionExportService {
 
     private final ProjectService projectService;
 
-    private final ProjectMaterialService projectMaterialService;
+    private final MaterialService materialService;
 
     private final SubFamilyService subFamilyService;
 
@@ -169,13 +165,13 @@ public class InspectionExportServiceImpl implements InspectionExportService {
             final NoProgrammedShareDto noProgrammedShare = this.noProgrammedShareService.findOrNotFound(
                     new NoProgrammedShareByIdFinderDto(inspection.getShareId()));
 
-            final ProjectMaterialFilterDto projectMaterialFilterDto = new ProjectMaterialFilterDto();
-            projectMaterialFilterDto.setProjectIds(List.of(noProgrammedShare.getProjectId()));
+            final MaterialFilterDto materialFilterDto = new MaterialFilterDto();
+            materialFilterDto.setProjectIds(List.of(noProgrammedShare.getProjectId()));
 
-            final List<ProjectMaterialDto> materials = this.projectMaterialService.list(projectMaterialFilterDto);
+            final List<MaterialDto> materials = this.materialService.list(materialFilterDto);
 
-            final List<ProjectMaterialDto> requiredMaterials = materials.stream().filter(ProjectMaterialDto::getRequired).collect(Collectors.toList());
-            final List<ProjectMaterialDto> optionalMaterials = materials.stream().filter(m -> !m.getRequired()).collect(Collectors.toList());
+            final List<MaterialDto> requiredMaterials = materials.stream().filter(MaterialDto::getRequired).collect(Collectors.toList());
+            final List<MaterialDto> optionalMaterials = materials.stream().filter(m -> !m.getRequired()).collect(Collectors.toList());
 
             final String language = localeProvider.getLocale().orElse("es");
             final Locale locale = new Locale(language);
@@ -296,7 +292,7 @@ public class InspectionExportServiceImpl implements InspectionExportService {
             table.addCell(cell);
         }
 
-        final List<MaterialDto> materials = inspection.getMaterials().stream().limit(5).collect(Collectors.toList());
+        final List<com.epm.gestepm.modelapi.inspection.dto.MaterialDto> materials = inspection.getMaterials().stream().limit(5).collect(Collectors.toList());
 
         materials.forEach(material -> {
             table.addCell(makeCell(material.getDescription(), normal));

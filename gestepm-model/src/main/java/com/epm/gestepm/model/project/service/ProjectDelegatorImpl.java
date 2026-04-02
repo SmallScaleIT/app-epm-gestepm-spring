@@ -2,8 +2,8 @@ package com.epm.gestepm.model.project.service;
 
 import com.epm.gestepm.lib.logging.annotation.EnableExecutionLog;
 import com.epm.gestepm.model.customer.service.mapper.MapCUToCustomerCreate;
+import com.epm.gestepm.model.material.service.mapper.MapMATToMaterialCreate;
 import com.epm.gestepm.model.project.service.mapper.MapPRToProjectCreate;
-import com.epm.gestepm.model.projectmaterial.service.mapper.MapPRMATToProjectMaterialCreate;
 import com.epm.gestepm.modelapi.customer.dto.CustomerDto;
 import com.epm.gestepm.modelapi.customer.dto.creator.CustomerCreateDto;
 import com.epm.gestepm.modelapi.customer.dto.finder.CustomerByProjectIdFinderDto;
@@ -12,6 +12,8 @@ import com.epm.gestepm.modelapi.deprecated.project.dto.Project;
 import com.epm.gestepm.modelapi.deprecated.project.service.ProjectOldService;
 import com.epm.gestepm.modelapi.family.dto.Family;
 import com.epm.gestepm.modelapi.family.service.FamilyService;
+import com.epm.gestepm.modelapi.material.dto.MaterialDto;
+import com.epm.gestepm.modelapi.material.dto.creator.MaterialCreateDto;
 import com.epm.gestepm.modelapi.project.dto.ProjectDto;
 import com.epm.gestepm.modelapi.project.dto.creator.ProjectCreateDto;
 import com.epm.gestepm.modelapi.project.dto.creator.ProjectLeaderCreateDto;
@@ -21,10 +23,8 @@ import com.epm.gestepm.modelapi.project.service.ProjectDelegator;
 import com.epm.gestepm.modelapi.project.service.ProjectLeaderService;
 import com.epm.gestepm.modelapi.project.service.ProjectMemberService;
 import com.epm.gestepm.modelapi.project.service.ProjectService;
-import com.epm.gestepm.modelapi.projectmaterial.dto.ProjectMaterialDto;
-import com.epm.gestepm.modelapi.projectmaterial.dto.creator.ProjectMaterialCreateDto;
-import com.epm.gestepm.modelapi.projectmaterial.dto.filter.ProjectMaterialFilterDto;
-import com.epm.gestepm.modelapi.projectmaterial.service.ProjectMaterialService;
+import com.epm.gestepm.modelapi.material.dto.filter.MaterialFilterDto;
+import com.epm.gestepm.modelapi.material.service.MaterialService;
 import com.epm.gestepm.modelapi.user.dto.UserDto;
 import com.epm.gestepm.modelapi.user.dto.filter.UserFilterDto;
 import com.epm.gestepm.modelapi.user.service.UserService;
@@ -56,7 +56,7 @@ public class ProjectDelegatorImpl implements ProjectDelegator {
 
     private final ProjectLeaderService projectLeaderService;
 
-    private final ProjectMaterialService projectMaterialService;
+    private final MaterialService materialService;
 
     private final UserService userService;
 
@@ -109,15 +109,11 @@ public class ProjectDelegatorImpl implements ProjectDelegator {
 
     public void duplicateMaterials(final ProjectDto project, final ProjectDto newProject) {
 
-        final ProjectMaterialFilterDto filterDto = new ProjectMaterialFilterDto();
+        final MaterialFilterDto filterDto = new MaterialFilterDto();
         filterDto.setProjectIds(List.of(project.getId()));
 
-        final List<ProjectMaterialDto> materials = this.projectMaterialService.list(filterDto);
-        materials.forEach(material -> {
-            final ProjectMaterialCreateDto createDto = getMapper(MapPRMATToProjectMaterialCreate.class).from(material);
-            createDto.setProjectId(newProject.getId());
-            this.projectMaterialService.create(createDto);
-        });
+        final List<MaterialDto> materials = this.materialService.list(filterDto);
+        materials.forEach(material -> this.materialService.create(getMapper(MapMATToMaterialCreate.class).from(material)));
     }
 
     public void duplicateFamilies(final ProjectDto project, final ProjectDto newProject) {
