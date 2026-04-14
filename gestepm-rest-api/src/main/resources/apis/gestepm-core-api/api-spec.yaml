@@ -3082,7 +3082,7 @@ components:
             id: 96cv7joi0oiwc
           type: array
           items:
-            $ref: '#/components/schemas/Material'
+            $ref: '#/components/schemas/MaterialCustom'
         materialsFileName:
           type: string
           x-stoplight:
@@ -3368,8 +3368,8 @@ components:
           type: string
           x-stoplight:
             id: lnngd121n48ga
-    Material:
-      title: Material
+    MaterialCustom:
+      title: MaterialCustom
       x-stoplight:
         id: 9erl59kl8o8oo
       type: object
@@ -4570,7 +4570,7 @@ components:
                     x-stoplight:
                       id: begtcvhk3jc1o
                     items:
-                      $ref: '#/components/schemas/Material'
+                      $ref: '#/components/schemas/MaterialCustom'
                   equipmentHours:
                     type: integer
                     x-stoplight:
